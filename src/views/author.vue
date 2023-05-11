@@ -1,7 +1,7 @@
 <template>
     <div class="container" v-if="isShow">
         <div class="box leftbox">
-            <h3>{{ datas.author.name }}</h3>
+            <h3>{{ datas.author.excelName }}</h3>
             <div v-for="post in datas.postList">
                 <h5>{{ post.title }}</h5>
                 <p>{{ post.content }}</p>
@@ -123,7 +123,7 @@
     <div class="bottom_div">
         <span v-for="author in datas.authorList">
             <span class="author_click" @click.prevent="getAuthorDetailById(author.authorId)"
-                :style="{ 'color': (author.handle == 1 || author.handle == 0) ? 'green' : 'red' }">{{ author.name }}</span>
+                :style="{ 'color': (author.handle == 1 || author.handle == 0) ? 'green' : 'red' }">{{ author.excelName }}</span>
             &nbsp;&nbsp;&nbsp;
         </span>
     </div>
@@ -149,7 +149,7 @@ const datas = reactive({
     author: {
         handle: -1,
         authorId: 0,
-        name: '',
+        excelName: '',
         matchType: -9,
         person: {} as any,
     }
@@ -198,7 +198,7 @@ const getAuthorDetailById = (authorId: any) => {
     findAuthorByAuthorId({ authorId: authorId.toString() }).then(res => {
         console.log(res)
         datas.author.authorId = res.data.author.authorId;
-        datas.author.name = res.data.author.name;
+        datas.author.excelName = res.data.author.excelName;
         datas.author.matchType = res.data.author.matchType;
         datas.author.person = res.data.author.person;
         datas.author.handle = res.data.author.handle;
