@@ -49,7 +49,6 @@ axiosInstance.interceptors.request.use(
 // respone拦截器
 axiosInstance.interceptors.response.use(
     response => {
-        console.log(response);
         if(response.data.code == 0)
         {
             return response.data;

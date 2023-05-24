@@ -49,3 +49,41 @@ export function logout(params) {
         params
     });
 }
+
+/////////////////////////下面的是业务api
+
+export function searchAuthor(params) {
+    return request({
+        url: '/searchPoet/searchPoetName',
+        method: 'get',
+        params
+    });
+}
+export function searchPoetAuthorId(params) {
+    return request({
+        url: '/searchPoet/searchPoetAuthorId',
+        method: 'get',
+        params
+    });
+}
+export function listPostPage(params) {
+    return request({
+        url: '/post/listPostPageByAuthorId',
+        method: 'get',
+        params
+    });
+}
+export function searchPostTitle(params) {
+    return request({
+        url: '/searchPost/searchPostTitle',
+        method: 'get',
+        params
+    });
+}
+export function searchPostContent(params) {
+    return request({
+        url: '/searchPost/searchPostContent',
+        method: 'get',
+        params
+    });
+}

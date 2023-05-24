@@ -5,7 +5,7 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
         redirect: {
-            name: 'match_author'
+            name: 'home'
         }
     },
     {
@@ -13,15 +13,20 @@ const routes: Array<RouteRecordRaw> = [
         name: 'login',
         component: () => import('../views/login.vue')
     },
-    {
-        path: '/match_author',
-        name: 'match_author',
-        component: () => import('../views/startMatch.vue')
-    },
+    // {
+    //     path: '/match_author',
+    //     name: 'match_author',
+    //     component: () => import('../views/startMatch.vue')
+    // },
     {
         path: '/author',
         name: 'author',
         component: () => import('../views/author.vue')
+    },
+    {
+        path: '/home',
+        name: 'home',
+        component: () => import('../views/home/index.vue')
     },
 ]
 

@@ -2,6 +2,8 @@
     <div class="container" v-if="isShow">
         <div class="box leftbox">
             <h3>{{ datas.author.excelName }}</h3>
+
+            <div class="description" v-if="datas.author.description">人物介绍: {{ datas.author.description }}</div>
             <div v-for="post in datas.postList">
                 <h5>{{ post.title }}</h5>
                 <p>{{ post.content }}</p>
@@ -139,6 +141,7 @@ const isShow = ref(false)
 
 const isShowCbdbPerson = ref(false)
 
+
 const datas = reactive({
     cbdbPersonId:null,
     cbdbPerson: {} as any,
@@ -150,6 +153,7 @@ const datas = reactive({
         handle: -1,
         authorId: 0,
         excelName: '',
+        description: '',
         matchType: -9,
         person: {} as any,
     }
@@ -199,6 +203,7 @@ const getAuthorDetailById = (authorId: any) => {
         console.log(res)
         datas.author.authorId = res.data.author.authorId;
         datas.author.excelName = res.data.author.excelName;
+        datas.author.description = res.data.author.description;
         datas.author.matchType = res.data.author.matchType;
         datas.author.person = res.data.author.person;
         datas.author.handle = res.data.author.handle;
@@ -259,7 +264,8 @@ const resetAuthorList = () => {
     datas.author ={
         handle: -1,
         authorId: 0,
-        name: '',
+        excelName: '',
+        description: '',
         matchType: -9,
         person: {} as any,
     }
@@ -302,6 +308,10 @@ hr {
 
     h3 {
         text-align: center;
+    }
+    .description{
+        font-size: 14px;
+        margin-bottom: 20px;
     }
 
     h5 {
