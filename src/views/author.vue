@@ -216,8 +216,8 @@ const getAuthorDetailById = (authorId: any) => {
 }
 const listAllAuthorAction = () => {
     listAllAuthor({}).then(res => {
-        console.log
-        console.log(res.data)
+        // console.log
+        // console.log(res.data)
         datas.authorList = res.data;
     })
 }

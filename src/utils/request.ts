@@ -2,6 +2,7 @@
 import axios from 'axios';
 import router from '@/router';
 import JSONBig from 'json-bigint';
+import qs from 'qs';
 // axios.defaults.retry = 4
 // axios.defaults.retryDelay = 1000
 // 创建axios实例
@@ -27,6 +28,9 @@ axiosInstance.interceptors.request.use(
         if (requestInfo.headers) {
             requestInfo.headers['Content-Type'] = 'application/json;charset=UTF-8';
             const pathname  = requestInfo.url;
+            requestInfo.paramsSerializer = function(params) {
+                return qs.stringify(params, { arrayFormat: 'repeat'})
+              }
             if(pathname == '/admin/login'){
             } else {
 

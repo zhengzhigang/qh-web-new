@@ -5,7 +5,10 @@ import App from './App.vue';
 import router from './router';
 
 // windi
-import 'virtual:windi.css'
+// import 'virtual:windi.css'
+// import 'virtual:windi-base.css's
+// import 'virtual:windi-components.css'
+import 'virtual:windi-utilities.css'
 
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';

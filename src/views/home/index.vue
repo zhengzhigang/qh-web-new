@@ -67,8 +67,9 @@
                         <p class="text-14px leading-24px">唐隴西成紀人，其先人隋末流寓西域，故生于安西都護府所屬碎葉城。中宗神龍初，遷居蜀之綿州昌隆縣青蓮鄉，又嘗寓居山東，故亦稱山東人。字太白，號青蓮居士。少有逸才，志氣宏放，飄然有超世之心。十歲通詩書，被稱為“天才英特”。喜縱橫術，擊劍任俠，輕財重施。青年時離蜀漫游，玄宗天寶初，入長安，經賀知章、吳筠推薦，詔供奉翰林。但政治上不受重視，又受權貴讒毀，僅一年余即離開長安。天寶三載在洛陽結識杜甫。二人于詩壇齊名，并稱“李杜”。安史亂起，白為永王李璘府僚，參與平亂。因永王兵敗，坐流夜郎，中途遇赦東還，依族人當涂令李陽冰。不久病卒。其詩風雄奇豪放、清新飄逸，代表作有《蜀道難》、《行路難》、《夢游天姥吟留別》等。有《李太白集》。</p>
                     </div>
                     <div class="item">
-                        <p>人脉图谱:</p>
-                        <img src="@/assets/demo.png" >
+                        <!-- <p>人脉图谱:</p>
+                        <img src="@/assets/demo.png" > -->
+                        <canvasPage :personId="datas.defaultPersonId"/>
                     </div>
                     <div class="item">
                         <p class="text-18px">作品:</p>
@@ -133,6 +134,7 @@
 
 <script lang="ts" setup>
 // import Pagination from '@/components/Pagination.vue'
+import canvasPage from './canvas.vue'
 import { computed, reactive, ref,onMounted } from 'vue'
 import {useRouter} from 'vue-router';
 import { searchAuthor,searchPoetAuthorId,listPostPage,searchPostTitle,searchPostContent } from '@/api/common'
@@ -187,6 +189,8 @@ const datas = reactive({
     searchStr: "",
     searchAuthorId: 0,
     //首页是否显示一个作者的信息
+    defaultAuthorId: "1655596564759744528",
+    defaultPersonId: "32540",
     singleMatch: 1,
     esPage:{} as any,
     authorInfo: {} as any,
@@ -194,7 +198,7 @@ const datas = reactive({
 })
 onMounted(()=>{
     if(!route.query.authorId){
-        datas.searchAuthorId = JSONBig.parse("1655596564759744528")
+        datas.searchAuthorId = JSONBig.parse(datas.defaultAuthorId)
      } else {
         datas.searchAuthorId = JSONBig.parse(route.query.authorId)
      }

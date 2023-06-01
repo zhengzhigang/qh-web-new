@@ -87,3 +87,25 @@ export function searchPostContent(params) {
         params
     });
 }
+/////////////////////////下面的是知识图谱api
+export function findSimplePoet(params) {
+    return request({
+        url: '/post/findSimplePoet',
+        method: 'get',
+        params
+    });
+}
+export function listPersonByRelation(params) {
+    return request({
+        url: '/poet/listPersonByRelation',
+        method: 'get',
+        params
+    });
+}
+export function listAssocCode(params) {
+    return request({
+        url: '/assoc/listAssocCode',
+        method: 'get',
+        params
+    });
+}

@@ -18,6 +18,7 @@
     "suppressImplicitAnyIndexErrors": true, //允许字符串用作下标
     "skipLibCheck": true,
     "baseUrl": ".", //
+    "strictNullChecks": false,
     "paths": {
       "@": ["./src"],
       "@/*": ["./src/*"] // 多加个这个
