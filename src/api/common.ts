@@ -109,3 +109,10 @@ export function listAssocCode(params) {
         params
     });
 }
+export function listTag(params) {
+    return request({
+        url: '/tag/listTag',
+        method: 'get',
+        params
+    });
+}

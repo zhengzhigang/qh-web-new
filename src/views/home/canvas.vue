@@ -33,7 +33,7 @@
         </el-checkbox-group> -->
       </div>
     </div>
-        <div style="border: #efefef solid 1px; height: calc(100vh - 100px);width: 100%;">
+        <div style="border: #efefef solid 1px; height: calc(100vh - 400px);width: 100%;">
             <relation-graph ref="relationGraph$" :options="options">
             </relation-graph>
         </div>
@@ -42,6 +42,7 @@
 
   <script setup lang="ts">
   import { onMounted, reactive, ref } from 'vue'
+  import { ElMessage } from 'element-plus'
   import RelationGraph, {RGJsonData} from 'relation-graph/vue3'
   import { listAssocCode,listPersonByRelation} from '@/api/common'
   const relationGraph$ = ref<RelationGraph>()
@@ -52,7 +53,7 @@
   })
   const datas = reactive({
     checked_role_type: 'A',
-    rel_checkList: [],
+    rel_checkList: [114,515,533,503,505],
     all_rel_type:[],
   })
   const props = defineProps({
@@ -75,26 +76,7 @@
         defaultJunctionPoint: 'border'
   }
   onMounted(() => {
-    // const graphJsonData:RGJsonData = {
-    //   rootId: 'N3',
-    //   nodes: [
-    //     { id: 'N4', text: '十4' },
-    //     { id: 'N5', text: '十5' },
-    //     { id: 'N6', text: '十6' },
-    //     { id: 'N7', text: '十7' },
-    //     { id: 'N3', text: '十三' },
-    //     { id: 'N9', text: '152****3393' },
-    //   ],
-    //   lines: [
-    //     { from: 'N3', to: 'N9', text: '分享' },
-    //     { from: 'N3', to: 'N4', text: '分享444' },
-    //     { from: 'N3', to: 'N5', text: '分享555' },
-    //     { from: 'N3', to: 'N6', text: '分享666' },
-    //     { from: 'N3', to: 'N7', text: '分享777' },
-    //     { from: 'N9', to: 'N4', text: '分享x' }
-    //   ],
-    // };
-    listPersonByRelation({"personId":props.personId,"assocCodes":[-1]}).then(res=>{
+    listPersonByRelation({"personId":props.personId,"assocCodes":datas.rel_checkList}).then(res=>{
             console.log(res);
             graphJsonData.value.rootId = props.personId
             graphJsonData.value.nodes = res.data.customNodes
@@ -118,7 +100,9 @@
     console.log(datas.rel_checkList);
     listPersonByRelation({"personId":props.personId,"assocCodes":datas.rel_checkList}).then(res=>{
             console.log(res);
-            debugger
+            if(res.data == null || res.data.customNodes == null ||res.data.customNodes.length==0){
+                ElMessage.error('当前关系类型下没有数据.')
+            }
             graphJsonData.value.rootId = props.personId
             graphJsonData.value.nodes = res.data.customNodes
             graphJsonData.value.lines = res.data.personLinks
@@ -135,3 +119,9 @@
 //       console.log('onLineClick:', lineObject);
 //     }
   </script>
+  <style lang="less">
+  .c-mb-button svg{
+    display: inline !important;
+    vertical-align:baseline;
+  }
+  </style>

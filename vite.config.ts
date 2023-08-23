@@ -12,7 +12,7 @@ export default defineConfig({
     base: './', // 不加打包后白屏
     server: {
         host: '0.0.0.0',
-        port: 5173,
+        port: 5172,
         proxy: {
             '^/api': {
                 // target: 'https://www.reye.xyz/',

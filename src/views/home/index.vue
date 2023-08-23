@@ -1,12 +1,12 @@
 <template>
     <div class="wrapper bg-white">
-        <div class="header h-440px">
+        <div class="header h-400px">
             <div class="w-1140px ml-auto mr-auto">
                 <div class="flex pt-25px pb-25px">
                     <img class="log" src="@/assets/logo.png">
                     <div class="nav flex justify-center items-end ml-20px">
                         <span class="active">语义搜索</span>
-                        <span>标签搜索</span>
+                        <span @click="changeTopMenu(2)">标签搜索</span>
                         <span>时间轴</span>
                     </div>
                 </div>
@@ -16,11 +16,11 @@
                         <span :class="poemTabActive[1] == true ? 'active' : ''" @click="changePoemTab(false,true,false)">诗题</span>
                         <span :class="poemTabActive[2] == true ? 'active' : ''" @click="changePoemTab(false,false,true)">诗文</span>
                     </div>
-                    <div class="search mt-10px mb-18px">
-                        <input type="text" v-model="datas.searchStr">
+                    <div class="search mt-10px mb-1px">
+                        <input type="text" v-model="datas.searchStr"/>
                         <span class="searchBtn" @click="searchAction">语义搜索</span>
                     </div>
-                    <div class="search-guid flex items-center">
+                    <div class="search-guid flex items-center" style="display: none;">
                         搜索示例：
                         <span>杜甫跟谁相唱和</span>
                         <span>李白跟谁互赠诗词</span>
@@ -142,6 +142,11 @@ import JSONBig from 'json-bigint';
 const { currentRoute } = useRouter();
 const router = useRouter();
 const route = currentRoute.value;
+
+const changeTopMenu = (type: number) => {
+    if(type==2) router.push({path: "tag"});
+    if(type==2) router.push({path: "tag"});
+}
 
 const poemTabActive = ref([true, false, false])
 const changePoemTab = async (active1: boolean,active2:boolean,active3:boolean) => {
