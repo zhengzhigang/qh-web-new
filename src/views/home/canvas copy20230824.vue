@@ -1,5 +1,5 @@
 <template>
-    <div v-if="datas.hasRelationData">
+    <div>
     <div style="height:110px;padding-top:6px;padding-left: 30px;padding-right:30px;border-bottom: #efefef solid 1px;color: #555555;font-size: 12px;">
       <div style="">
         <div style="line-height: 20px;">方向筛选：</div>
@@ -33,37 +33,40 @@
         </el-checkbox-group> -->
       </div>
     </div>
-        <div class="myPage" @click="datas.isShowNodeMenuPanel = false" style="border: #efefef solid 1px; height: calc(100vh - 400px);width: 100%;">
+        <div style="border: #efefef solid 1px; height: calc(100vh - 400px);width: 100%;">
             <relation-graph ref="relationGraph$" :options="options" :on-node-click="onNodeClick">
                 <template #node="{node}">
+                    <div>
                     <div
-                        style="height:20px;line-height: 80px;border-radius: 50%;cursor: pointer;"
+                        style="height:80px;line-height: 80px;border-radius: 50%;cursor: pointer;"
+                        @click="showNodeMenus(node, $event)"
                         @contextmenu.prevent.stop="showNodeMenus(node, $event)"
                     >
-                        <i style="font-size: 14px;" >{{ node['text'] }}</i>
+                        <i style="font-size: 30px;" :class="node.data.myicon" />
                     </div>
+                    <div style="color: forestgreen;font-size: 16px;position: absolute;width: 160px;height:25px;line-height: 25px;margin-top:5px;margin-left:-48px;text-align: center;background-color: rgba(66,187,66,0.2);">
+                        {{ node.data.myicon }}
+                    </div>
+                </div>
                </template>
+
             </relation-graph>
         </div>
-        <!-- <div v-show="datas.isShowNodeMenuPanel" :style="{left: datas.nodeMenuPanelPosition.x + 'px', top: datas.nodeMenuPanelPosition.y + 'px' }" style="z-index: 999;padding:10px;background-color: #ffffff;border:#eeeeee solid 1px;box-shadow: 0px 0px 8px #cccccc;position: absolute;">
-            <div style="line-height: 25px;padding-left: 10px;color: #888888;font-size: 12px;">对这个节点进行操作：</div>
-            <div class="c-node-menu-item" @click.stop="doAction('操作1')">操作1</div>
-            <div class="c-node-menu-item" @click.stop="doAction('操作1')">操作2</div>
-            <div class="c-node-menu-item" @click.stop="doAction('操作1')">操作3</div>
-            <div class="c-node-menu-item" @click.stop="doAction('操作1')">操作4</div>
-       </div> -->
+        <div v-show="datas.isShowNodeMenuPanel" :style="{left: datas.nodeMenuPanelPosition.x + 'px', top: datas.nodeMenuPanelPosition.y + 'px' }" style="z-index: 999;padding:10px;background-color: #ffffff;border:#eeeeee solid 1px;box-shadow: 0px 0px 8px #cccccc;position: absolute;">
+        <div style="line-height: 25px;padding-left: 10px;color: #888888;font-size: 12px;">对这个节点进行操作：</div>
+        <div class="c-node-menu-item" @click.stop="doAction('操作1')">操作1</div>
+        <div class="c-node-menu-item" @click.stop="doAction('操作1')">操作2</div>
+        <div class="c-node-menu-item" @click.stop="doAction('操作1')">操作3</div>
+        <div class="c-node-menu-item" @click.stop="doAction('操作1')">操作4</div>
+    </div>
     </div>
   </template>
 
   <script setup lang="ts">
   import { onMounted, reactive, ref,watch} from 'vue'
-  import {useRouter} from 'vue-router';
   import { ElMessage } from 'element-plus'
   import RelationGraph, {RGJsonData} from 'relation-graph/vue3'
   import { listPersonAssocCode,listPersonByRelation} from '@/api/common'
-  const { currentRoute } = useRouter();
-  const router = useRouter();
-  const route = currentRoute.value;
   const relationGraph$ = ref<RelationGraph>()
   const graphJsonData = ref<RGJsonData>({
     rootId:'',
@@ -77,8 +80,6 @@
     isShowCodePanel: false,
     isShowNodeMenuPanel: false,
     nodeMenuPanelPosition: { x: 0, y: 0 },
-    currentNode: null,
-    hasRelationData: false,
   })
   const props = defineProps({
         personId:String,
@@ -106,28 +107,27 @@
         listPersonAssocCode({"personId":props.personId,"roleType":datas.checked_role_type}).then(res=>{
             console.log(res);
             datas.all_rel_type = res.data
-
+            let selectRel = 0;//只取头5个
             let selectNum = 0;//只取200个
             for(let i=0;i<datas.all_rel_type.length;i++){
-                if( selectNum >= 100) {
+                if(selectRel >=5 || selectNum > 200) {
                     break;
                 }
-                if(datas.all_rel_type[i].num <= 100 && datas.all_rel_type[i].num >0){
+                if(datas.all_rel_type[i].num < 100 || datas.all_rel_type[i].num ==0){
                     datas.rel_checkList.push(datas.all_rel_type[i].assocCode)
+                    selectRel++
                     selectNum = selectNum + datas.all_rel_type[i].num
                 }
             }
             if(datas.rel_checkList.length==0){
-                // ElMessage.error('当前关系类型下没有关系图谱.')
-                datas.hasRelationData = false
+                ElMessage.error('当前关系类型下没有关系图谱.')
                 return
-            } else {
-                datas.hasRelationData = true
-                listPersonByRelation({"personId":props.personId,"assocCodes":datas.rel_checkList}).then(res=>{
+            }
+            listPersonByRelation({"personId":props.personId,"assocCodes":datas.rel_checkList}).then(res=>{
                 console.log(res);
                 graphJsonData.value.rootId = props.personId
                 if(res.data == null || res.data.customNodes == null ||res.data.customNodes.length==0){
-                    // ElMessage.error('当前关系类型下没有关系图谱.')
+                    ElMessage.error('当前关系类型下没有关系图谱.')
                     return
                 }
                 graphJsonData.value.nodes = res.data.customNodes
@@ -136,8 +136,6 @@
                     console.log('relationGraph ready!');
                 })
             })
-            }
-
         })
     }
   })
@@ -164,25 +162,17 @@
             relationGraph$.value.updateView()
         })
   }
- const showNodeMenus=(nodeObject, $event) =>{
-      datas.currentNode = nodeObject;
-    //   const _base_position = myPage.value.$el.getBoundingClientRect();
-      let _base_position = document.getElementsByClassName("myPage")[0].getBoundingClientRect();
+ const showNodeMenus=(nodeObject, $event) {
+      this.currentNode = nodeObject;
+      const _base_position = this.$refs.myPage.getBoundingClientRect();
       console.log('showNodeMenus:', $event, _base_position);
-      datas.isShowNodeMenuPanel = true;
-      datas.nodeMenuPanelPosition.x = $event.clientX - _base_position.x;
-      datas.nodeMenuPanelPosition.y = $event.clientY - _base_position.y+100;
+      this.isShowNodeMenuPanel = true;
+      this.nodeMenuPanelPosition.x = $event.clientX - _base_position.x;
+      this.nodeMenuPanelPosition.y = $event.clientY - _base_position.y;
   }
-  const onNodeClick=(nodeObject, $event) =>{
-      console.log('onNodeClick:', nodeObject);
-      //id text
-      const to = router.resolve({
-        name: "home", //这里是跳转页面的name，要与路由设置保持一致
-        query: {personId:nodeObject.id },
-      });
-    window.open(to.href, "_blank");
-      return true
-  }
+//   const onNodeClick=(nodeObject, $event) =>{
+//       console.log('onNodeClick:', nodeObject);
+//     }
 //   const onLineClick=(lineObject, linkObject, $event) boolean =>{
 //       console.log('onLineClick:', lineObject);
 //     }
@@ -192,10 +182,4 @@
     display: inline !important;
     vertical-align:baseline;
   }
-  .c-node-menu-item{
-  line-height: 30px;padding-left: 10px;cursor: pointer;color: #444444;font-size: 14px;border-top:#efefef solid 1px;
-}
-.c-node-menu-item:hover{
-  background-color: rgba(66,187,66,0.2);
-}
   </style>

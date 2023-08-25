@@ -36,7 +36,15 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/tag',
         name: 'tag',
-        component: () => import('../views/home/tag.vue')
+        component: () => import('../views/home/tag.vue'),
+        children: [
+
+        ]
+    },
+    {
+        path: '/listStatusAuthorPageByStatusCode',
+        name: 'listStatusAuthorPageByStatusCode',
+        component: () => import('../views/home/tagAuthor.vue')
     }
 ]
 

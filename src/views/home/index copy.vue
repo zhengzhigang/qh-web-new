@@ -69,9 +69,9 @@
                     <div class="item">
                         <!-- <p>人脉图谱:</p>
                         <img src="@/assets/demo.png" > -->
-                        <canvasPage :personId="datas.personId"/>
+                        <!-- <canvasPage :personId="datas.personId"/> -->
                     </div>
-                    <div class="item" v-if="datas.authorId!='0'">
+                    <div class="item">
                         <p class="text-18px">作品:</p>
                         <template v-for="(item,index) in datas.postListPage.list">
                             <div class="production">
@@ -88,7 +88,7 @@
                         <li v-for="item in datas.postListPage.list" :key="item.authorId" v-html="item.name"></li>
                     </template>
                     <template v-else-if="poemTabActive[0]">
-                        <li v-for="item in datas.esPage.records"><a href="javascript:void(0)" @click="linkToAuthor(item.personId)" v-html="item.name"></a></li>
+                        <li v-for="item in datas.esPage.records"><a href="void(0)" @click="linkToAuthor(item.authorId)" v-html="item.name"></a></li>
                     </template>
                     <template v-else>
                         <li v-for="item in datas.esPage.records">
@@ -101,7 +101,6 @@
                 </ul>
             </template>
             <el-pagination
-            v-if="datas.authorId!='0'"
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
             :page-sizes="[10, 20, 30, 50]"
@@ -138,7 +137,7 @@
 import canvasPage from './canvas.vue'
 import { computed, reactive, ref,onMounted } from 'vue'
 import {useRouter} from 'vue-router';
-import { searchAuthor,searchPoetAuthorId,listPostPage,searchPostTitle,searchPostContent,findAuthorIdByPersonId } from '@/api/common'
+import { searchAuthor,searchPoetAuthorId,listPostPage,searchPostTitle,searchPostContent } from '@/api/common'
 import JSONBig from 'json-bigint';
 const { currentRoute } = useRouter();
 const router = useRouter();
@@ -199,27 +198,26 @@ const datas = reactive({
     singleMatch: 1,
     esPage:{} as any,
     authorInfo: {} as any,
-    personInfo: {} as any,
     postListPage: [] as any,
 })
-onMounted(async ()=>{
+onMounted(()=>{
     if(!route.query.authorId){
-        //如果没有传authorId，如果没有传personId就默认是李白，如果传了personid就用传的personid,authorid就没有了
+        console.log("aaaaaaaaaaaaaaaaaaaaaa")
+        //如果没有传authorId，判断传来的personId是否是李白的。如果是李白的，就用李白的authorId
         if(!route.query.personId){
             datas.personId = JSONBig.parse("32540")
             datas.authorId = JSONBig.parse("1655596564759744528")
         } else{
             datas.personId = JSONBig.parse(route.query.personId)
-            await findAuthorIdByPersonId({"personId":datas.personId}).then(res=>{
-                datas.authorId = res.data.toString()
-            })
         }
      } else {
         datas.authorId = JSONBig.parse(route.query.authorId)
         datas.personId = JSONBig.parse(route.query.personId)
      }
+     console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb1",datas.authorId)
+     console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb2",datas.personId)
 
-     searchPoetAuthorId({"authorId":datas.authorId.toString(),"personId":datas.personId.toString(),"pageSize":pageSize.value,"pageNo":currentPage.value}).then(res=>{
+     searchPoetAuthorId({"authorId":datas.authorId.toString(),"pageSize":pageSize.value,"pageNo":currentPage.value}).then(res=>{
         if (res.data.singleMatch == 1) {
             datas.singleMatch = 1
             datas.authorInfo = res.data.authorInfo
@@ -234,7 +232,6 @@ onMounted(async ()=>{
             pageSize.value = res.data.esAuthorEsPage.pageSize
         }
     })
-
 })
 const listPostPageAction = async (authorId:any,currentPage:number=1,pageSize:number=10) =>{
     listPostPage({"authorId":authorId.toString(),"pageSize":pageSize,"pageNo":currentPage}).then(res=>{
@@ -299,17 +296,12 @@ const searchPostContentAction = async (pageNo:number=1,pageSizeParam:number=20) 
 }
 // searchAuthorAction()
 
-const linkToAuthor = (personId:any) =>{
-
-    const to = router.resolve({
-        name: "home", //这里是跳转页面的name，要与路由设置保持一致
-        query: { personId:personId },
-      });
-    window.open(to.href, "_blank");
-
-    // let routeData = router.resolve({ path: '/', query: {  personId: personId} });
-    // window.open(routeData.href, '_blank');
-
+const linkToAuthor = (authorId:any) =>{
+    console.log(authorId)
+    // router.push(`/?authorId=${authorId}`)
+    // router.push({path: '/', params: { authorId: authorId }})
+    let routeData = router.resolve({ path: '/', query: {  authorId: authorId} });
+    window.open(routeData.href, '_blank');
 }
 const getDynasty = (v :any) =>{
         if (v == 6) {

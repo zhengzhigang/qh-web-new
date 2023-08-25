@@ -88,6 +88,13 @@ export function searchPostContent(params) {
     });
 }
 /////////////////////////下面的是知识图谱api
+export function  findAuthorIdByPersonId(params) {
+    return request({
+        url: '/common/findAuthorIdByPersonId',
+        method: 'get',
+        params
+    });
+}
 export function findSimplePoet(params) {
     return request({
         url: '/post/findSimplePoet',
@@ -109,9 +116,30 @@ export function listAssocCode(params) {
         params
     });
 }
+export function listPersonAssocCode(params) {
+    return request({
+        url: '/assoc/listPersonAssocCode',
+        method: 'get',
+        params
+    });
+}
 export function listTag(params) {
     return request({
         url: '/tag/listTag',
+        method: 'get',
+        params
+    });
+}
+export function findTag(params) {
+    return request({
+        url: '/tag/findTag',
+        method: 'get',
+        params
+    });
+}
+export function listStatusAuthorPage(params) {
+    return request({
+        url: '/tag/listStatusAuthorPageByStatusCode',
         method: 'get',
         params
     });

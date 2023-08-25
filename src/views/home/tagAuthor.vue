@@ -13,22 +13,49 @@
             </div>
         </div>
 
-        <section class="content w-1140px ml-auto mr-auto pt-28px pb-28px pl-28px pr-28px">
+        <section class="content w-1140px ml-auto mr-auto pt-28px pb-0px pl-28px pr-28px">
                 <div class="details">
-                    <div class="item" >
-                        <el-tag v-for="item in datas.tags"
-                        :key="item.statusCode"
-                        style="cursor: pointer;"
+                    <div class="item">
+                        <el-tag
+                        :key="datas.tag.statusCode"
                          class="mx-1"
-                         :effect="item.effect"
-                         :type="item.type"
-                         @click="onClickTag(item)"
+                         effect="dark"
+                         type="warning"
                          round
                            >
-                                {{ item.statusDescChn }}({{ item.num }})
+                                {{ datas.tag.statusDescChn }}({{ datas.tag.num }})
                            </el-tag>
                     </div>
                 </div>
+        </section>
+        <section class="content w-1140px ml-auto mr-auto pt-0px pb-28px pl-28px pr-28px">
+                <div class="details">
+                    <div class="item">
+                        <el-tag v-for="item in datas.personsPage.list"
+                        :key="item.statusCode"
+                         class="mx-1"
+                         style="cursor: pointer;"
+                         effect="light"
+                         type="info"
+                         @click="onClickPerson(item)"
+                         round
+                           >
+                                {{ item.personName }}
+                           </el-tag>
+                    </div>
+                </div>
+                <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="pageSize"
+            :page-sizes="[10, 20, 30, 50,100]"
+            :small="false"
+            :disabled="false"
+            :background="true"
+            layout="total, sizes,prev, pager, next,jumper"
+            :total="total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+    />
         </section>
 
         <div class="footer">
@@ -44,44 +71,50 @@
 <script lang="ts" setup>
 import { computed, reactive, ref,onMounted } from 'vue'
 import {useRouter} from 'vue-router';
-import { listTag } from '@/api/common'
+import { findTag,listStatusAuthorPage } from '@/api/common'
 import JSONBig from 'json-bigint';
 const { currentRoute } = useRouter();
 const router = useRouter();
 const route = currentRoute.value;
 const datas = reactive({
-    tags: [],
+    tag: {} as any,
+    personsPage: [] as any,
 })
-
+const currentPage = ref(1)
+const pageSize = ref(100)
+const total = ref(0)
 onMounted(()=>{
-    listTag({}).then(res=>{
+    let statusCode = route.query.statusCode || ''
+    findTag({statusCode: statusCode}).then(res=>{
         console.log(res);
-        datas.tags = res.data;
-        datas.tags.forEach((item:any)=>{
-            item.effect = "light";
-            item.type = "info";
-            // if(item.statusCode == 114) {
-            //     item.effect = "dark";
-            //     item.type = "warning";
-            // } else {
-            //     item.effect = "light";
-            //     item.type = "info";
-            // }
-        })
+        datas.tag = res.data;
+        listTagAuthorPageAction(datas.tag.statusCode)
     })
 })
-const changeTopMenu = (type: number) => {
-    if(type==1) router.push({path: "home"});
-    if(type==2) router.push({path: "tag"});
+const listTagAuthorPageAction = async (statusCode:any,currentPage:number=1,pageSize:number=100) =>{
+    listStatusAuthorPage({"statusCode":statusCode,"pageSize":pageSize,"pageNo":currentPage}).then(res=>{
+        datas.personsPage = res.data
+        total.value = res.data.total
+        console.log(datas.personsPage);
+        console.log("总数量:" ,total.value);
+    })
 }
-const onClickTag=(tag:any) =>{
+const handleSizeChange = (val: number) => {
+  console.log(`${val} items per page`)
+  listTagAuthorPageAction(datas.tag.statusCode,1,val)
+}
+const handleCurrentChange = (val: number) => {
+  console.log(`current page: ${val}`)
+  listTagAuthorPageAction(datas.tag.statusCode,val,pageSize.value)
+}
+const onClickPerson = (item:any) => {
     const to = router.resolve({
-        name: "listStatusAuthorPageByStatusCode", //这里是跳转页面的name，要与路由设置保持一致
-        query: { statusCode: tag.statusCode},
+        name: "home", //这里是跳转页面的name，要与路由设置保持一致
+        query: { authorId: item.authorSourceDO?.authorId,personId:item.personId },
       });
     window.open(to.href, "_blank");
-    // window.open(router.resolve('/tag/listStatusAuthorPageByStatusCode?tagId=' + tag.statusCode).href, '_blank')
 }
+
 </script>
 <style lang="less" scoped>
 :deep(.el-tag.el-tag--info ) {
