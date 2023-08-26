@@ -3,7 +3,7 @@
         <div class="header h-400px">
             <div class="w-1140px ml-auto mr-auto">
                 <div class="flex pt-25px pb-25px">
-                    <img class="log" src="@/assets/logo.png">
+                    <img class="log" style="cursor: pointer;" src="@/assets/logo.png" @click="linkPage('home')">
                     <div class="nav flex justify-center items-end ml-20px">
                         <span class="active">语义搜索</span>
                         <span @click="changeTopMenu(2)">标签搜索</span>
@@ -47,18 +47,25 @@
                                 <span v-if="index==datas.authorInfo.personInfo?.altNameDOList.length-1">{{item.altNameChn}}</span>
                                 <span v-if="index<datas.authorInfo.personInfo?.altNameDOList.length-1">{{item.altNameChn}}、</span>
                             </template>
+
                         </p>
                         <p class="text-14px leading-24px">
                             <template v-for="(item,index) in datas.authorInfo.personInfo?.personAddrList">
                                 {{ computedAddrType(item.addrType) }}:{{item.addrName}}&nbsp;
                             </template>
-                            </p>
+                        </p>
 
-                            <p class="text-14px leading-24px">
+                        <p class="text-14px leading-24px">
                             <span v-if="datas.authorInfo.personInfo?.kinList!=undefined && datas.authorInfo.personInfo?.kinList!=null && datas.authorInfo.personInfo?.kinList.length >0 ">亲属:</span>
                             <template v-for="(item,index) in datas.authorInfo.personInfo?.kinList">
                                 <span v-if="index==datas.authorInfo.personInfo?.kinList.length-1">{{item.kinPerson.name}}({{ item.kinRelChn }})</span>
                                 <span v-if="index<datas.authorInfo.personInfo?.kinList.length-1">{{item.kinPerson.name}}({{ item.kinRelChn }})、</span>
+                            </template>
+                        </p>
+                        <p class="text-14px leading-24px" v-if="datas.authorInfo.personInfo?.personStatusList!=undefined && datas.authorInfo.personInfo?.personStatusList!=null && datas.authorInfo.personInfo?.personStatusList.length >0 ">
+                            <span>职官:</span>
+                            <template v-for="(item,index) in datas.authorInfo.personInfo?.personStatusList">
+                                <span @click="onClickTag(item.statusCode)" style="cursor: pointer;">#{{item.statusDescChn}}&nbsp;&nbsp;</span>
                             </template>
                         </p>
                     </div>
@@ -138,6 +145,7 @@
 import canvasPage from './canvas.vue'
 import { computed, reactive, ref,onMounted } from 'vue'
 import {useRouter} from 'vue-router';
+import { ElMessage } from 'element-plus'
 import { searchAuthor,searchPoetAuthorId,listPostPage,searchPostTitle,searchPostContent,findAuthorIdByPersonId } from '@/api/common'
 import JSONBig from 'json-bigint';
 const { currentRoute } = useRouter();
@@ -264,14 +272,17 @@ const searchAuthorAction = async (pageNo:number=1,pageSizeParam:number=20) =>{
             console.log(res.data)
             datas.singleMatch = 1
             datas.authorInfo = res.data.authorInfo
+            datas.personId = res.data.authorInfo.personId
             listPostPageAction(datas.authorInfo.authorId,1,10)
-        } else {
+        } else if (res.data.singleMatch == 0) {
             postListPageFlag.value = false;
             datas.singleMatch = 0
             datas.esPage = res.data.esAuthorEsPage
             total.value= res.data.esAuthorEsPage.total
             currentPage.value = res.data.esAuthorEsPage.current
             pageSize.value = res.data.esAuthorEsPage.pageSize
+        } else if (res.data.singleMatch == -1) {
+            ElMessage.error('没有找到匹配的人.')
         }
     })
 }
@@ -298,7 +309,14 @@ const searchPostContentAction = async (pageNo:number=1,pageSizeParam:number=20) 
     })
 }
 // searchAuthorAction()
-
+const onClickTag=(statusCode:any) =>{
+    const to = router.resolve({
+        name: "listStatusAuthorPageByStatusCode", //这里是跳转页面的name，要与路由设置保持一致
+        query: { statusCode: statusCode},
+      });
+    window.open(to.href, "_blank");
+    // window.open(router.resolve('/tag/listStatusAuthorPageByStatusCode?tagId=' + tag.statusCode).href, '_blank')
+}
 const linkToAuthor = (personId:any) =>{
 
     const to = router.resolve({
@@ -309,7 +327,12 @@ const linkToAuthor = (personId:any) =>{
 
     // let routeData = router.resolve({ path: '/', query: {  personId: personId} });
     // window.open(routeData.href, '_blank');
-
+}
+const linkPage = (routePage:any) =>{
+    const to = router.resolve({
+        name: routePage,
+    });
+    window.open(to.href, "_blank");
 }
 const getDynasty = (v :any) =>{
         if (v == 6) {
