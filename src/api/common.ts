@@ -123,6 +123,13 @@ export function listPersonAssocCode(params) {
         params
     });
 }
+export function listTagGroup(params) {
+    return request({
+        url: '/tag/listTagGroup',
+        method: 'get',
+        params
+    });
+}
 export function listTag(params) {
     return request({
         url: '/tag/listTag',

@@ -14,21 +14,29 @@
         </div>
 
         <section class="content w-1140px ml-auto mr-auto pt-28px pb-28px pl-28px pr-28px">
-                <div class="details">
-                    <div class="item" >
-                        <el-tag v-for="item in datas.tags"
-                        :key="item.statusCode"
-                        style="cursor: pointer;"
-                         class="mx-1"
-                         :effect="item.effect"
-                         :type="item.type"
-                         @click="onClickTag(item)"
-                         round
-                           >
-                                {{ item.statusDescChn }}({{ item.num }})
-                           </el-tag>
+            <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleTabClick" >
+
+                <el-tab-pane :label="groupItem.tagGroupName" v-for="groupItem in datas.tagGroups">
+                    <div class="details">
+                        <div class="item" >
+                            <el-tag v-for="item in datas.tags"
+                            :key="item.statusCode"
+                            style="cursor: pointer;"
+                            class="mx-1"
+                            :effect="item.effect"
+                            :type="item.type"
+                            @click="onClickTag(item)"
+                            round
+                            >
+                                    {{ item.statusDescChn }}({{ item.num }})
+                            </el-tag>
+                        </div>
                     </div>
-                </div>
+
+                </el-tab-pane>
+
+
+            </el-tabs>
         </section>
 
         <div class="footer">
@@ -44,32 +52,45 @@
 <script lang="ts" setup>
 import { computed, reactive, ref,onMounted } from 'vue'
 import {useRouter} from 'vue-router';
-import { listTag } from '@/api/common'
+import { listTag,listTagGroup } from '@/api/common'
+import type { TabsPaneContext } from 'element-plus'
 import JSONBig from 'json-bigint';
 const { currentRoute } = useRouter();
 const router = useRouter();
 const route = currentRoute.value;
 const datas = reactive({
+    tagGroups:[],
     tags: [],
 })
+const activeName = ref("0")
 
-onMounted(()=>{
-    listTag({}).then(res=>{
+onMounted(async ()=>{
+    await listTagGroup({}).then(res=>{
         console.log(res);
-        datas.tags = res.data;
-        datas.tags.forEach((item:any)=>{
-            item.effect = "light";
-            item.type = "info";
-            // if(item.statusCode == 114) {
-            //     item.effect = "dark";
-            //     item.type = "warning";
-            // } else {
-            //     item.effect = "light";
-            //     item.type = "info";
-            // }
+        datas.tagGroups = res.data;
+        console.log(datas.tagGroups,"vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
+        listTag({tagGroupId: 0}).then(res=>{
+            console.log(res);
+            datas.tags = res.data;
+            datas.tags.forEach((item:any)=>{
+                item.effect = "light";
+                item.type = "info";
+            })
         })
     })
+
 })
+const handleTabClick = (target) => {
+    activeName.value = target.index
+    listTag({tagGroupId: datas.tagGroups[target.index].tagGroupId}).then(res=>{
+            console.log(res);
+            datas.tags = res.data;
+            datas.tags.forEach((item:any)=>{
+                item.effect = "light";
+                item.type = "info";
+            })
+        })
+}
 const changeTopMenu = (type: number) => {
     if(type==1) router.push({path: "home"});
     if(type==2) router.push({path: "tag"});
@@ -94,6 +115,12 @@ const onClickTag=(tag:any) =>{
     font-size: 14px;
     height: 34px;
     margin-bottom: 15px;
+}
+.demo-tabs > .el-tabs__content {
+  padding: 32px;
+  color: #6b778c;
+  font-size: 32px;
+  font-weight: 600;
 }
 .wrapper {
     background: #FAFBFC;

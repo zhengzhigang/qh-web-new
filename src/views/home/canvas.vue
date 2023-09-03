@@ -37,10 +37,10 @@
             <relation-graph ref="relationGraph$" :options="options" :on-node-click="onNodeClick">
                 <template #node="{node}">
                     <div
-                        style="height:20px;line-height: 80px;border-radius: 50%;cursor: pointer;"
+                        style="height:10px;line-height: 50px;border-radius: 50%;cursor: pointer;"
                         @contextmenu.prevent.stop="showNodeMenus(node, $event)"
                     >
-                        <i style="font-size: 14px;" >{{ node['text'] }}</i>
+                        <i style="font-size: 12px;" >{{ node['text'] }}</i>
                     </div>
                </template>
             </relation-graph>
@@ -108,7 +108,12 @@
             datas.all_rel_type = res.data
 
             let selectNum = 0;//只取200个
-            for(let i=0;i<datas.all_rel_type.length;i++){
+            if (datas.all_rel_type.length == 1) {
+                    datas.rel_checkList.push(datas.all_rel_type[0].assocCode)
+                    selectNum = selectNum + datas.all_rel_type[0].num
+            } else {
+                for(let i=0;i<datas.all_rel_type.length;i++){
+
                 if( selectNum >= 100) {
                     break;
                 }
@@ -117,6 +122,8 @@
                     selectNum = selectNum + datas.all_rel_type[i].num
                 }
             }
+            }
+
             if(datas.rel_checkList.length==0){
                 // ElMessage.error('当前关系类型下没有关系图谱.')
                 datas.hasRelationData = false
