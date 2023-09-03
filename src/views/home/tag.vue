@@ -7,7 +7,7 @@
                     <div class="nav flex justify-center items-end ml-20px">
                         <span @click="changeTopMenu(1)">语义搜索</span>
                         <span class="active">标签搜索</span>
-                        <span>时间轴</span>
+                        <span @click="changeTopMenu(3)">时间轴</span>
                     </div>
                 </div>
             </div>
@@ -73,6 +73,7 @@ onMounted(()=>{
 const changeTopMenu = (type: number) => {
     if(type==1) router.push({path: "home"});
     if(type==2) router.push({path: "tag"});
+    if(type==3) router.push({path: "timeScroll"});
 }
 const onClickTag=(tag:any) =>{
     const to = router.resolve({

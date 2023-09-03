@@ -7,7 +7,7 @@
                     <div class="nav flex justify-center items-end ml-20px">
                         <span class="active">语义搜索</span>
                         <span @click="changeTopMenu(2)">标签搜索</span>
-                        <span>时间轴</span>
+                        <span @click="changeTopMenu(3)">时间轴</span>
                     </div>
                 </div>
                 <div class="search-wrapper pl-170px pt-66px">
@@ -145,8 +145,9 @@ const router = useRouter();
 const route = currentRoute.value;
 
 const changeTopMenu = (type: number) => {
+    if(type==1) router.push({path: "home"});
     if(type==2) router.push({path: "tag"});
-    if(type==2) router.push({path: "tag"});
+    if(type==3) router.push({path: "timeScroll"});
 }
 
 const poemTabActive = ref([true, false, false])

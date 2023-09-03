@@ -1,0 +1,418 @@
+<template>
+  <div class="wrapper bg-white">
+      <div class="header h-220px">
+          <div class="w-1140px ml-auto mr-auto">
+              <div class="flex pt-25px pb-25px">
+                  <img class="log" src="@/assets/logo.png">
+                  <div class="nav flex justify-center items-end ml-20px">
+                      <span @click="changeTopMenu(1)">语义搜索</span>
+                      <span @click="changeTopMenu(2)">标签搜索</span>
+                      <span class="active">时间轴</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="mian">
+        <div class="timeScroll">
+          <div class="table" :style="{minHeight:!(tableList.length > 0) ? '380px' : 0}">
+            <div id="header">
+              <div>
+                <p>{{tableStart}}</p>
+              </div>
+              <div>
+                <p>{{tableStart + 50}}</p>
+              </div>
+              <div>
+                <p>{{tableStart + 100}}</p>
+              </div>
+              <div>
+                <p>{{tableStart + 150}}</p>
+              </div>
+              <div style="width: auto;">
+                <p>{{tableStart + 200}}</p>
+              </div>
+            </div>
+            <div id="border"></div>
+            <ul  v-if="tableList.length > 0">
+              <li v-for="item in tableList">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div style="width: 116px;"></div>
+                <p 
+                :class="{progress: item.deathYear !== null, borderRadius: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 }"
+                :style="{
+                  marginLeft: (item.birthYear - tableStart) * 4.32 + 'px', 
+                  width: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 ? ((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) - 1020) + 'px' : ((item.deathYear - item.birthYear) * 4.32) + 'px'
+                  }" 
+                v-if="((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32) < 0 && item.birthYear !== null" 
+                > 
+                </p>
+                <p 
+                class="progress borderLeftRadius"
+                :style="{
+                  marginLeft: ((item.birthYear - tableStart) * 4.32) + (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32)) + 'px', 
+                  width:item.birthYear !== null ? (((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32))) + 'px' : '0px'
+                  }" 
+                v-else
+                > 
+                </p>
+                <footer 
+                v-if="(((item.birthYear - tableStart) * 4.32) - 268) > 0 && (item.name.length > 7 ? item.name.length - 2 === 7 : item.name.length === 7)"
+                class="describe" 
+                  :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 268) + 268) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 268) - (((((item.birthYear - tableStart) * 4.32) - 268) + 268) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 268 + 'px', minWidth:'268px'}">
+                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
+                </footer>
+                <footer 
+                v-else-if="(((item.birthYear - tableStart) * 4.32) - 250) > 0 && (item.name.length > 6 ? item.name.length - 2 === 6 : item.name.length === 6)" class="describe" 
+                :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 250) + 250) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 250) - (((((item.birthYear - tableStart) * 4.32) - 250) + 250) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 250 + 'px', minWidth:'250px'}">
+                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
+                </footer>
+                <footer 
+                v-else-if="(((item.birthYear - tableStart) * 4.32) - 208) > 0 && (item.name.length > 5 ? item.name.length - 2 === 5 : item.name.length === 5)" class="describe" 
+                :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 208) + 208) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 208) - (((((item.birthYear - tableStart) * 4.32) - 208) + 208) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 208 + 'px', minWidth:'208px'}">
+                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
+                </footer>
+                <footer 
+                v-else-if="(((item.birthYear - tableStart) * 4.32) - 178) > 0 && (item.name.length > 4 ? item.name.length - 2 === 4 : item.name.length === 4)" class="describe" 
+                :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 178) + 178) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 178) - (((((item.birthYear - tableStart) * 4.32) - 178) + 178) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 178 + 'px', minWidth:'178px'}">
+                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
+                </footer>
+                <footer 
+                v-else-if="(((item.birthYear - tableStart) * 4.32) - 158) > 0 && (item.name.length > 4 ? item.name.length - 2 === 2 || item.name.length - 2 === 3 : item.name.length === 2 || item.name.length === 3)" class="describe" 
+                :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 158) + 158) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 158) - (((((item.birthYear - tableStart) * 4.32) - 158) + 158) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 158 + 'px', minWidth:'158px'}">
+                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
+                </footer>
+                <footer 
+                v-else-if="(((item.birthYear - tableStart) * 4.32) - 148) > 0 && item.name.length === 1" class="describe" 
+                :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 148) + 148) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 148) - (((((item.birthYear - tableStart) * 4.32) - 148) + 148) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 148 + 'px', minWidth:'148px'}">
+                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
+                </footer>
+                <footer 
+                v-else-if="(((item.birthYear - tableStart) * 4.32) - 148) < 0 && !item.deathYear === null || item.birthYear === null" class="describe">
+                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
+                </footer>
+                <el-tooltip content="Top center" placement="top" effect="light" v-else>
+                  <template #content>
+                    {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
+                  </template>
+                  <p 
+                    :class="{progress: item.deathYear !== null, borderRadius: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 ,pointer: true}"
+                    :style="{
+                      marginLeft: (item.birthYear - tableStart) * 4.32 + 'px', 
+                      width: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 ? ((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) - 1020) + 'px' : ((item.deathYear - item.birthYear) * 4.32) + 'px'
+                    }" 
+                    v-if="((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32) < 0 && item.birthYear !== null" 
+                  > 
+                  </p>
+                  <p 
+                    class="progress borderLeftRadius pointer"
+                    :style="{
+                      marginLeft: ((item.birthYear - tableStart) * 4.32) + (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32)) + 'px', 
+                      width:item.birthYear !== null ? (((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32))) + 'px' : '0px'
+                    }" 
+                    v-else
+                  > 
+                  </p>
+                </el-tooltip>
+              </li>
+            </ul>
+            <h1 class="noData" v-else v-text="noData"></h1>
+          </div>
+        </div>
+        <div class="left" @click="switchYear(-200, 'left')" v-if="defaultStartYear !== initData.startYear" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="加载中、请稍候..." element-loading-background="rgba(216, 207, 180, 0.4)"></div>
+        <div class="right" @click="switchYear(200, 'right')" v-if="defaultStartYear !== initData.endYear" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="加载中、请稍候..." element-loading-background="rgba(216, 207, 180, 0.4)"></div>
+      </div>
+      <div class="footer" :style="{marginTop:tableList.length > 0 ? '40px' : '0'}">
+          <div class="w-1140px ml-auto mr-auto flex justify-center flex-col items-center">
+              <p>© 2023 中国数字人文 皖ICP备19020276号-4</p>
+              <p>本网站为学术公益性网站，若有侵权，请联系删除。</p>
+              <p>知识共享许可协议本网站采用知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议进行许可。</p>
+          </div>
+      </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ref } from 'vue';
+import {getTimeList,getInitData,getTimeListRight} from '../../api/common'
+import {useRouter} from 'vue-router';
+import { ElMessage } from 'element-plus'
+import { fa } from 'element-plus/es/locale';
+const noData = ref('')
+const router = useRouter();
+const fullscreenLoading = ref(true)
+const changeTopMenu = (type: number) => {
+  if(type==1) router.push({path: "home"});
+  if(type==2) router.push({path: "tag"});
+  if(type==3) router.push({path: "timeScroll"});
+}
+const tableList = ref<any>([])
+const initData = ref<any>({})
+const tableStart = ref(0)
+const defaultStartYear = ref(0)
+const replaceLastTwoDigits = (num, newDigits) => {  
+  let numStr = num.toString();   
+  if(num < 0) {
+    let newNumStr = numStr.slice(0, numStr.length - 2) + '00';
+    let newNum = parseInt(newNumStr);
+    let oldNum = parseInt(newDigits)
+    return newNum - oldNum
+  } else {
+    let newNumStr = numStr.slice(0, numStr.length - 2) + newDigits;  
+    let newNum = parseInt(newNumStr);  
+    return newNum; 
+  } 
+}
+const switchYear = (year, code) => {
+  fullscreenLoading.value = true
+  defaultStartYear.value += year
+  if(defaultStartYear.value < initData.value.startYear) {
+    defaultStartYear.value = initData.value.startYear 
+  }
+  if(defaultStartYear.value + 200 > initData.value.endYear) {
+    defaultStartYear.value = initData.value.endYear - 200
+  }
+  if(defaultStartYear.value + 200 !== initData.value.endYear || defaultStartYear.value !== initData.value.startYear) {
+    tableList.value = []
+  }
+  if(code === 'left') {
+    getTimeListRight(defaultStartYear.value).then(res => {
+      tableList.value = res.data
+      fullscreenLoading.value = false
+      noData.value =  res.data.length > 0 ? '' : '暂无数据'
+      if(defaultStartYear.value === initData.value.startYear) {
+        ElMessage({
+          message: '前面没有更多了',
+          type: 'success',
+        })
+      }
+    }) 
+    if(defaultStartYear.value > 0) {
+        tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') :  replaceLastTwoDigits(defaultStartYear.value, '00')
+      } else {
+        if(defaultStartYear.value < -50 && defaultStartYear.value > -100) {
+        tableStart.value = -100
+      } else {
+      tableStart.value = defaultStartYear.value % 100 > -50 ? replaceLastTwoDigits(defaultStartYear.value, '00') :  replaceLastTwoDigits(defaultStartYear.value, '100')
+      }
+    }
+  } else {
+    getTimeList(defaultStartYear.value).then(res => {
+      tableList.value = res.data
+      fullscreenLoading.value = false
+      noData.value =  res.data.length > 0 ? '' : '暂无数据'
+      if(defaultStartYear.value + 200 === initData.value.endYear) {
+        ElMessage({
+          message: '当前已是最后一页',
+          type: 'success',
+        })
+      }
+    }) 
+    if(defaultStartYear.value > 0) {
+        tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') :  replaceLastTwoDigits(defaultStartYear.value, '00')
+      } else {
+        if(defaultStartYear.value < -50 && defaultStartYear.value > -100) {
+        tableStart.value = -100
+      } else {
+      tableStart.value = defaultStartYear.value % 100 > -50 ? replaceLastTwoDigits(defaultStartYear.value, '00') :  replaceLastTwoDigits(defaultStartYear.value, '100')
+      }
+    }
+  }
+}
+getInitData().then(res => {
+  initData.value = res.data
+  defaultStartYear.value = res.data.defaultStartYear
+  tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')  
+  getTimeList(defaultStartYear.value).then(res => {
+  tableList.value = res.data
+  noData.value =  res.data.length > 0 ? '' : '暂无数据'
+  fullscreenLoading.value = false
+})
+})
+</script>
+<style lang="less" scoped>
+.pointer {
+  cursor: pointer; 
+}
+:deep(.el-tag.el-tag--info ) {
+  --el-tag-bg-color: #f5f5f5;
+  --el-tag-text-color:#2C3D50;
+}
+:deep(.el-tag){
+  padding: 13px 17px;
+  font-size: 14px;
+  height: 34px;
+  margin-bottom: 15px;
+}
+.borderRadius {
+  border-top-right-radius: 0 !important;  
+  border-bottom-right-radius: 0 !important;
+}
+.borderLeftRadius {
+  border-top-left-radius: 0 !important;  
+  border-bottom-left-radius: 0 !important;
+}
+.describe {
+  position: absolute;
+  margin-top: 46px;
+  text-align: right;
+  height: 26px;
+  font-size: 18px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #2C3D50;
+  line-height: 25px;
+  border-left:none;
+}
+.progress  {
+    position: absolute;
+    margin-top: 55px;
+    height: 8px;
+    background: linear-gradient(302deg, #C867FF 0%, #A468E2 100%);
+    border-radius: 4px;
+    z-index: 1;
+  }
+.wrapper {
+  background: #FAFBFC;
+  .header {
+      height: 440px;
+      background: url("@/assets/bj.png");
+      background-size: 100% auto;
+      background-repeat: no-repeat;
+  }
+  .mian {
+    position: relative;
+    margin-top: -310px;
+    margin: -310px 0 0 50%;
+    padding: 37px 0 43px 0;
+    transform: translate(-50%);
+    width: 1140px;
+    background-image: url('../../assets/timeBj.png');
+    background-repeat: repeat-y;
+    background-position:center;
+    background-size: 1150px auto;
+    border-radius: 5px;
+    .timeScroll {
+      margin: 0 40px;
+      padding: 35px 40px 13px 40px;
+      width: 1060px;
+      background-color: #FEFEFD;
+      border-radius: 5px;
+      overflow: hidden;
+      .table {
+        width: 980px;
+        #header {
+          display: flex;
+          padding: 0 0 6px 0;
+          height: 25px;
+          > :not(:first-child) {
+              transform: translateX(-20px);
+            }
+          div {
+            width: 216px;
+            height: 25px;
+            p {
+              width: 40px;
+              height: 25px;
+              font-size: 18px;
+              font-family: PingFangSC-Regular, PingFang SC;
+              font-weight: 400;
+              color: #AEA68D;
+              line-height: 25px;
+            }
+          }
+        }
+        #border {
+          width: 980px;
+          height: 2px;
+          background: linear-gradient(90deg, #EEE9DB 0%, #C7C1B0 100%);
+        }
+        ul {
+          li {
+            display: flex;
+            height: 60px;
+            width: 980px;
+            border-top: 1px solid rgba(216, 207, 180, 0.4);
+            div {
+              position: relative;
+              flex-shrink:0;
+              height: 100%;
+              width: 215px;
+              border-left: 1px dashed #D8CFB4;
+              overflow: hidden;
+            }
+          }
+        }
+      }
+    }
+    .noData {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%,-50%);
+      font-family: PingFangSC-Regular, PingFang SC;
+    }
+    .left {
+      position: absolute;
+      top: 0;
+      width: 40px;
+      height: 100%;
+    }
+    .right {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 40px;
+      height: 100%;
+    }
+  }
+  .nav {
+      span {
+          margin: 0 20px;
+          color: #333;
+          font-size: 18px;
+          cursor: pointer;
+          &.active {
+              color: #F85650;
+          }
+      }
+  }
+  .content {
+      border-radius: 8px;
+      transform: translateY(-80px);
+      background: #fff;
+      .details {
+          .item {
+              margin-bottom: 40px;
+              >p {
+                  color: #2C3D50;
+                  &:first-of-type {
+                      margin-bottom: 20px;
+                      font-weight: 500;
+                  }
+              }
+
+          }
+      }
+  }
+  .footer {
+      padding: 40px 0 20px 0;
+      background: linear-gradient(226deg, #C4B894 0%, #EDE4D3 100%);
+      .footerNav {
+          margin-bottom: 20px;
+          >span {
+              font-weight: 500;
+              color: #6F4D3A;
+              font-size: 14px;
+          }
+      }
+      p {
+          margin-bottom: 6px;
+          font-size: 12px;
+          color: #6F4D3A;
+      }
+  }
+}
+</style>

@@ -4,10 +4,20 @@ import path from 'path'
 import { resolve } from 'path'
 import WindiCSS from 'vite-plugin-windicss'
 import eslint from 'vite-plugin-eslint'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
-        vue(), WindiCSS()
+        vue(), 
+        WindiCSS(),
+        AutoImport({
+            resolvers: [ElementPlusResolver()],
+          }),
+        Components({
+            resolvers: [ElementPlusResolver()],
+        }),
     ],
     base: './', // 不加打包后白屏
     server: {

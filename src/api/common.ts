@@ -144,3 +144,21 @@ export function listStatusAuthorPage(params) {
         params
     });
 }
+// 事件轴api
+export function getTimeList(startYear) {
+    return request({
+        url: `searchYear/searchByBirthYear?startYear=${startYear}&endYear=${startYear + 200}`,
+        method:'get'
+    })
+}
+export function getTimeListRight(startYear) {
+    return request({
+        url: `searchYear/searchByDeathYear?startYear=${startYear}&endYear=${startYear + 200}`
+    })
+}
+export function getInitData() {
+    return request({
+        method:'GET',
+        url: 'searchYear/findInitParam'
+    })
+}
