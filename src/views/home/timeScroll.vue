@@ -12,7 +12,7 @@
               </div>
           </div>
       </div>
-      <div class="mian">
+      <div class="mian" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="加载中、请稍候..." element-loading-background="rgba(216, 207, 180, 0.4)">
         <div class="timeScroll">
           <div class="table" :style="{minHeight:!(tableList.length > 0) ? '380px' : 0}">
             <div id="header">
@@ -121,8 +121,6 @@
             <h1 class="noData" v-else v-text="noData"></h1>
           </div>
         </div>
-        <div class="left" @click="switchYear(-200, 'left')" v-if="defaultStartYear !== initData.startYear" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="加载中、请稍候..." element-loading-background="rgba(216, 207, 180, 0.4)"></div>
-        <div class="right" @click="switchYear(200, 'right')" v-if="defaultStartYear !== initData.endYear" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="加载中、请稍候..." element-loading-background="rgba(216, 207, 180, 0.4)"></div>
       </div>
       <div class="footer" :style="{marginTop:tableList.length > 0 ? '40px' : '0'}">
           <div class="w-1140px ml-auto mr-auto flex justify-center flex-col items-center">
@@ -131,15 +129,18 @@
               <p>知识共享许可协议本网站采用知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议进行许可。</p>
           </div>
       </div>
+      <el-button color="#f4f1ea" type="info" :icon="ArrowLeftBold" class="left"  @click="switchYear(-150, 'left')" v-if="show" :disabled="defaultStartYear === initData.startYear"></el-button>
+      <el-button color="#f4f1ea" type="info" :icon="ArrowRightBold" class="right" @click="switchYear(150, 'right')" v-if="show" :disabled="defaultStartYear === initData.endYear"></el-button>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { ArrowLeftBold,ArrowRightBold } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 import {getTimeList,getInitData,getTimeListRight} from '../../api/common'
 import {useRouter} from 'vue-router';
 import { ElMessage } from 'element-plus'
-import { fa } from 'element-plus/es/locale';
+const show = ref(false)
 const noData = ref('')
 const router = useRouter();
 const fullscreenLoading = ref(true)
@@ -171,57 +172,51 @@ const switchYear = (year, code) => {
   if(defaultStartYear.value < initData.value.startYear) {
     defaultStartYear.value = initData.value.startYear 
   }
-  if(defaultStartYear.value + 200 > initData.value.endYear) {
-    defaultStartYear.value = initData.value.endYear - 200
+  if(defaultStartYear.value + 150 > initData.value.endYear) {
+    defaultStartYear.value = initData.value.endYear - 150
   }
-  if(defaultStartYear.value + 200 !== initData.value.endYear || defaultStartYear.value !== initData.value.startYear) {
+  if(defaultStartYear.value + 150 !== initData.value.endYear || defaultStartYear.value !== initData.value.startYear) {
     tableList.value = []
   }
   if(code === 'left') {
+    show.value = false
     getTimeListRight(defaultStartYear.value).then(res => {
       tableList.value = res.data
       fullscreenLoading.value = false
       noData.value =  res.data.length > 0 ? '' : '暂无数据'
-      if(defaultStartYear.value === initData.value.startYear) {
-        ElMessage({
-          message: '前面没有更多了',
-          type: 'success',
-        })
-      }
-    }) 
-    if(defaultStartYear.value > 0) {
-        tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') :  replaceLastTwoDigits(defaultStartYear.value, '00')
-      } else {
-        if(defaultStartYear.value < -50 && defaultStartYear.value > -100) {
-        tableStart.value = -100
-      } else {
-      tableStart.value = defaultStartYear.value % 100 > -50 ? replaceLastTwoDigits(defaultStartYear.value, '00') :  replaceLastTwoDigits(defaultStartYear.value, '100')
-      }
-    }
+      setTimeout(() => {
+        if(defaultStartYear.value === initData.value.startYear) {
+          ElMessage({
+            message: '前面没有更多了',
+            type: 'success',
+          })
+        }
+      }, 2000);
+        show.value = true
+    })
+    tableStart.value -= 150
   } else {
+    show.value = false
     getTimeList(defaultStartYear.value).then(res => {
       tableList.value = res.data
       fullscreenLoading.value = false
       noData.value =  res.data.length > 0 ? '' : '暂无数据'
-      if(defaultStartYear.value + 200 === initData.value.endYear) {
-        ElMessage({
-          message: '当前已是最后一页',
-          type: 'success',
-        })
-      }
+      console.log((defaultStartYear.value + 150) , );
+      setTimeout(() => { 
+        if((defaultStartYear.value + 150) === initData.value.endYear) {
+          ElMessage({
+            message: '当前已是最后一页',
+            type: 'success',
+          })
+        }
+      }, 500);
+        show.value = true
     }) 
-    if(defaultStartYear.value > 0) {
-        tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') :  replaceLastTwoDigits(defaultStartYear.value, '00')
-      } else {
-        if(defaultStartYear.value < -50 && defaultStartYear.value > -100) {
-        tableStart.value = -100
-      } else {
-      tableStart.value = defaultStartYear.value % 100 > -50 ? replaceLastTwoDigits(defaultStartYear.value, '00') :  replaceLastTwoDigits(defaultStartYear.value, '100')
-      }
-    }
+    tableStart.value += 150
   }
 }
 getInitData().then(res => {
+  show.value = false
   initData.value = res.data
   defaultStartYear.value = res.data.defaultStartYear
   tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')  
@@ -229,10 +224,35 @@ getInitData().then(res => {
   tableList.value = res.data
   noData.value =  res.data.length > 0 ? '' : '暂无数据'
   fullscreenLoading.value = false
+  show.value = true
 })
 })
 </script>
 <style lang="less" scoped>
+@keyframes fadeIn {  
+      0% {  
+        opacity: 0;  
+      } 
+      100% {  
+        opacity: 1;  
+      }  
+}
+.left {
+  position: fixed;
+  top: 230px;
+  left: 140px;
+  width: 50px;
+  height: 50px;
+  animation: fadeIn 1.5s ease-in-out;
+}
+.right {
+  position: fixed;
+  top: 230px;
+  right: 140px;
+  width: 50px;
+  height: 50px;
+  animation: fadeIn 1.5s ease-in-out; 
+}
 .pointer {
   cursor: pointer; 
 }
@@ -304,6 +324,7 @@ getInitData().then(res => {
       .table {
         width: 980px;
         #header {
+          position: relative;
           display: flex;
           padding: 0 0 6px 0;
           height: 25px;
@@ -353,19 +374,6 @@ getInitData().then(res => {
       top: 50%;
       transform: translate(-50%,-50%);
       font-family: PingFangSC-Regular, PingFang SC;
-    }
-    .left {
-      position: absolute;
-      top: 0;
-      width: 40px;
-      height: 100%;
-    }
-    .right {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 40px;
-      height: 100%;
     }
   }
   .nav {
