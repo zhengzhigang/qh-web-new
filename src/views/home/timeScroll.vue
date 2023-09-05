@@ -16,6 +16,11 @@
         <div class="timeScroll">
           <div class="table" :style="{minHeight:!(tableList.length > 0) ? '380px' : 0}">
             <div id="header">
+              <ul class="scale">
+                <li v-for="item in scale" :key="item" :style="{width: initData.step * 4.32 + 'px'}">
+                  <p>|</p>
+                </li>
+              </ul>
               <div>
                 <p>{{tableStart}}</p>
               </div>
@@ -140,20 +145,20 @@ import { ref } from 'vue';
 import {getTimeList,getInitData,getTimeListRight} from '../../api/common'
 import {useRouter} from 'vue-router';
 import { ElMessage } from 'element-plus'
-const show = ref(false)
-const noData = ref('')
+const show = ref(false) // 按钮显示隐藏
+const noData = ref('') // 没有数据显示字样
 const router = useRouter();
-const fullscreenLoading = ref(true)
-const changeTopMenu = (type: number) => {
+const fullscreenLoading = ref(true) // 加载中状态
+const changeTopMenu = (type: number) => { // 切换页面
   if(type==1) router.push({path: "home"});
   if(type==2) router.push({path: "tag"});
   if(type==3) router.push({path: "timeScroll"});
 }
 const tableList = ref<any>([])
-const initData = ref<any>({})
-const tableStart = ref(0)
-const defaultStartYear = ref(0)
-const replaceLastTwoDigits = (num, newDigits) => {  
+const initData = ref<any>({}) // 初始数据
+const tableStart = ref(0) // 表格开始位置
+const defaultStartYear = ref(0) // 默认获取列表参数
+const replaceLastTwoDigits = (num, newDigits) => {  // 将开始时间转化为整数
   let numStr = num.toString();   
   if(num < 0) {
     let newNumStr = numStr.slice(0, numStr.length - 2) + '00';
@@ -166,7 +171,7 @@ const replaceLastTwoDigits = (num, newDigits) => {
     return newNum; 
   } 
 }
-const switchYear = (year, code) => {
+const switchYear = (year, code) => { //切换显示范围
   fullscreenLoading.value = true
   defaultStartYear.value += year
   if(defaultStartYear.value < initData.value.startYear) {
@@ -215,9 +220,11 @@ const switchYear = (year, code) => {
     tableStart.value += 150
   }
 }
-getInitData().then(res => {
+const scale = ref(0) //刻度
+getInitData().then(res => { // 初始化
   show.value = false
   initData.value = res.data
+  scale.value = Math.floor(980 / (initData.value.step * 4.32))
   defaultStartYear.value = res.data.defaultStartYear
   tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')  
   getTimeList(defaultStartYear.value).then(res => {
@@ -331,6 +338,26 @@ getInitData().then(res => {
           > :not(:first-child) {
               transform: translateX(-20px);
             }
+          .scale {
+            display: flex;
+            position: absolute;
+            top: 26px;
+            height: 2px;
+            width: 100%;
+            li {
+              position: relative;
+              height: 2px;
+              p {
+                position: absolute;
+                top: -3px;
+                right: 0px;
+                width: 1px;
+                height: 100%;
+                color: #2C3D50;
+                font-size: 12px;
+              }
+            }
+          }
           div {
             width: 216px;
             height: 25px;
@@ -360,7 +387,7 @@ getInitData().then(res => {
               position: relative;
               flex-shrink:0;
               height: 100%;
-              width: 215px;
+              width: 216px;
               border-left: 1px dashed #D8CFB4;
               overflow: hidden;
             }
