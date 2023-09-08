@@ -154,13 +154,13 @@ export function listStatusAuthorPage(params) {
 // 事件轴api
 export function getTimeList(startYear) {
     return request({
-        url: `searchYear/searchByBirthYear?startYear=${startYear}&endYear=${startYear + 150}`,
+        url: `searchYear/searchByBirthYear?startYear=${startYear}&endYear=${startYear + 100}`,
         method:'get'
     })
 }
 export function getTimeListRight(startYear) {
     return request({
-        url: `searchYear/searchByDeathYear?startYear=${startYear}&endYear=${startYear + 150}`
+        url: `searchYear/searchByDeathYear?startYear=${startYear}&endYear=${startYear + 100}`
     })
 }
 export function getInitData() {

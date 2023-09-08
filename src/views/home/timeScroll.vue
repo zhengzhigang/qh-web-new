@@ -25,16 +25,16 @@
                 <p>{{tableStart}}</p>
               </div>
               <div>
+                <p>{{tableStart + 25}}</p>
+              </div>
+              <div>
                 <p>{{tableStart + 50}}</p>
               </div>
               <div>
-                <p>{{tableStart + 100}}</p>
-              </div>
-              <div>
-                <p>{{tableStart + 150}}</p>
+                <p>{{tableStart + 75}}</p>
               </div>
               <div style="width: auto;">
-                <p>{{tableStart + 200}}</p>
+                <p>{{tableStart + 100}}</p>
               </div>
             </div>
             <div id="border"></div>
@@ -45,82 +45,87 @@
                 <div></div>
                 <div></div>
                 <div style="width: 116px;"></div>
-                <p 
+                <p
                 :class="{progress: item.deathYear !== null, borderRadius: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 }"
                 :style="{
-                  marginLeft: (item.birthYear - tableStart) * 4.32 + 'px', 
+                  marginLeft: (item.birthYear - tableStart) * 4.32 + 'px',
                   width: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 ? ((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) - 1020) + 'px' : ((item.deathYear - item.birthYear) * 4.32) + 'px'
-                  }" 
-                v-if="((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32) < 0 && item.birthYear !== null" 
-                > 
+                  }"
+                v-if="((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32) < 0 && item.birthYear !== null"
+                  class="progressBox"
+                >
+                <span class="userName">{{ item.name }}({{ item.birthYear }}-{{ item.deathYear}})</span>
                 </p>
-                <p 
-                class="progress borderLeftRadius"
+                <p
+                class="progress borderLeftRadius progressBox"
                 :style="{
-                  marginLeft: ((item.birthYear - tableStart) * 4.32) + (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32)) + 'px', 
+                  marginLeft: ((item.birthYear - tableStart) * 4.32) + (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32)) + 'px',
                   width:item.birthYear !== null ? (((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32))) + 'px' : '0px'
-                  }" 
+                  }"
                 v-else
-                > 
+                >
+                  <span class="userName">{{ item.name }}({{ item.birthYear }}-{{ item.deathYear}})</span>
                 </p>
-                <footer 
+                <!-- <footer
                 v-if="(((item.birthYear - tableStart) * 4.32) - 268) > 0 && (item.name.length > 7 ? item.name.length - 2 === 7 : item.name.length === 7)"
-                class="describe" 
+                class="describe"
                   :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 268) + 268) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 268) - (((((item.birthYear - tableStart) * 4.32) - 268) + 268) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 268 + 'px', minWidth:'268px'}">
                   {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
                 </footer>
-                <footer 
-                v-else-if="(((item.birthYear - tableStart) * 4.32) - 250) > 0 && (item.name.length > 6 ? item.name.length - 2 === 6 : item.name.length === 6)" class="describe" 
+                <footer
+                v-else-if="(((item.birthYear - tableStart) * 4.32) - 250) > 0 && (item.name.length > 6 ? item.name.length - 2 === 6 : item.name.length === 6)" class="describe"
                 :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 250) + 250) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 250) - (((((item.birthYear - tableStart) * 4.32) - 250) + 250) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 250 + 'px', minWidth:'250px'}">
                   {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
                 </footer>
-                <footer 
-                v-else-if="(((item.birthYear - tableStart) * 4.32) - 208) > 0 && (item.name.length > 5 ? item.name.length - 2 === 5 : item.name.length === 5)" class="describe" 
+                <footer
+                v-else-if="(((item.birthYear - tableStart) * 4.32) - 208) > 0 && (item.name.length > 5 ? item.name.length - 2 === 5 : item.name.length === 5)" class="describe"
                 :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 208) + 208) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 208) - (((((item.birthYear - tableStart) * 4.32) - 208) + 208) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 208 + 'px', minWidth:'208px'}">
                   {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
                 </footer>
-                <footer 
-                v-else-if="(((item.birthYear - tableStart) * 4.32) - 178) > 0 && (item.name.length > 4 ? item.name.length - 2 === 4 : item.name.length === 4)" class="describe" 
+                <footer
+                v-else-if="(((item.birthYear - tableStart) * 4.32) - 178) > 0 && (item.name.length > 4 ? item.name.length - 2 === 4 : item.name.length === 4)" class="describe"
                 :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 178) + 178) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 178) - (((((item.birthYear - tableStart) * 4.32) - 178) + 178) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 178 + 'px', minWidth:'178px'}">
                   {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
                 </footer>
-                <footer 
-                v-else-if="(((item.birthYear - tableStart) * 4.32) - 158) > 0 && (item.name.length > 4 ? item.name.length - 2 === 2 || item.name.length - 2 === 3 : item.name.length === 2 || item.name.length === 3)" class="describe" 
+                <footer
+                v-else-if="(((item.birthYear - tableStart) * 4.32) - 158) > 0 && (item.name.length > 4 ? item.name.length - 2 === 2 || item.name.length - 2 === 3 : item.name.length === 2 || item.name.length === 3)" class="describe"
                 :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 158) + 158) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 158) - (((((item.birthYear - tableStart) * 4.32) - 158) + 158) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 158 + 'px', minWidth:'158px'}">
                   {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
                 </footer>
-                <footer 
-                v-else-if="(((item.birthYear - tableStart) * 4.32) - 148) > 0 && item.name.length === 1" class="describe" 
+                <footer
+                v-else-if="(((item.birthYear - tableStart) * 4.32) - 148) > 0 && item.name.length === 1" class="describe"
                 :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 148) + 148) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 148) - (((((item.birthYear - tableStart) * 4.32) - 148) + 148) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 148 + 'px', minWidth:'148px'}">
                   {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
                 </footer>
-                <footer 
-                v-else-if="(((item.birthYear - tableStart) * 4.32) - 148) < 0 && !item.deathYear === null || item.birthYear === null" class="describe">
+                <footer
+                 v-else-if="(((item.birthYear - tableStart) * 4.32) - 148) < 0 && !item.deathYear === null || item.birthYear === null"
+                 class="describe">
                   {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
-                </footer>
-                <el-tooltip content="Top center" placement="top" effect="light" v-else>
+                </footer> -->
+                <!-- v-else -->
+                <!-- <el-tooltip content="Top center" placement="top" effect="light" >
                   <template #content>
                     {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
                   </template>
-                  <p 
+                  <p
                     :class="{progress: item.deathYear !== null, borderRadius: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 ,pointer: true}"
                     :style="{
-                      marginLeft: (item.birthYear - tableStart) * 4.32 + 'px', 
+                      marginLeft: (item.birthYear - tableStart) * 4.32 + 'px',
                       width: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 ? ((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) - 1020) + 'px' : ((item.deathYear - item.birthYear) * 4.32) + 'px'
-                    }" 
-                    v-if="((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32) < 0 && item.birthYear !== null" 
-                  > 
+                    }"
+                    v-if="((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32) < 0 && item.birthYear !== null"
+                  >
                   </p>
-                  <p 
+                  <p
                     class="progress borderLeftRadius pointer"
                     :style="{
-                      marginLeft: ((item.birthYear - tableStart) * 4.32) + (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32)) + 'px', 
+                      marginLeft: ((item.birthYear - tableStart) * 4.32) + (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32)) + 'px',
                       width:item.birthYear !== null ? (((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32))) + 'px' : '0px'
-                    }" 
+                    }"
                     v-else
-                  > 
+                  >
                   </p>
-                </el-tooltip>
+                </el-tooltip> -->
               </li>
             </ul>
             <h1 class="noData" v-else v-text="noData"></h1>
@@ -159,23 +164,23 @@ const initData = ref<any>({}) // 初始数据
 const tableStart = ref(0) // 表格开始位置
 const defaultStartYear = ref(0) // 默认获取列表参数
 const replaceLastTwoDigits = (num, newDigits) => {  // 将开始时间转化为整数
-  let numStr = num.toString();   
+  let numStr = num.toString();
   if(num < 0) {
     let newNumStr = numStr.slice(0, numStr.length - 2) + '00';
     let newNum = parseInt(newNumStr);
     let oldNum = parseInt(newDigits)
     return newNum - oldNum
   } else {
-    let newNumStr = numStr.slice(0, numStr.length - 2) + newDigits;  
-    let newNum = parseInt(newNumStr);  
-    return newNum; 
-  } 
+    let newNumStr = numStr.slice(0, numStr.length - 2) + newDigits;
+    let newNum = parseInt(newNumStr);
+    return newNum;
+  }
 }
 const switchYear = (year, code) => { //切换显示范围
   fullscreenLoading.value = true
   defaultStartYear.value += year
   if(defaultStartYear.value < initData.value.startYear) {
-    defaultStartYear.value = initData.value.startYear 
+    defaultStartYear.value = initData.value.startYear
   }
   if(defaultStartYear.value + 150 > initData.value.endYear) {
     defaultStartYear.value = initData.value.endYear - 150
@@ -207,7 +212,7 @@ const switchYear = (year, code) => { //切换显示范围
       fullscreenLoading.value = false
       noData.value =  res.data.length > 0 ? '' : '暂无数据'
       console.log((defaultStartYear.value + 150) , );
-      setTimeout(() => { 
+      setTimeout(() => {
         if((defaultStartYear.value + 150) === initData.value.endYear) {
           ElMessage({
             message: '当前已是最后一页',
@@ -216,7 +221,7 @@ const switchYear = (year, code) => { //切换显示范围
         }
       }, 500);
         show.value = true
-    }) 
+    })
     tableStart.value += 150
   }
 }
@@ -226,7 +231,7 @@ getInitData().then(res => { // 初始化
   initData.value = res.data
   scale.value = Math.floor(980 / (initData.value.step * 4.32))
   defaultStartYear.value = res.data.defaultStartYear
-  tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')  
+  tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')
   getTimeList(defaultStartYear.value).then(res => {
   tableList.value = res.data
   noData.value =  res.data.length > 0 ? '' : '暂无数据'
@@ -236,13 +241,22 @@ getInitData().then(res => { // 初始化
 })
 </script>
 <style lang="less" scoped>
-@keyframes fadeIn {  
-      0% {  
-        opacity: 0;  
-      } 
-      100% {  
-        opacity: 1;  
-      }  
+@keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+}
+.progressBox {
+  position: relative;
+  .userName {
+    position: absolute;
+    top: -24px;
+    left: 0;
+    white-space: nowrap;
+  }
 }
 .left {
   position: fixed;
@@ -258,10 +272,10 @@ getInitData().then(res => { // 初始化
   right: 140px;
   width: 50px;
   height: 50px;
-  animation: fadeIn 1.5s ease-in-out; 
+  animation: fadeIn 1.5s ease-in-out;
 }
 .pointer {
-  cursor: pointer; 
+  cursor: pointer;
 }
 :deep(.el-tag.el-tag--info ) {
   --el-tag-bg-color: #f5f5f5;
@@ -274,11 +288,11 @@ getInitData().then(res => { // 初始化
   margin-bottom: 15px;
 }
 .borderRadius {
-  border-top-right-radius: 0 !important;  
+  border-top-right-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
 }
 .borderLeftRadius {
-  border-top-left-radius: 0 !important;  
+  border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
 }
 .describe {
@@ -353,7 +367,7 @@ getInitData().then(res => { // 初始化
                 right: 0px;
                 width: 1px;
                 height: 100%;
-                color: #2C3D50;
+                color:#AEA68D;
                 font-size: 12px;
               }
             }
