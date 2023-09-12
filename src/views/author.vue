@@ -123,17 +123,33 @@
         </div>
     </div>
     <div class="bottom_div">
+        <el-row class="mb-4">
+            <el-input style="width:200px" v-model="datas.searchAuthorName" placeholder="输入名字" />
+            <el-button @click="searchAuthor" type="primary">搜索</el-button>
+        </el-row>
         <span v-for="author in datas.authorList">
             <span class="author_click" @click.prevent="getAuthorDetailById(author.authorId)"
                 :style="{ 'color': (author.handle == 1 || author.handle == 0) ? 'green' : 'red' }">{{ author.excelName }}</span>
             &nbsp;&nbsp;&nbsp;
         </span>
     </div>
+    <el-drawer
+    v-model="datas.drawerShow"
+    title="选择一个诗人"
+    direction="ttb"
+    size="50%"
+  >
+    <el-table :data="datas.searchAuthorList" @row-click="handleSelect">
+      <el-table-column property="excelName" label="名字" width="60" />
+      <el-table-column property="excelDynasty" label="朝代" width="60" />
+      <el-table-column property="description" label="介绍" />
+    </el-table>
+  </el-drawer>
 </template>
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { findPersonByPersonId,findAuthorByAuthorId, doMatchAuthor, logout, listAllAuthor } from '@/api/common'
+import { findPersonByPersonId,findAuthorByAuthorName,findAuthorByAuthorId, doMatchAuthor, logout, listAllAuthor, searchAuthor } from '@/api/common'
 import router from '@/router'
 var params = router.currentRoute.value.params
 
@@ -149,6 +165,8 @@ const datas = reactive({
     authorList: [] as any,
     postList: [] as any,
     personList: [] as any,
+    searchAuthorName: '',
+    searchAuthorList: [] as any,
     author: {
         handle: -1,
         authorId: 0,
@@ -156,7 +174,8 @@ const datas = reactive({
         description: '',
         matchType: -9,
         person: {} as any,
-    }
+    },
+    drawerShow: false,
 })
 const computedDynasty = computed(() => {
     return (v: any) => {
@@ -185,6 +204,30 @@ const computedDynasty = computed(() => {
         }
     }
 })
+const searchAuthor = () => {
+    if (datas.searchAuthorName == '') {
+        ElMessage({ message: '请输入名字', type: 'error' })
+        return
+    }
+    findAuthorByAuthorName({ authorName: datas.searchAuthorName }).then(res => {
+        console.log(res)
+        if (res.data == null) {
+            ElMessage({ message: '没有找到此作者', type: 'error' })
+            return
+        }
+        if (res.data.length == 1) {
+            getAuthorDetailById(res.data[0].authorId)
+            return
+        } else {
+            datas.searchAuthorList = res.data;
+            datas.drawerShow = true;
+        }
+    })
+}
+const handleSelect = (row: any) => {
+    datas.drawerShow = false;
+    getAuthorDetailById(row.authorId)
+}
 // const findOneData = () => {
 //     findAuthorByAuthorId({}).then(res => {
 //         console.log(res)

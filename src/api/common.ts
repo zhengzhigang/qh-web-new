@@ -14,9 +14,23 @@ export function findAuthorByAuthorId(params) {
         params
     });
 }
+export function findAuthorByAuthorName(params) {
+    return request({
+        url: '/system/matchAuthor/findAuthorByAuthorName',
+        method: 'get',
+        params
+    });
+}
 export function findPersonByPersonId(params) {
     return request({
         url: '/system/matchAuthor/findPersonByPersonId',
+        method: 'get',
+        params
+    });
+}
+export function findPersonByPersonName(params) {
+    return request({
+        url: '/poet/findPersonByName',
         method: 'get',
         params
     });
