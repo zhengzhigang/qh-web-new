@@ -216,7 +216,7 @@ onMounted(async ()=>{
         //如果没有传authorId，如果没有传personId就默认是李白，如果传了personid就用传的personid,authorid就没有了
         if(!route.query.personId){
             datas.personId = JSONBig.parse("32540")
-            datas.authorId = JSONBig.parse("1655596564759744528")
+            datas.authorId = JSONBig.parse("1656658312757964828")
         } else{
             datas.personId = JSONBig.parse(route.query.personId)
             await findAuthorIdByPersonId({"personId":datas.personId}).then(res=>{
