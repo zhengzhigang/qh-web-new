@@ -17,7 +17,7 @@
           <div class="table" :style="{minHeight:!(tableList.length > 0) ? '380px' : 0}">
             <div id="header">
               <ul class="scale">
-                <li v-for="item in scale" :key="item" :style="{width: initData.step * 4.32 + 'px'}">
+                <li v-for="item in scale" :key="item" :style="{width: initData.step * 7.12 + 'px'}">
                   <p>|</p>
                 </li>
               </ul>
@@ -39,93 +39,21 @@
             </div>
             <div id="border"></div>
             <ul  v-if="tableList.length > 0">
-              <li v-for="item in tableList">
+              <li v-for="(item, index) in tableList" :key="index">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
                 <div style="width: 116px;"></div>
                 <p
-                :class="{progress: item.deathYear !== null, borderRadius: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 }"
                 :style="{
-                  marginLeft: (item.birthYear - tableStart) * 4.32 + 'px',
-                  width: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 ? ((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) - 1020) + 'px' : ((item.deathYear - item.birthYear) * 4.32) + 'px'
+                  marginLeft: ((item.birthYear - tableStart)/100) * 864 + 'px',
+                  width: ((item.deathYear - item.birthYear)/100) * 864 + 'px'
                   }"
-                v-if="((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32) < 0 && item.birthYear !== null"
-                  class="progressBox"
+                  class="progressBox progress"
                 >
                 <span class="userName">{{ item.name }}({{ item.birthYear }}-{{ item.deathYear}})</span>
                 </p>
-                <p
-                class="progress borderLeftRadius progressBox"
-                :style="{
-                  marginLeft: ((item.birthYear - tableStart) * 4.32) + (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32)) + 'px',
-                  width:item.birthYear !== null ? (((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32))) + 'px' : '0px'
-                  }"
-                v-else
-                >
-                  <span class="userName">{{ item.name }}({{ item.birthYear }}-{{ item.deathYear}})</span>
-                </p>
-                <!-- <footer
-                v-if="(((item.birthYear - tableStart) * 4.32) - 268) > 0 && (item.name.length > 7 ? item.name.length - 2 === 7 : item.name.length === 7)"
-                class="describe"
-                  :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 268) + 268) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 268) - (((((item.birthYear - tableStart) * 4.32) - 268) + 268) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 268 + 'px', minWidth:'268px'}">
-                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
-                </footer>
-                <footer
-                v-else-if="(((item.birthYear - tableStart) * 4.32) - 250) > 0 && (item.name.length > 6 ? item.name.length - 2 === 6 : item.name.length === 6)" class="describe"
-                :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 250) + 250) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 250) - (((((item.birthYear - tableStart) * 4.32) - 250) + 250) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 250 + 'px', minWidth:'250px'}">
-                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
-                </footer>
-                <footer
-                v-else-if="(((item.birthYear - tableStart) * 4.32) - 208) > 0 && (item.name.length > 5 ? item.name.length - 2 === 5 : item.name.length === 5)" class="describe"
-                :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 208) + 208) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 208) - (((((item.birthYear - tableStart) * 4.32) - 208) + 208) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 208 + 'px', minWidth:'208px'}">
-                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
-                </footer>
-                <footer
-                v-else-if="(((item.birthYear - tableStart) * 4.32) - 178) > 0 && (item.name.length > 4 ? item.name.length - 2 === 4 : item.name.length === 4)" class="describe"
-                :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 178) + 178) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 178) - (((((item.birthYear - tableStart) * 4.32) - 178) + 178) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 178 + 'px', minWidth:'178px'}">
-                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
-                </footer>
-                <footer
-                v-else-if="(((item.birthYear - tableStart) * 4.32) - 158) > 0 && (item.name.length > 4 ? item.name.length - 2 === 2 || item.name.length - 2 === 3 : item.name.length === 2 || item.name.length === 3)" class="describe"
-                :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 158) + 158) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 158) - (((((item.birthYear - tableStart) * 4.32) - 158) + 158) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 158 + 'px', minWidth:'158px'}">
-                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
-                </footer>
-                <footer
-                v-else-if="(((item.birthYear - tableStart) * 4.32) - 148) > 0 && item.name.length === 1" class="describe"
-                :style="{marginLeft:((((item.birthYear - tableStart) * 4.32) - 148) + 148) > 1020 ? (((item.birthYear - tableStart) * 4.32) - 148) - (((((item.birthYear - tableStart) * 4.32) - 148) + 148) - 1020) + 'px' : ((item.birthYear - tableStart) * 4.32) - 148 + 'px', minWidth:'148px'}">
-                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
-                </footer>
-                <footer
-                 v-else-if="(((item.birthYear - tableStart) * 4.32) - 148) < 0 && !item.deathYear === null || item.birthYear === null"
-                 class="describe">
-                  {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
-                </footer> -->
-                <!-- v-else -->
-                <!-- <el-tooltip content="Top center" placement="top" effect="light" >
-                  <template #content>
-                    {{ item.name }}({{ item.birthYear === null ? '未知' : item.birthYear }}-{{ !item.deathYear ? '未知' : item.deathYear}})
-                  </template>
-                  <p
-                    :class="{progress: item.deathYear !== null, borderRadius: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 ,pointer: true}"
-                    :style="{
-                      marginLeft: (item.birthYear - tableStart) * 4.32 + 'px',
-                      width: ((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) > 1020 ? ((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) + ((item.birthYear - tableStart) * 4.32) - 1020) + 'px' : ((item.deathYear - item.birthYear) * 4.32) + 'px'
-                    }"
-                    v-if="((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32) < 0 && item.birthYear !== null"
-                  >
-                  </p>
-                  <p
-                    class="progress borderLeftRadius pointer"
-                    :style="{
-                      marginLeft: ((item.birthYear - tableStart) * 4.32) + (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32)) + 'px',
-                      width:item.birthYear !== null ? (((item.deathYear - item.birthYear) * 4.32) - (((item.deathYear - item.birthYear) * 4.32) - ((item.deathYear - tableStart) * 4.32))) + 'px' : '0px'
-                    }"
-                    v-else
-                  >
-                  </p>
-                </el-tooltip> -->
               </li>
             </ul>
             <h1 class="noData" v-else v-text="noData"></h1>
@@ -229,7 +157,7 @@ const scale = ref(0) //刻度
 getInitData().then(res => { // 初始化
   show.value = false
   initData.value = res.data
-  scale.value = Math.floor(980 / (initData.value.step * 4.32))
+  scale.value = Math.floor(980 / (initData.value.step * 7.12))
   defaultStartYear.value = res.data.defaultStartYear
   tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')
   getTimeList(defaultStartYear.value).then(res => {
@@ -344,14 +272,16 @@ getInitData().then(res => { // 初始化
       overflow: hidden;
       .table {
         width: 980px;
+        overflow: hidden;
+        position: relative;
         #header {
           position: relative;
           display: flex;
           padding: 0 0 6px 0;
           height: 25px;
-          > :not(:first-child) {
-              transform: translateX(-20px);
-            }
+          // > :not(:first-child) {
+          //     transform: translateX(-20px);
+          //   }
           .scale {
             display: flex;
             position: absolute;
