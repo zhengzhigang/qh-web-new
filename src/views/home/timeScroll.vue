@@ -17,9 +17,9 @@
           <div class="table" :style="{minHeight:!(tableList.length > 0) ? '380px' : 0}">
             <div id="header">
               <ul class="scale">
-                <li v-for="item in scale" :key="item" :style="{width: initData.step * 7.12 + 'px'}">
+                <!-- <li v-for="item in scale" :key="item" :style="{width: initData.step * 7.12 + 'px'}">
                   <p>|</p>
-                </li>
+                </li> -->
               </ul>
               <div>
                 <p>{{tableStart}}</p>
