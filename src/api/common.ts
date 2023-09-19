@@ -30,7 +30,7 @@ export function findPersonByPersonId(params) {
 }
 export function findPersonByPersonName(params) {
     return request({
-        url: '/poet/findPersonByName',
+        url: '/poet/findByName',
         method: 'get',
         params
     });

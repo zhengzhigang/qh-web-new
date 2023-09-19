@@ -13,6 +13,10 @@
           </div>
       </div>
       <div class="mian" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="加载中、请稍候..." element-loading-background="rgba(216, 207, 180, 0.4)">
+        <div class="searchname">
+            <el-input style="width:200px" v-model="datas.searchAuthorName" placeholder="输入名字" />
+            <el-button @click="searchAuthor" type="primary">搜索</el-button>
+        </div>
         <div class="timeScroll">
           <div class="table" :style="{minHeight:!(tableList.length > 0) ? '380px' : 0}">
             <div id="header">
@@ -70,12 +74,24 @@
       <el-button color="#f4f1ea" type="info" :icon="ArrowLeftBold" class="left"  @click="switchYear(-150, 'left')" v-if="show" :disabled="defaultStartYear === initData.startYear"></el-button>
       <el-button color="#f4f1ea" type="info" :icon="ArrowRightBold" class="right" @click="switchYear(150, 'right')" v-if="show" :disabled="defaultStartYear === initData.endYear"></el-button>
   </div>
+  <el-drawer
+    v-model="datas.drawerShow"
+    direction="ttb"
+    size="50%"
+  >
+    <el-table :data="datas.searchAuthorList" @row-click="handleSelect">
+      <el-table-column property="name" label="名字" width="60" />
+      <el-table-column property="birthYear" label="出生年" width="100" />
+      <el-table-column property="deathYear" label="死亡年"  width="100"/>
+      <el-table-column property="dynastyChn" label="朝代"  width="60"/>
+    </el-table>
+  </el-drawer>
 </template>
 
 <script lang="ts" setup>
 import { ArrowLeftBold,ArrowRightBold } from '@element-plus/icons-vue';
-import { ref } from 'vue';
-import {getTimeList,getInitData,getTimeListRight} from '../../api/common'
+import { ref,reactive } from 'vue';
+import {getTimeList,getInitData,getTimeListRight,findPersonByPersonName} from '../../api/common'
 import {useRouter} from 'vue-router';
 import { ElMessage } from 'element-plus'
 const show = ref(false) // 按钮显示隐藏
@@ -86,6 +102,49 @@ const changeTopMenu = (type: number) => { // 切换页面
   if(type==1) router.push({path: "home"});
   if(type==2) router.push({path: "tag"});
   if(type==3) router.push({path: "timeScroll"});
+}
+const datas = reactive({
+    searchAuthorName: '',
+    drawerShow: false,
+    searchAuthorList: [] as any,
+
+})
+const handleSelect = (row: any) => {
+    console.log(row);
+    datas.drawerShow = false;
+    let rowData:any;
+    for (let i = 0; i < datas.searchAuthorList.length; i++) {
+        if (datas.searchAuthorList[i].personId == row.personId) {
+            rowData = datas.searchAuthorList[i];
+            break;
+        }
+    }
+    if (rowData.birthYear == null) {
+        ElMessage({ message: '该人物的出生日期为空', type: 'error' })
+        return
+    }
+    if (rowData.deathYear == null) {
+        ElMessage({ message: '该人物的死亡日期为空', type: 'error' })
+        return
+    }
+    resetTime(rowData.birthYear-20)
+}
+const searchAuthor = () => {
+    if (datas.searchAuthorName == '') {
+        ElMessage({ message: '请输入名字', type: 'error' })
+        return
+    }
+    findPersonByPersonName({ name: datas.searchAuthorName }).then(res => {
+        console.log(res)
+        if (res.data == null) {
+            ElMessage({ message: '没有找到此作者', type: 'error' })
+            return
+        }
+        if (res.data.length >= 1) {
+            datas.searchAuthorList = res.data;
+            datas.drawerShow = true;
+        }
+    })
 }
 const tableList = ref<any>([])
 const initData = ref<any>({}) // 初始数据
@@ -167,6 +226,17 @@ getInitData().then(res => { // 初始化
   show.value = true
 })
 })
+const resetTime = (startYear:any) => {
+  show.value = false
+  scale.value = Math.floor(980 / (initData.value.step * 7.12))
+  defaultStartYear.value = startYear
+  tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')
+  getTimeList(defaultStartYear.value).then(res => {
+  tableList.value = res.data
+  noData.value =  res.data.length > 0 ? '' : '暂无数据'
+  fullscreenLoading.value = false
+  show.value = true
+})}
 </script>
 <style lang="less" scoped>
 @keyframes fadeIn {
@@ -250,6 +320,10 @@ getInitData().then(res => { // 初始化
       background: url("@/assets/bj.png");
       background-size: 100% auto;
       background-repeat: no-repeat;
+  }
+  .searchname{
+    margin: 0 40px;
+    padding: 35px 40px 13px 40px;
   }
   .mian {
     position: relative;

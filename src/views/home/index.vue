@@ -82,7 +82,7 @@
                             </template>
                         </p>
                         <p class="text-14px leading-24px" v-if="datas.authorInfo.personInfo?.personStatusList!=undefined && datas.authorInfo.personInfo?.personStatusList!=null && datas.authorInfo.personInfo?.personStatusList.length >0 ">
-                            <span>职官:</span>
+                            <span>标签:</span>
                             <template v-for="(item,index) in datas.authorInfo.personInfo?.personStatusList">
                                 <span @click="onClickTag(item.statusCode)" style="cursor: pointer;">#{{item.statusDescChn}}&nbsp;&nbsp;</span>
                             </template>
