@@ -17,14 +17,17 @@
                         <span :class="poemTabActive[2] == true ? 'active' : ''" @click="changePoemTab(false,false,true)">诗文</span>
                     </div>
                     <div class="search mt-10px mb-1px">
-                        <el-select v-model="datas.index" placeholder="">
-                               <el-option label="模糊查找" value="-1" />
-                                <el-option label="第1个字" value="1" />
-                                <el-option label="第2个字" value="2" />
-                                <el-option label="第3个字" value="3" />
-                                <el-option label="第4个字" value="4" />
-                                <el-option label="最后一个字" value="99" />
+
+                        <el-select v-show="poemTabActive[0] == true" v-model="datas.index" placeholder="">
+                            <el-option label="模糊查找" value="-1" />
+                            <el-option label="第1个字" value="1" />
+                            <el-option label="第2个字" value="2" />
+                            <el-option label="第3个字" value="3" />
+                            <el-option label="第4个字" value="4" />
+                            <el-option label="最后一个字" value="99" />
                         </el-select>
+
+
                         <input type="text" v-model="datas.searchStr"/>
                         <!-- <el-input v-model="datas.searchStr" placeholder="" class="input-with-select">
                             <template #prepend>
