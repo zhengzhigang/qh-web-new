@@ -17,7 +17,25 @@
                         <span :class="poemTabActive[2] == true ? 'active' : ''" @click="changePoemTab(false,false,true)">诗文</span>
                     </div>
                     <div class="search mt-10px mb-1px">
+                        <el-select v-model="datas.index" placeholder="">
+                               <el-option label="模糊查找" value="-1" />
+                                <el-option label="第1个字" value="1" />
+                                <el-option label="第2个字" value="2" />
+                                <el-option label="第3个字" value="3" />
+                                <el-option label="第4个字" value="4" />
+                        </el-select>
                         <input type="text" v-model="datas.searchStr"/>
+                        <!-- <el-input v-model="datas.searchStr" placeholder="" class="input-with-select">
+                            <template #prepend>
+                                <el-select v-model="datas.index" placeholder="" style="width: 115px">
+                                <el-option label="模糊查找" value="-1" />
+                                <el-option label="第1个字" value="1" />
+                                <el-option label="第2个字" value="2" />
+                                <el-option label="第3个字" value="3" />
+                                <el-option label="第4个字" value="4" />
+                                </el-select>
+                            </template>
+                        </el-input> -->
                         <span class="searchBtn" @click="searchAction">语义搜索</span>
                     </div>
                     <div class="search-guid flex items-center" style="display: none;">
@@ -210,6 +228,7 @@ const datas = reactive({
     authorInfo: {} as any,
     personInfo: {} as any,
     postListPage: [] as any,
+    index: "-1",
 })
 onMounted(async ()=>{
     if(!route.query.authorId){
@@ -267,7 +286,7 @@ const searchAction = async () => {
     }
 }
 const searchAuthorAction = async (pageNo:number=1,pageSizeParam:number=20) =>{
-     searchAuthor({"authorName":datas.searchStr,"pageSize":pageSizeParam,"pageNo":pageNo}).then(res=>{
+     searchAuthor({"authorName":datas.searchStr,"index":datas.index,"pageSize":pageSizeParam,"pageNo":pageNo}).then(res=>{
         console.log(res.data)
         if (res.data.singleMatch == 1) {
             console.log(res.data)
@@ -392,6 +411,9 @@ const computedAddrType = computed(() => {
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
   background-color: #2C3D50 !important; //修改默认的背景色
 }
+:deep(.el-select .el-input__wrapper ) {
+    height:50px
+}
 .wrapper {
     background: #FAFBFC;
     .header {
@@ -440,7 +462,7 @@ const computedAddrType = computed(() => {
             overflow: hidden;
             border-radius: 100px;
             >input {
-                width: 680px;
+                width: 480px;
                 height: 100%;
                 outline: none;
                 text-indent: 30px;
