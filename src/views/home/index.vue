@@ -23,6 +23,7 @@
                                 <el-option label="第2个字" value="2" />
                                 <el-option label="第3个字" value="3" />
                                 <el-option label="第4个字" value="4" />
+                                <el-option label="最后一个字" value="99" />
                         </el-select>
                         <input type="text" v-model="datas.searchStr"/>
                         <!-- <el-input v-model="datas.searchStr" placeholder="" class="input-with-select">
