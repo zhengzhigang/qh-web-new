@@ -466,7 +466,7 @@ const computedAddrType = computed(() => {
             overflow: hidden;
             border-radius: 100px;
             >input {
-                width: 480px;
+                width: 400px;
                 height: 100%;
                 outline: none;
                 text-indent: 30px;
