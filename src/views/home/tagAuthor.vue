@@ -2,14 +2,7 @@
     <div class="wrapper bg-white">
         <div class="header h-220px">
             <div class="w-1140px ml-auto mr-auto">
-                <div class="flex pt-25px pb-25px">
-                    <img class="log" src="@/assets/logo.png">
-                    <div class="nav flex justify-center items-end ml-20px">
-                        <span @click="changeTopMenu(1)">语义搜索</span>
-                        <span class="active">标签搜索</span>
-                        <span>时间轴</span>
-                    </div>
-                </div>
+                <Header :type="1"></Header>
             </div>
         </div>
 
@@ -58,17 +51,13 @@
     />
         </section>
 
-        <div class="footer">
-            <div class="w-1140px ml-auto mr-auto flex justify-center flex-col items-center">
-                <p>© 2023 中国数字人文 皖ICP备19020276号-4</p>
-                <p>本网站为学术公益性网站，若有侵权，请联系删除。</p>
-                <p>知识共享许可协议本网站采用知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议进行许可。</p>
-            </div>
-        </div>
+        <Footer></Footer>
     </div>
 </template>
 
 <script lang="ts" setup>
+import Header from '@/components/header.vue';
+import Footer from '@/components/footer.vue';
 import { computed, reactive, ref,onMounted } from 'vue'
 import {useRouter} from 'vue-router';
 import { findTag,listStatusAuthorPage } from '@/api/common'

@@ -2,14 +2,7 @@
   <div class="wrapper bg-white">
       <div class="header h-220px">
           <div class="w-1140px ml-auto mr-auto">
-              <div class="flex pt-25px pb-25px">
-                  <img class="log" src="@/assets/logo.png">
-                  <div class="nav flex justify-center items-end ml-20px">
-                      <span @click="changeTopMenu(1)">语义搜索</span>
-                      <span @click="changeTopMenu(2)">标签搜索</span>
-                      <span class="active">时间轴</span>
-                  </div>
-              </div>
+              <Header :type="3"></Header>
           </div>
       </div>
       <div class="mian" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="加载中、请稍候..." element-loading-background="rgba(216, 207, 180, 0.4)">
@@ -64,12 +57,8 @@
           </div>
         </div>
       </div>
-      <div class="footer" :style="{marginTop:tableList.length > 0 ? '40px' : '0'}">
-          <div class="w-1140px ml-auto mr-auto flex justify-center flex-col items-center">
-              <p>© 2023 中国数字人文 皖ICP备19020276号-4</p>
-              <p>本网站为学术公益性网站，若有侵权，请联系删除。</p>
-              <p>知识共享许可协议本网站采用知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议进行许可。</p>
-          </div>
+      <div :style="{marginTop:tableList.length > 0 ? '40px' : '0'}">
+          <Footer></Footer>
       </div>
       <el-button color="#f4f1ea" type="info" :icon="ArrowLeftBold" class="left"  @click="switchYear(-150, 'left')" v-if="show" :disabled="defaultStartYear === initData.startYear"></el-button>
       <el-button color="#f4f1ea" type="info" :icon="ArrowRightBold" class="right" @click="switchYear(150, 'right')" v-if="show" :disabled="defaultStartYear === initData.endYear"></el-button>
@@ -90,6 +79,8 @@
 
 <script lang="ts" setup>
 import { ArrowLeftBold,ArrowRightBold } from '@element-plus/icons-vue';
+import Header from '@/components/header.vue';
+import Footer from '@/components/footer.vue';
 import { ref,reactive } from 'vue';
 import {getTimeList,getInitData,getTimeListRight,findPersonByPersonName} from '../../api/common'
 import {useRouter} from 'vue-router';

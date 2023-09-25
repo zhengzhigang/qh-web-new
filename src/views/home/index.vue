@@ -2,14 +2,15 @@
     <div class="wrapper bg-white">
         <div class="header h-400px">
             <div class="w-1140px ml-auto mr-auto">
-                <div class="flex pt-25px pb-25px">
+                <!-- <div class="flex pt-25px pb-25px">
                     <img class="log" style="cursor: pointer;" src="@/assets/logo.png" @click="linkPage('home')">
                     <div class="nav flex justify-center items-end ml-20px">
                         <span class="active">语义搜索</span>
                         <span @click="changeTopMenu(2)">标签搜索</span>
                         <span @click="changeTopMenu(3)">时间轴</span>
                     </div>
-                </div>
+                </div> -->
+                <Header :type="1"></Header>
                 <div class="search-wrapper pl-170px pt-66px">
                     <div class="search-type flex">
                         <span :class="poemTabActive[0] == true ? 'active' : ''" @click="changePoemTab(true,false,false)">诗人</span>
@@ -164,6 +165,7 @@
 
 <script lang="ts" setup>
 // import Pagination from '@/components/Pagination.vue'
+import Header from '@/components/header.vue';
 import canvasPage from './canvas.vue'
 import { computed, reactive, ref,onMounted } from 'vue'
 import {useRouter} from 'vue-router';
@@ -465,6 +467,15 @@ const computedAddrType = computed(() => {
             height: 48px;
             overflow: hidden;
             border-radius: 100px;
+            ::v-deep .el-input__inner {
+                text-align: center;
+            }
+            ::v-deep .el-input.is-focus .el-input__wrapper {
+                box-shadow: 0 0 0 1px transparent inset!important;
+            }
+            ::v-deep .el-select .el-input__wrapper.is-focus {
+                box-shadow: 0 0 0 1px transparent inset!important;
+            }
             >input {
                 width: 400px;
                 height: 100%;
