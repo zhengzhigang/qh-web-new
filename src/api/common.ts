@@ -87,6 +87,13 @@ export function listPostPage(params) {
         params
     });
 }
+export function exportByAuthorId(params) {
+    return request({
+        url: '/post/exportByAuthorId',
+        method: 'get',
+        params
+    });
+}
 export function searchPostTitle(params) {
     return request({
         url: '/searchPost/searchPostTitle',
@@ -168,7 +175,7 @@ export function listStatusAuthorPage(params) {
 // 事件轴api
 export function getTimeList(startYear) {
     return request({
-        url: `searchYear/searchByBirthYear?startYear=${startYear}&endYear=${startYear + 100}`,
+        url: `searchYear/searchByBirthYear?startYear=${startYear+10}&endYear=${startYear + 70}`,
         method:'get'
     })
 }

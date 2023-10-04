@@ -59,13 +59,13 @@
             <template v-if="datas.singleMatch==1">
                 <div class="details">
                     <div class="item">
-                        <p class="text-18px">基本信息:</p>
+                        <p class="text-18px">基本信息：</p>
                         <p class="text-14px leading-24px">
                             {{ getDynasty(datas.authorInfo.personInfo?.dynastyCode) }}&nbsp;
                             {{ datas.authorInfo.personInfo?.female==1?"女":"男" }}&nbsp;
-                            生卒:{{datas.authorInfo.personInfo?.birthYear==0?'?':datas.authorInfo.personInfo?.birthYear}}-{{datas.authorInfo.personInfo?.deathYear==0?'?':datas.authorInfo.personInfo?.deathYear}}&nbsp;&nbsp;
-                            年号:{{datas.authorInfo.personInfo?.byNianHaoDO==null?'?':datas.authorInfo.personInfo?.byNianHaoDO.nianHaoChn}}-{{datas.authorInfo.personInfo?.dyNianHaoDO==null?'?':datas.authorInfo.personInfo?.dyNianHaoDO.nianHaoChn}}&nbsp;&nbsp;
-                            <span v-if="datas.authorInfo.personInfo?.altNameDOList!=undefined && datas.authorInfo.personInfo?.altNameDOList!=null && datas.authorInfo.personInfo?.altNameDOList.length >0 ">别名:</span>
+                            生卒：clientX{{datas.authorInfo.personInfo?.birthYear==0?'?':datas.authorInfo.personInfo?.birthYear}}-{{datas.authorInfo.personInfo?.deathYear==0?'?':datas.authorInfo.personInfo?.deathYear}}&nbsp;&nbsp;
+                            年号：{{datas.authorInfo.personInfo?.byNianHaoDO==null?'?':datas.authorInfo.personInfo?.byNianHaoDO.nianHaoChn}}-{{datas.authorInfo.personInfo?.dyNianHaoDO==null?'?':datas.authorInfo.personInfo?.dyNianHaoDO.nianHaoChn}}&nbsp;&nbsp;
+                            <span v-if="datas.authorInfo.personInfo?.altNameDOList!=undefined && datas.authorInfo.personInfo?.altNameDOList!=null && datas.authorInfo.personInfo?.altNameDOList.length >0 ">别名：</span>
                             <template v-for="(item,index) in datas.authorInfo.personInfo?.altNameDOList">
                                 <span v-if="index==datas.authorInfo.personInfo?.altNameDOList.length-1">{{item.altNameChn}}</span>
                                 <span v-if="index<datas.authorInfo.personInfo?.altNameDOList.length-1">{{item.altNameChn}}、</span>
@@ -74,19 +74,19 @@
                         </p>
                         <p class="text-14px leading-24px">
                             <template v-for="(item,index) in datas.authorInfo.personInfo?.personAddrList">
-                                {{ computedAddrType(item.addrType) }}:{{item.addrName}}&nbsp;
+                                {{ computedAddrType(item.addrType) }}：{{item.addrName}}&nbsp;
                             </template>
                         </p>
 
                         <p class="text-14px leading-24px">
-                            <span v-if="datas.authorInfo.personInfo?.kinList!=undefined && datas.authorInfo.personInfo?.kinList!=null && datas.authorInfo.personInfo?.kinList.length >0 ">亲属:</span>
+                            <span v-if="datas.authorInfo.personInfo?.kinList!=undefined && datas.authorInfo.personInfo?.kinList!=null && datas.authorInfo.personInfo?.kinList.length >0 ">亲属：</span>
                             <template v-for="(item,index) in datas.authorInfo.personInfo?.kinList">
                                 <span v-if="index==datas.authorInfo.personInfo?.kinList.length-1">{{item.kinPerson.name}}({{ item.kinRelChn }})</span>
                                 <span v-if="index<datas.authorInfo.personInfo?.kinList.length-1">{{item.kinPerson.name}}({{ item.kinRelChn }})、</span>
                             </template>
                         </p>
                         <p class="text-14px leading-24px" v-if="datas.authorInfo.personInfo?.personStatusList!=undefined && datas.authorInfo.personInfo?.personStatusList!=null && datas.authorInfo.personInfo?.personStatusList.length >0 ">
-                            <span>标签:</span>
+                            <span>标签：</span>
                             <template v-for="(item,index) in datas.authorInfo.personInfo?.personStatusList">
                                 <span @click="onClickTag(item.statusCode)" style="cursor: pointer;">#{{item.statusDescChn}}&nbsp;&nbsp;</span>
                             </template>
@@ -102,7 +102,8 @@
                         <canvasPage :personId="datas.personId"/>
                     </div>
                     <div class="item" v-if="datas.authorId!='0'">
-                        <p class="text-18px">作品:</p>
+                        
+                        <p class="text-18px">作品  :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<el-button @click="exportByAuthorIdAction(datas.authorId)">导出</el-button></p>
                         <template v-for="(item,index) in datas.postListPage.list">
                             <div class="production">
                                 <span class="title">{{item.title}}</span>
@@ -333,6 +334,18 @@ const searchPostContentAction = async (pageNo:number=1,pageSizeParam:number=20) 
         currentPage.value = res.data.current
         pageSize.value = res.data.pageSize
     })
+}
+
+const exportByAuthorIdAction =   (authorId:any) =>{
+      console.log('exportByAuthorIdAction:', authorId);
+      //id text
+    //   const to = router.resolve({
+    //     name: "post/exportByAuthorId", //这里是跳转页面的name，要与路由设置保持一致
+    //     query: {authorId:authorId },
+    //   });
+    const exportUrl = `${import.meta.env.VITE_URL}/post/exportByAuthorId?authorId=${authorId}`;
+    window.open(exportUrl, "_blank");
+    return true
 }
 // searchAuthorAction()
 const onClickTag=(statusCode:any) =>{

@@ -73,6 +73,9 @@
       <el-table-column property="birthYear" label="出生年" width="100" />
       <el-table-column property="deathYear" label="死亡年"  width="100"/>
       <el-table-column property="dynastyChn" label="朝代"  width="60"/>
+      <el-table-column  label="操作"  width="60">
+            <span>选择</span>
+      </el-table-column>
     </el-table>
   </el-drawer>
 </template>
@@ -118,7 +121,7 @@ const handleSelect = (row: any) => {
         ElMessage({ message: '该人物的死亡日期为空', type: 'error' })
         return
     }
-    resetTime(rowData.birthYear-20)
+    resetTime(rowData.birthYear)
 }
 const searchAuthor = () => {
     if (datas.searchAuthorName == '') {
@@ -220,14 +223,15 @@ getInitData().then(res => { // 初始化
 const resetTime = (startYear:any) => {
   show.value = false
   scale.value = Math.floor(980 / (initData.value.step * 7.12))
-  defaultStartYear.value = startYear
-  tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')
-  getTimeList(defaultStartYear.value).then(res => {
-  tableList.value = res.data
-  noData.value =  res.data.length > 0 ? '' : '暂无数据'
-  fullscreenLoading.value = false
-  show.value = true
-})}
+  defaultStartYear.value = startYear-25
+  tableStart.value = Math.floor(defaultStartYear.value / 25) * 25;
+  // tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')
+  getTimeList(tableStart.value).then(res => {
+    tableList.value = res.data
+    noData.value =  res.data.length > 0 ? '' : '暂无数据'
+    fullscreenLoading.value = false
+    show.value = true
+  })}
 </script>
 <style lang="less" scoped>
 @keyframes fadeIn {
