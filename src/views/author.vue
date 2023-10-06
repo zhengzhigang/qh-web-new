@@ -124,7 +124,7 @@
     </div>
     <div class="bottom_div">
         <el-row class="mb-4">
-            <el-input style="width:200px" v-model="datas.searchAuthorName" placeholder="输入名字" />
+            <el-input style="width:200px" v-model="datas.searchAuthorName" placeholder="输入名额字"/>
             <el-button @click="searchAuthor" type="primary">搜索</el-button>
         </el-row>
         <span v-for="author in datas.authorList">

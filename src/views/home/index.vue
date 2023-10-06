@@ -29,7 +29,7 @@
                         </el-select>
 
 
-                        <input type="text" v-model="datas.searchStr"/>
+                        <input type="text" v-model="datas.searchStr" @keyup.enter="searchAction"/>
                         <!-- <el-input v-model="datas.searchStr" placeholder="" class="input-with-select">
                             <template #prepend>
                                 <el-select v-model="datas.index" placeholder="" style="width: 115px">

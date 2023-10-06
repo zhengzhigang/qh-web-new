@@ -7,7 +7,7 @@
       </div>
       <div class="mian" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="加载中、请稍候..." element-loading-background="rgba(216, 207, 180, 0.4)">
         <div class="searchname">
-            <el-input style="width:200px" v-model="datas.searchAuthorName" placeholder="输入名字" />
+            <el-input style="width:200px" v-model="datas.searchAuthorName" placeholder="输入名字" @keyup.enter="searchAuthor"/>
             <el-button @click="searchAuthor" type="primary">搜索</el-button>
         </div>
         <div class="timeScroll">
@@ -213,7 +213,7 @@ getInitData().then(res => { // 初始化
   scale.value = Math.floor(980 / (initData.value.step * 7.12))
   defaultStartYear.value = res.data.defaultStartYear
   tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')
-  getTimeList(defaultStartYear.value).then(res => {
+  getTimeList(defaultStartYear.value - 25).then(res => {
   tableList.value = res.data
   noData.value =  res.data.length > 0 ? '' : '暂无数据'
   fullscreenLoading.value = false
