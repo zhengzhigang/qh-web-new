@@ -63,7 +63,7 @@
                         <p class="text-14px leading-24px">
                             {{ getDynasty(datas.authorInfo.personInfo?.dynastyCode) }}&nbsp;
                             {{ datas.authorInfo.personInfo?.female==1?"女":"男" }}&nbsp;
-                            生卒：clientX{{datas.authorInfo.personInfo?.birthYear==0?'?':datas.authorInfo.personInfo?.birthYear}}-{{datas.authorInfo.personInfo?.deathYear==0?'?':datas.authorInfo.personInfo?.deathYear}}&nbsp;&nbsp;
+                            生卒：{{datas.authorInfo.personInfo?.birthYear==0?'?':datas.authorInfo.personInfo?.birthYear}}-{{datas.authorInfo.personInfo?.deathYear==0?'?':datas.authorInfo.personInfo?.deathYear}}&nbsp;&nbsp;
                             年号：{{datas.authorInfo.personInfo?.byNianHaoDO==null?'?':datas.authorInfo.personInfo?.byNianHaoDO.nianHaoChn}}-{{datas.authorInfo.personInfo?.dyNianHaoDO==null?'?':datas.authorInfo.personInfo?.dyNianHaoDO.nianHaoChn}}&nbsp;&nbsp;
                             <span v-if="datas.authorInfo.personInfo?.altNameDOList!=undefined && datas.authorInfo.personInfo?.altNameDOList!=null && datas.authorInfo.personInfo?.altNameDOList.length >0 ">别名：</span>
                             <template v-for="(item,index) in datas.authorInfo.personInfo?.altNameDOList">
@@ -296,7 +296,6 @@ const searchAuthorAction = async (pageNo:number=1,pageSizeParam:number=20) =>{
      searchAuthor({"authorName":datas.searchStr,"index":datas.index,"pageSize":pageSizeParam,"pageNo":pageNo}).then(res=>{
         console.log(res.data)
         if (res.data.singleMatch == 1) {
-            console.log(res.data)
             datas.singleMatch = 1
             datas.authorInfo = res.data.authorInfo
             datas.personId = res.data.authorInfo.personId
