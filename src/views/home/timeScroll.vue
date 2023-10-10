@@ -7,8 +7,16 @@
       </div>
       <div class="mian" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="加载中、请稍候..." element-loading-background="rgba(216, 207, 180, 0.4)">
         <div class="searchname">
-            <el-input style="width:200px" v-model="datas.searchAuthorName" placeholder="输入名字" @keyup.enter="searchAuthor"/>
-            <el-button @click="searchAuthor" type="primary">搜索</el-button>
+          <el-input
+            v-model="datas.searchAuthorName"
+            placeholder="输入名字"
+            style="width:260px"
+            clearable
+          >
+            <template #append>
+              <el-button color="#F85659" :icon="Search" @click="searchAuthor" class="searchBtn" type="primary"></el-button>
+            </template>
+          </el-input>
         </div>
         <div class="timeScroll">
           <div class="table" :style="{minHeight:!(tableList.length > 0) ? '380px' : 0}">
@@ -63,25 +71,23 @@
       <el-button color="#f4f1ea" type="info" :icon="ArrowLeftBold" class="left"  @click="switchYear(-150, 'left')" v-if="show" :disabled="defaultStartYear === initData.startYear"></el-button>
       <el-button color="#f4f1ea" type="info" :icon="ArrowRightBold" class="right" @click="switchYear(150, 'right')" v-if="show" :disabled="defaultStartYear === initData.endYear"></el-button>
   </div>
-  <el-drawer
-    v-model="datas.drawerShow"
-    direction="ttb"
-    size="50%"
-  >
-    <el-table :data="datas.searchAuthorList" @row-click="handleSelect">
-      <el-table-column property="name" label="名字" width="60" />
-      <el-table-column property="birthYear" label="出生年" width="100" />
-      <el-table-column property="deathYear" label="死亡年"  width="100"/>
-      <el-table-column property="dynastyChn" label="朝代"  width="60"/>
-      <el-table-column  label="操作"  width="60">
-            <span>选择</span>
-      </el-table-column>
-    </el-table>
-  </el-drawer>
+  <el-dialog v-model="datas.drawerShow" title="搜索结果" width="500" :close-on-click-modal="false">
+    <div style="margin: 0 auto">
+      <el-table :data="datas.searchAuthorList" @row-click="handleSelect">
+        <el-table-column property="name" label="名字" minWidth="100" />
+        <el-table-column property="birthYear" label="出生年" width="100" />
+        <el-table-column property="deathYear" label="死亡年"  width="100"/>
+        <el-table-column property="dynastyChn" label="朝代"  width="60"/>
+        <el-table-column  label="操作"  width="80">
+          <span class="btn">选择</span>
+        </el-table-column>
+      </el-table>
+    </div>
+  </el-dialog>
 </template>
 
 <script lang="ts" setup>
-import { ArrowLeftBold,ArrowRightBold } from '@element-plus/icons-vue';
+import { ArrowLeftBold,ArrowRightBold,Search } from '@element-plus/icons-vue';
 import Header from '@/components/header.vue';
 import Footer from '@/components/footer.vue';
 import { ref,reactive } from 'vue';
@@ -92,11 +98,8 @@ const show = ref(false) // 按钮显示隐藏
 const noData = ref('') // 没有数据显示字样
 const router = useRouter();
 const fullscreenLoading = ref(true) // 加载中状态
-const changeTopMenu = (type: number) => { // 切换页面
-  if(type==1) router.push({path: "home"});
-  if(type==2) router.push({path: "tag"});
-  if(type==3) router.push({path: "timeScroll"});
-}
+const selectAuthorName = ref('') // 加载中状态
+
 const datas = reactive({
     searchAuthorName: '',
     drawerShow: false,
@@ -104,7 +107,7 @@ const datas = reactive({
 
 })
 const handleSelect = (row: any) => {
-    console.log(row);
+    console.log('[ row ]=>-108', row.name)
     datas.drawerShow = false;
     let rowData:any;
     for (let i = 0; i < datas.searchAuthorList.length; i++) {
@@ -114,18 +117,19 @@ const handleSelect = (row: any) => {
         }
     }
     if (rowData.birthYear == null) {
-        ElMessage({ message: '该人物的出生日期为空', type: 'error' })
+        ElMessage({ message: '该人物的出生日期为空', type: 'warning' })
         return
     }
     if (rowData.deathYear == null) {
-        ElMessage({ message: '该人物的死亡日期为空', type: 'error' })
+        ElMessage({ message: '该人物的死亡日期为空', type: 'warning' })
         return
     }
+    selectAuthorName.value = row.name
     resetTime(rowData.birthYear)
 }
 const searchAuthor = () => {
     if (datas.searchAuthorName == '') {
-        ElMessage({ message: '请输入名字', type: 'error' })
+        ElMessage({ message: '请输入名字', type: 'warning' })
         return
     }
     findPersonByPersonName({ name: datas.searchAuthorName }).then(res => {
@@ -228,6 +232,12 @@ const resetTime = (startYear:any) => {
   // tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')
   getTimeList(tableStart.value).then(res => {
     tableList.value = res.data
+    console.log('[ tableList.value ]=>-229', tableList.value)
+    const index = tableList.value.findIndex(item => item.name === selectAuthorName.value)
+    if (index !== -1) {
+      const item = tableList.value.splice(index, 1)[0]
+      tableList.value.unshift(item)
+    }
     noData.value =  res.data.length > 0 ? '' : '暂无数据'
     fullscreenLoading.value = false
     show.value = true
@@ -241,6 +251,19 @@ const resetTime = (startYear:any) => {
       100% {
         opacity: 1;
       }
+}
+.btn {
+  color: #409eff;
+  cursor: pointer;
+}
+.el-input-group__append, .el-input-group__prepend {
+  padding: 0 !important;
+}
+.searchBtn {
+  // background: #F85659 !important;
+  .el-icon {
+    // color: #ffffff !important;
+  }
 }
 .progressBox {
   position: relative;
