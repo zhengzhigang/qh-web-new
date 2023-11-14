@@ -29,7 +29,7 @@
                         </el-select>
 
 
-                        <input type="text" v-model="datas.searchStr" @keyup.enter="searchAction"/>
+                        <input type="text" v-model="datas.searchStr" :style="{ width: poemTabActive[0] ? '400px' : '602px' }" @keyup.enter="searchAction"/>
                         <!-- <el-input v-model="datas.searchStr" placeholder="" class="input-with-select">
                             <template #prepend>
                                 <el-select v-model="datas.index" placeholder="" style="width: 115px">
@@ -506,8 +506,8 @@ const computedAddrType = computed(() => {
                 font-size: 14px;
                 font-weight: 500;
                 cursor: pointer;
+               }
             }
-        }
         .search-guid {
             padding-left: 60px;
             font-size: 14px;
