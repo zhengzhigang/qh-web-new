@@ -41,7 +41,7 @@
                                 </el-select>
                             </template>
                         </el-input> -->
-                        <span class="searchBtn" @click="searchAction">语义搜索</span>
+                        <span class="searchBtn" @click="searchAction">搜索</span>
                     </div>
                     <div class="search-guid flex items-center" style="display: none;">
                         搜索示例：
