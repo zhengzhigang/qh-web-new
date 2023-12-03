@@ -32,10 +32,36 @@
     modal-class="time-scroll__export-modal"
     :show-close="false"
     append-to-body
+    align-center
   >
-    <div>
-
-    </div>
+    <el-form :model="exportParams" label-width="120px">
+      <el-form-item label="范围：">{{ exportParams.range }}</el-form-item>
+      <el-form-item label="元素：">
+        <el-radio-group v-model="exportParams.element">
+          <el-radio class="time-scroll__export-modal-item" :label="1">事件</el-radio>
+          <el-radio class="time-scroll__export-modal-item" :label="2">作品</el-radio>
+          <el-radio class="time-scroll__export-modal-item" :label="3">关系</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="筛选：">
+        <el-checkbox
+          v-model="isCheckAll"
+          :indeterminate="isIndeterminate"
+          @change="handleCheckAllChange"
+          >全选</el-checkbox
+        >
+        <el-checkbox-group
+          v-model="exportParams.filterOptions"
+          @change="handleCheckedChange"
+        >
+          <el-checkbox
+            v-for="(item, index) in filterOptions"
+            :key="index"
+            :label="item.value"
+            class="time-scroll__export-modal-item">{{ item.label }}</el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
+    </el-form>
     <template #footer>
       <div>
         <el-button
@@ -55,22 +81,50 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 
 const emits = defineEmits(['switch'])
 
+const exportParams = reactive({
+  range: '620年-680年',
+  element: 1,
+  filterOptions: []
+})
 const options = ref([
   { label: '朝代', value: 0 },
   { label: '皇帝', value: 1 },
   { label: '年号', value: 2 }
 ])
-
+const filterOptions = ref([
+  { label: '选项一', value: 1 },
+  { label: '选项二', value: 2 },
+  { label: '选项三', value: 3 },
+  { label: '选项四', value: 4 },
+  { label: '选项五', value: 5 },
+  { label: '选项六', value: 6 },
+  { label: '选项七', value: 7 },
+  { label: '选项八', value: 8 }
+])
 const active = ref(0)
 const isShowExportDialog = ref(false)
+const isCheckAll = ref(false)
+const isIndeterminate = ref(false)
 
 const switchTab = (value) => {
   active.value = value
   emits('switch', value)
+}
+
+// 全选
+const handleCheckAllChange = (val ) => {
+  exportParams.filterOptions = val ? filterOptions.value.map((item) => item.value) : []
+  isIndeterminate.value = false
+}
+
+const handleCheckedChange = (value: number[]) => {
+  const checkedCount = value.length
+  isCheckAll.value = checkedCount === filterOptions.value.length
+  isIndeterminate.value = checkedCount > 0 && checkedCount < filterOptions.value.length
 }
 
 const closeExport = () => {
@@ -82,13 +136,14 @@ const showExport = () => {
 }
 
 const confirmExport = () => {
-  
+  isShowExportDialog.value = false
 }
 </script>
 <style lang="scss" scoped>
 .time-header {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 11px;
   font-size: 18px;
   color: #6D6A63;
 
@@ -112,7 +167,8 @@ const confirmExport = () => {
       color: #6D6A63;
       font-size: 14px;
 
-      &.active {
+      &.active,
+      &:hover {
         background: #6D6A63;
         color: #fff;
       }
@@ -126,6 +182,38 @@ const confirmExport = () => {
       width: 16px;
       margin-right: 5px;
     }
+  }
+}
+</style>
+<style lang="scss">
+.time-scroll__export-modal {
+  .el-dialog__header {
+    margin-right: 0;
+    padding: 0;
+    height: 60px;
+    line-height: 60px;
+    background: rgba(194, 181, 148, 0.2);
+    font-size: 20px;
+    color: #6D6A63;
+    text-align: center;
+  }
+
+  .el-dialog__footer {
+    padding: 13px 0;
+    text-align: center;
+    border-top: 1px solid #DDDDDD;
+  }
+
+  &-button {
+    width: 180px;
+
+    &:last-child {
+      margin-left: 68px;
+    }
+  }
+  &-item {
+    width: 130px;
+    margin: 0;
   }
 }
 </style>

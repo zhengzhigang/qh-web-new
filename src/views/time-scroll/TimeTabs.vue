@@ -58,31 +58,3 @@ const switchTab = (index) => {
   }
 }
 </style>
-<style lang="scss">
-.time-scroll__export-modal {
-    .el-dialog__header {
-      margin-right: 0;
-      padding: 0;
-      height: 60px;
-      line-height: 60px;
-      background: #C2B594;
-      font-size: 20px;
-      color: #6D6A63;
-      text-align: center;
-    }
-
-    .el-dialog__footer {
-      padding: 13px 0;
-      text-align: center;
-      border-top: 1px solid #DDDDDD;
-    }
-
-    &-button {
-      width: 180px;
-
-      &:last-child {
-        margin-left: 68px;
-      }
-    }
-  }
-</style>

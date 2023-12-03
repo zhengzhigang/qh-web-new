@@ -1,13 +1,12 @@
 <template>
   <div class="time-scroll wrapper bg-white">
     <div class="header h-220px">
-        <div class="w-1140px ml-auto mr-auto">
-            <Header :type="3"></Header>
-        </div>
+      <Header :type="3"></Header>
     </div>
     <div
       class="time-scroll__main" 
-      v-loading.fullscreen.lock="fullscreenLoading"
+      id="eqweqw"
+      v-loading.fullscreen.lock="state.loading"
       element-loading-text="加载中、请稍候..."
       element-loading-background="rgba(216, 207, 180, 0.4)"
     >
@@ -15,13 +14,41 @@
         :tabIndex="state.tabIndex"
         @switch="switchTab"></time-tabs>
       <time-search
-        :options="historicalEventOptions"
+        :historicalEventOptions="state.historicalEventOptions"
+        :personalEventOptions="state.personalEventOptions"
+        :worksOptions="state.worksOptions"
+        :timeType="state.tabIndex === 0 ? 'history' : 'personal'"
         @search="search"
       ></time-search>
-      <div class="time-scroll__content">
+      <!-- 落地页 -->
+      <div v-if="!state.timeData" style="margin-top: -40px;">
+        <time-data-summary
+          :eventNumber="state.summaryData.eventNumber"
+          :workNumber="state.summaryData.workNumber"
+          :relationNumber="state.summaryData.relationNumber"
+        ></time-data-summary>
+        <time-bar
+          v-if="state.summaryData.list && state.summaryData.list.length"
+          :title="state.summaryData.title"
+          :data="state.summaryData.list"
+          style="state.margin-bottom: 26px;"></time-bar>
+        <time-line
+          v-if="state.summaryData.list && state.summaryData.list.length"
+          :isShowTab="false"
+          :title="state.summaryData.title"
+          :data="state.summaryData.list"></time-line>
+      </div>
+      <!-- 时间轴 -->
+      <div v-if="state.timeData" class="time-scroll__content">
         <time-header></time-header>
-
-        <time-summary></time-summary>
+        <div class="time-scroll__content-main" id="timeContnet">
+          {{ state.lineX }}
+          <time-dynasty></time-dynasty>
+          <time-ruler></time-ruler>
+          <time-expand></time-expand>
+          <div class="time-scroll__content-line" :style="{ left: `${state.lineX}px` }"></div>
+        </div>
+        <time-line></time-line>
       </div>
     </div>
     <Footer></Footer>
@@ -29,41 +56,69 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from 'vue';
-import { getTimeList, getInitData ,getTimeListRight, findPersonByPersonName } from '../../api/common'
-import {useRouter} from 'vue-router';
-import { ElMessage } from 'element-plus'
-import Header from '@/components/header.vue';
+import { ref, reactive, onMounted } from 'vue';
+import Header from '@/components/headerNew.vue';
 import Footer from '@/components/footer.vue';
 import TimeTabs from './TimeTabs.vue'
 import TimeSearch from './TimeSearch.vue'
 import TimeHeader from './TimeHeader.vue'
-import TimeSummary from './TimeSummary.vue'
+import TimeLine from './TimeLine.vue'
+import TimeBar from './TimeBar.vue'
+import TimeDynasty from './TimeDynasty.vue'
+import TimeExpand from './TimeExpand.vue'
+import TimeRuler from './TimeRuler.vue'
+import TimeDataSummary from './TimeDataSummary.vue'
+import {
+  historicalEventOptions,
+  personalEventOptions,
+  worksOptions,
+  summaryData
+} from './luodiye'
 
-
-const show = ref(false) // 按钮显示隐藏
-const noData = ref('') // 没有数据显示字样
-const router = useRouter();
-const fullscreenLoading = ref(true) // 加载中状态
-const selectAuthorName = ref('') // 加载中状态
+let timeContnet = null
 
 const state = reactive({
+  loading: false,
   tabIndex: 0, // 选中tab索引
+  lineX: 0, // 时间线的x轴坐标
+  offset: 0, // 时间轴区域元素的offsetLeft值的和
+  historicalEventOptions: [], // 历史事件选项
+  personalEventOptions: [], // 个人事件选项
+  worksOptions: [], // 作品选项
+  summaryData: {}, // 落地页数据
+  timeData: {}
 })
 
-const exportParams = reactive({
-  range: '',
-  element: ''
-})
+// 获取筛选项数据
+const getFilterData = () => {
+  setTimeout(() => {
+    state.historicalEventOptions = historicalEventOptions
+    state.personalEventOptions = personalEventOptions
+    state.worksOptions = worksOptions
+  }, 300)
+}
 
-const historicalEventOptions = ref([
-  { label: '111111', value: 1 },
-  { label: '222222', value: 2 },
-  { label: '333333', value: 3 },
-  { label: '444444', value: 4 },
-  { label: '555555', value: 5 },
-  { label: '666666', value: 6 }
-])
+// 获取落地页数据
+const getLandingPageData = () => {
+  state.loading = true
+  setTimeout(() => {
+    state.summaryData = summaryData
+    state.loading = false
+  }, 500)
+}
+
+
+
+const getAllParentElements = (element) => {
+  var parentElements = []
+ 
+  while (element.parentElement) {
+    parentElements.push(element.parentElement)
+    element = element.parentElement
+  }
+ 
+  return parentElements
+}
 
 // 切换tab
 const switchTab = (index) => {
@@ -72,157 +127,32 @@ const switchTab = (index) => {
 
 // 搜索
 const search = () => {
-
+  setTimeout(() => {
+    state.timeData = {}
+  }, 300)
 }
 
-
-
-
-
-
-
-const datas = reactive({
-  searchAuthorName: '',
-  drawerShow: false,
-  searchAuthorList: [] as any,
-
-})
-const handleSelect = (row: any) => {
-    console.log('[ row ]=>-108', row.name)
-    datas.drawerShow = false;
-    let rowData:any;
-    for (let i = 0; i < datas.searchAuthorList.length; i++) {
-        if (datas.searchAuthorList[i].personId == row.personId) {
-            rowData = datas.searchAuthorList[i];
-            break;
-        }
-    }
-    if (rowData.birthYear == null) {
-        ElMessage({ message: '该人物的出生日期为空', type: 'warning' })
-        return
-    }
-    if (rowData.deathYear == null) {
-        ElMessage({ message: '该人物的死亡日期为空', type: 'warning' })
-        return
-    }
-    selectAuthorName.value = row.name
-    resetTime(rowData.birthYear)
+const moveTimeLine = (event) => {
+  state.lineX = event.clientX - 172
 }
-const searchAuthor = () => {
-    if (datas.searchAuthorName == '') {
-        ElMessage({ message: '请输入名字', type: 'warning' })
-        return
-    }
-    findPersonByPersonName({ name: datas.searchAuthorName }).then(res => {
-        console.log(res)
-        if (res.data == null) {
-            ElMessage({ message: '没有找到此作者', type: 'error' })
-            return
-        }
-        if (res.data.length >= 1) {
-            datas.searchAuthorList = res.data;
-            datas.drawerShow = true;
-        }
+
+onMounted(() => {
+  getFilterData()
+  getLandingPageData()
+
+  timeContnet = document.getElementById('timeContnet')
+  if (timeContnet) {
+    const parents = getAllParentElements(timeContnet)
+    console.log(timeContnet.offsetLeft)
+  
+    parents.forEach((el) => {
+      console.log('^^^^', el.offsetLeft)
+      state.offset = state.offset + el.offsetLeft
     })
-}
-const tableList = ref<any>([])
-const initData = ref<any>({}) // 初始数据
-const tableStart = ref(0) // 表格开始位置
-const defaultStartYear = ref(0) // 默认获取列表参数
-const replaceLastTwoDigits = (num, newDigits) => {  // 将开始时间转化为整数
-  let numStr = num.toString();
-  if(num < 0) {
-    let newNumStr = numStr.slice(0, numStr.length - 2) + '00';
-    let newNum = parseInt(newNumStr);
-    let oldNum = parseInt(newDigits)
-    return newNum - oldNum
-  } else {
-    let newNumStr = numStr.slice(0, numStr.length - 2) + newDigits;
-    let newNum = parseInt(newNumStr);
-    return newNum;
+    console.log(state.offset)
+    timeContnet.addEventListener('mousemove', moveTimeLine)
   }
-}
-const switchYear = (year, code) => { //切换显示范围
-  fullscreenLoading.value = true
-  defaultStartYear.value += year
-  if(defaultStartYear.value < initData.value.startYear) {
-    defaultStartYear.value = initData.value.startYear
-  }
-  if(defaultStartYear.value + 150 > initData.value.endYear) {
-    defaultStartYear.value = initData.value.endYear - 150
-  }
-  if(defaultStartYear.value + 150 !== initData.value.endYear || defaultStartYear.value !== initData.value.startYear) {
-    tableList.value = []
-  }
-  if(code === 'left') {
-    show.value = false
-    getTimeListRight(defaultStartYear.value).then(res => {
-      tableList.value = res.data
-      fullscreenLoading.value = false
-      noData.value =  res.data.length > 0 ? '' : '暂无数据'
-      setTimeout(() => {
-        if(defaultStartYear.value === initData.value.startYear) {
-          ElMessage({
-            message: '前面没有更多了',
-            type: 'success',
-          })
-        }
-      }, 2000);
-        show.value = true
-    })
-    tableStart.value -= 150
-  } else {
-    show.value = false
-    getTimeList(defaultStartYear.value).then(res => {
-      tableList.value = res.data
-      fullscreenLoading.value = false
-      noData.value =  res.data.length > 0 ? '' : '暂无数据'
-      console.log((defaultStartYear.value + 150) , );
-      setTimeout(() => {
-        if((defaultStartYear.value + 150) === initData.value.endYear) {
-          ElMessage({
-            message: '当前已是最后一页',
-            type: 'success',
-          })
-        }
-      }, 500);
-        show.value = true
-    })
-    tableStart.value += 150
-  }
-}
-const scale = ref(0) //刻度
-getInitData().then(res => { // 初始化
-  show.value = false
-  initData.value = res.data
-  scale.value = Math.floor(980 / (initData.value.step * 7.12))
-  defaultStartYear.value = res.data.defaultStartYear
-  tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')
-  getTimeList(defaultStartYear.value - 25).then(res => {
-  tableList.value = res.data
-  noData.value =  res.data.length > 0 ? '' : '暂无数据'
-  fullscreenLoading.value = false
-  show.value = true
 })
-})
-const resetTime = (startYear:any) => {
-  show.value = false
-  scale.value = Math.floor(980 / (initData.value.step * 7.12))
-  defaultStartYear.value = startYear-25
-  tableStart.value = Math.floor(defaultStartYear.value / 25) * 25;
-  // tableStart.value = defaultStartYear.value % 100 > 50 ? replaceLastTwoDigits(defaultStartYear.value, '50') : replaceLastTwoDigits(defaultStartYear.value, '00')
-  getTimeList(tableStart.value).then(res => {
-    tableList.value = res.data
-    console.log('[ tableList.value ]=>-229', tableList.value)
-    const index = tableList.value.findIndex(item => item.name === selectAuthorName.value)
-    if (index !== -1) {
-      const item = tableList.value.splice(index, 1)[0]
-      tableList.value.unshift(item)
-    }
-    noData.value =  res.data.length > 0 ? '' : '暂无数据'
-    fullscreenLoading.value = false
-    show.value = true
-  })}
 </script>
 <style lang="less" scoped>
 .time-scroll {
@@ -230,9 +160,9 @@ const resetTime = (startYear:any) => {
 
   &__main {
     position: relative;
-    margin: -310px 0 0 50%;
+    margin: -352px 0 0 50%;
     transform: translate(-50%);
-    width: 1140px;
+    width: 1200px;
     background-repeat: repeat-y;
     background-position:center;
     background-size: 1150px auto;
@@ -243,9 +173,22 @@ const resetTime = (startYear:any) => {
     position: relative;
     padding: 13px;
     margin-top: -40px;
-    background: #fff;
     border-radius: 4px;
     z-index: 1;
+    background: #fff;
+
+    &-main {
+      position: relative;
+    }
+
+    &-line {
+      position: absolute;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      z-index: 1;
+      background: #6D6A63;
+    }
   }
 }
 @keyframes fadeIn {
