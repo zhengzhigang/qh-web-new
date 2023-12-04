@@ -6,7 +6,7 @@ const summaryData = {
   title: '各年份事件数',
   list: [
     { year:618, events:20 },
-    { year:628, events:8 },
+    { year:636, events:8 },
     { year:638, events:50 },
     { year:648, events:55 },
     { year:658, events:20 },

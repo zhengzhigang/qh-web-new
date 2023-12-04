@@ -14,7 +14,8 @@ export const mainStore = defineStore('main', {
             sponsorUserId: '',
             sponsorUserName: '',
             sponsorUserAvatar: ''
-        } // 切换会议室信息
+        }, // 切换会议室信息
+        currentYear: 0, // 时间轴鼠标所在位置对应的年份
     }),
     actions: {
         updateCheckVideo(check: boolean) {
@@ -44,6 +45,9 @@ export const mainStore = defineStore('main', {
         clearChooseList() {
             this.chooseList = []
             this.chooseUserIds = []
+        },
+        updateYear(val: number) {
+            this.currentYear = val
         }
     }
 })

@@ -17,8 +17,8 @@ import { onMounted, ref } from 'vue'
 import * as echarts from 'echarts'
 
 interface Props {
-  isShowTab: boolean
-  tabs: any
+  isShowTab?: boolean
+  tabs?: any
   title: string
   data: any[]
 }

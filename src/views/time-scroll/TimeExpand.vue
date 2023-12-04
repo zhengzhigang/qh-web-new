@@ -10,11 +10,13 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import * as echarts from 'echarts'
+import { mainStore  } from '@/pinia/main'
+const store = mainStore()
 
 interface Props {
-  title: string
+  title?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -104,6 +106,10 @@ const init = () => {
 
   myEcharts.setOption(option)
 }
+
+watch(() => store.currentYear, (val) => {
+  console.log('===', val)
+})
 
 onMounted(() => {
   init()

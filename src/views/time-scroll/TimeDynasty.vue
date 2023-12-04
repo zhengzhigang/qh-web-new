@@ -13,7 +13,7 @@ import { onMounted } from 'vue';
 interface Props {
   start: number
   end: number
-  dynastyList: any
+  dynastyList?: any
 }
 
 const props = withDefaults(defineProps<Props>(), {

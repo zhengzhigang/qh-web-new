@@ -44,11 +44,14 @@
         <div class="time-scroll__content-main" id="timeContnet">
           {{ state.lineX }}
           <time-dynasty></time-dynasty>
-          <time-ruler></time-ruler>
+          <time-ruler :lineX="state.lineX"></time-ruler>
           <time-expand></time-expand>
           <div class="time-scroll__content-line" :style="{ left: `${state.lineX}px` }"></div>
         </div>
-        <time-line></time-line>
+        <time-line
+          v-if="state.summaryData.list && state.summaryData.list.length"
+          :title="state.summaryData.title"
+          :data="state.summaryData.list"></time-line>
       </div>
     </div>
     <Footer></Footer>
@@ -56,7 +59,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
 import Header from '@/components/headerNew.vue';
 import Footer from '@/components/footer.vue';
 import TimeTabs from './TimeTabs.vue'
@@ -81,7 +84,7 @@ const state = reactive({
   loading: false,
   tabIndex: 0, // 选中tab索引
   lineX: 0, // 时间线的x轴坐标
-  offset: 0, // 时间轴区域元素的offsetLeft值的和
+  offsetLeft: 0, // 时间轴区域元素的offsetLeft值的和
   historicalEventOptions: [], // 历史事件选项
   personalEventOptions: [], // 个人事件选项
   worksOptions: [], // 作品选项
@@ -107,19 +110,6 @@ const getLandingPageData = () => {
   }, 500)
 }
 
-
-
-const getAllParentElements = (element) => {
-  var parentElements = []
- 
-  while (element.parentElement) {
-    parentElements.push(element.parentElement)
-    element = element.parentElement
-  }
- 
-  return parentElements
-}
-
 // 切换tab
 const switchTab = (index) => {
   state.tabIndex = index
@@ -133,25 +123,29 @@ const search = () => {
 }
 
 const moveTimeLine = (event) => {
-  state.lineX = event.clientX - 172
+  state.lineX = event.clientX - state.offsetLeft
+}
+
+const getTimeContnetRect = () => {
+  const rect = timeContnet.getBoundingClientRect()
+  state.offsetLeft = rect.left
 }
 
 onMounted(() => {
   getFilterData()
   getLandingPageData()
-
+  
   timeContnet = document.getElementById('timeContnet')
   if (timeContnet) {
-    const parents = getAllParentElements(timeContnet)
-    console.log(timeContnet.offsetLeft)
-  
-    parents.forEach((el) => {
-      console.log('^^^^', el.offsetLeft)
-      state.offset = state.offset + el.offsetLeft
-    })
-    console.log(state.offset)
+    getTimeContnetRect()
     timeContnet.addEventListener('mousemove', moveTimeLine)
+    window.addEventListener('resize', getTimeContnetRect)
   }
+})
+
+onBeforeUnmount(() => {
+  timeContnet.removeEventListener('mousemove', moveTimeLine)
+  window.removeEventListener('resize', getTimeContnetRect)
 })
 </script>
 <style lang="less" scoped>

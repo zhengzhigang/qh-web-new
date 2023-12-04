@@ -22,6 +22,14 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { onMounted, watch } from 'vue'
+import { throttle } from 'lodash-es'
+import { mainStore  } from '@/pinia/main'
+const store = mainStore()
+
+interface Props {
+  lineX: number
+}
 // 总共1052px
 const all = 1052
 const start = 620
@@ -29,6 +37,26 @@ const end = 828 + 2
 // 每个刻度间隔px, 每个刻度是2年
 const space = Math.floor(all / ((end - start) / 2))
 
+const props = withDefaults(defineProps<Props>(), {
+  lineX: 0
+})
+
+// 计算当前鼠标所属年份
+const getCurrentYear = (mouseX) => {
+  const base = mouseX - 58
+  if (base >= 0) {
+    const year = Math.floor(base / space * 2 + start)
+    if (year <= end) {
+      store.updateYear(year)
+    }
+  }
+}
+
+const throttleGetYear = throttle(getCurrentYear, 300)
+
+watch(() => props.lineX, (v) => {
+  throttleGetYear(v)
+})
 </script>
 <style lang="scss" scoped>
 .time-ruler {
