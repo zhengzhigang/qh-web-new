@@ -55,10 +55,20 @@ const option = {
     axisLabel: {
       textStyle: {
         color: 'rgba(134, 128, 112, 0.6)',
+      },
+      formatter: (item,index)=>{
+          let a = [618, 636, 638, 668, 678, 698, 708, 738]
+          let b = [0, 1, 2, 5, 6, 8, 9, 12]
+          for(let i in b){
+             if(index===b[i]){
+              return a[i]
+            }
+          }
+         return ''
       }
     },
     // x轴刻度
-    axisTick: {
+    axisTick:{
       show: false
     },
     // x轴线
@@ -101,7 +111,8 @@ const option = {
       },
       lineStyle: {
         color: '#C2B594'
-      }
+      },
+      connectNulls: true
     }
   ]
 }

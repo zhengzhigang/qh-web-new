@@ -1,23 +1,23 @@
 <template>
   <div class="time-search">
     <div
-      v-if="timeType === 'personal'"
+      v-if="timeType === 'history'"
       class="time-search__item time-search__item-short"
     >
       <el-input
-        v-model="params.author"
+        v-model="params.startYear"
         placeholder="请输入起始年份"
         size="large"
         style="width: 220px;"
       ></el-input>
       <el-input
-        v-model="params.author"
+        v-model="params.endYear"
         placeholder="请输入结束年份"
         size="large"
         style="width: 220px;"
       ></el-input>
     </div>
-    <div v-if="timeType === 'history'" class="time-search__item">
+    <div v-if="timeType === 'personal'" class="time-search__item">
       <span class="time-search__item-prefix">作者</span>
       <el-input
         v-model="params.author"
@@ -101,6 +101,7 @@
 </template>
 <script lang="ts" setup>
 import { reactive } from 'vue'
+import { ElMessage } from 'element-plus'
 
 interface Props {
   timeType: string // 时间轴类型 history-历史时间轴 personal-个人时间轴
@@ -126,7 +127,33 @@ const params = reactive({
 })
 const emits = defineEmits(['search'])
 
+const isNumber = (input) => {
+  // 使用正则表达式匹配数字
+  var regex = /^\d+$/;
+  return regex.test(input);
+}
+ 
+
+const validate = () => {
+  if (props.timeType === 'personal') return true
+  if (props.timeType === 'history') {
+    if (!isNumber(params.startYear) || !isNumber(params.endYear)) {
+      ElMessage.error('起始年份和结束年份必须为数字')
+      return false
+    }
+
+    const yearDiff = Number(params.endYear) - Number(params.startYear)
+    if (yearDiff < 50 || yearDiff > 500) {
+      ElMessage.error('筛选年份范围应在50-500之间')
+      return false
+    }
+
+    return true
+  }
+}
+
 const search = () => {
+  if (!validate()) return
   emits('search', params)
 }
 </script>

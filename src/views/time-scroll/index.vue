@@ -42,9 +42,9 @@
       <div v-if="state.timeData" class="time-scroll__content">
         <time-header></time-header>
         <div class="time-scroll__content-main" id="timeContnet">
-          {{ state.lineX }}
           <time-dynasty></time-dynasty>
           <time-ruler :lineX="state.lineX"></time-ruler>
+          <time-relation></time-relation>
           <time-expand></time-expand>
           <div class="time-scroll__content-line" :style="{ left: `${state.lineX}px` }"></div>
         </div>
@@ -71,6 +71,8 @@ import TimeDynasty from './TimeDynasty.vue'
 import TimeExpand from './TimeExpand.vue'
 import TimeRuler from './TimeRuler.vue'
 import TimeDataSummary from './TimeDataSummary.vue'
+import TimeRelation from './TimeRelation.vue'
+
 import {
   historicalEventOptions,
   personalEventOptions,
@@ -79,6 +81,23 @@ import {
 } from './luodiye'
 
 let timeContnet = null
+
+const arr = [620, 624, 631, 633, 634, 635, 642]
+const arr2 = []
+
+for (let i = 0; i < arr.length; i++) {
+  const current = arr[i]
+  let next = arr[i + 1]
+  arr2.push(arr[i])
+  if (next) {
+    let diff = next - current
+    if (diff > 1) {
+      const newArr = new Array(diff - 1).fill(null)
+      arr2.push(...newArr)
+    }
+  }
+}
+console.log(arr2)
 
 const state = reactive({
   loading: false,

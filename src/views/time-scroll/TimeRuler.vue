@@ -33,7 +33,7 @@ interface Props {
 // 总共1052px
 const all = 1052
 const start = 620
-const end = 828 + 2
+const end = 722 + 2
 // 每个刻度间隔px, 每个刻度是2年
 const space = Math.floor(all / ((end - start) / 2))
 
