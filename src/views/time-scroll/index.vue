@@ -114,23 +114,6 @@ import {
 
 let timeContnet = null
 
-const arr = [620, 624, 631, 633, 634, 635, 642]
-const arr2 = []
-
-for (let i = 0; i < arr.length; i++) {
-  const current = arr[i]
-  let next = arr[i + 1]
-  arr2.push(arr[i])
-  if (next) {
-    let diff = next - current
-    if (diff > 1) {
-      const newArr = new Array(diff - 1).fill(null)
-      arr2.push(...newArr)
-    }
-  }
-}
-console.log(arr2)
-
 const state = reactive({
   loading: false,
   tabIndex: 0, // 选中tab索引

@@ -30,7 +30,7 @@ import {
   MarkLineComponent,
 } from "echarts/components"
 import VChart, { THEME_KEY } from "vue-echarts"
-import { ref, provide, onMounted, computed } from 'vue'
+import { ref, provide, onMounted, computed, toRaw } from 'vue'
 import { getMinMax, getOptions } from './time-util'
 import { EChartsOption, DataItem } from './type'
 
@@ -79,12 +79,6 @@ const emits = defineEmits(['showDetail', 'toggleExpand'])
 
 const minMax = getMinMax(props)
 
-const xAxisData = [
-  minMax.minYear - 300,
-  ...props.xAxisData,
-  minMax.maxYear + 300,
-];
-const lineData = [undefined, ...props.lineData, undefined];
 const scatterData = [{ value: '0' }, ...props.scatterData, { value: '0' }].map(
   (scatter) =>
     `${scatter.value}` === '0'
@@ -98,10 +92,43 @@ const bg = computed(() => {
   return `@/assets/time-card-bg0${props.type}.png`
 })
 
+// 数据补空处理
+const arrFillNull = (tmpl, list) => {
+  let newList = []
+  for (let i = 0; i < tmpl.length; i++) {
+    const current = tmpl[i]
+    let next = tmpl[i + 1]
+    newList.push(list[i])
+    if (next) {
+      let diff = next - current
+      if (diff > 1) {
+        const newArr = new Array(diff - 1).fill(null)
+        newList.push(...newArr)
+      }
+    }
+  }
+  return newList
+}
+
+// 数据连续处理
+const generateContinuousArray = (start, end) => {
+  return Array.from({ length: end - start + 1 }, (_, index) => start + index)
+}
+
+// y轴数据补空处理，x轴数据做连续处理
 const option = ref<EChartsOption>({
-  ...getOptions({ xAxisData, minMax, lineData, scatterData, color: colors[props.type] }),
+  ...getOptions({
+    xAxisData: generateContinuousArray(props.xAxisData[0], props.xAxisData[xAxisData.length - 1]),
+    minMax,
+    lineData: arrFillNull(props.xAxisData, props.lineData),
+    scatterData,
+    color: colors[props.type]
+  }),
   ...props.option,
 });
+
+console.log('===========', toRaw(option.value))
+
 
 const handleClick = (e: any) => {
   if (e.seriesName === 'scatter') {

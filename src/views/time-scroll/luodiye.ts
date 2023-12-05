@@ -52,7 +52,7 @@ const worksOptions = [
 ]
 
 const cardData = {
-  xData: [620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720],
+  xData: [620, 623, 635, 636, 660, 670, 674, 690, 708, 710, 720],
   lineData: [
     { id: "1", value: "33" },
     { id: "2", value: "55" },

@@ -100,7 +100,7 @@ const option = {
   },
   series: [
     {
-      data: [20, 8, 50, 55, 20, 47, 28, 66, 80, 55, 37, 50, 67, 23, 20, 47, 30],
+      data: [],
       type: 'line',
       symbol: 'circle',
       symbolSize: 8,

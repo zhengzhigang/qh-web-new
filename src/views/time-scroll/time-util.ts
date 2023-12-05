@@ -1,13 +1,13 @@
-import { EChartsOption, IDataItem, IMinMax } from "./type";
+import { EChartsOption, DataItem, MinMax } from "./type";
 
 export const getMinMax = ({
   lineData,
   xAxisData,
 }: {
-  lineData: Array<string | number | IDataItem>;
-  xAxisData: Array<string | number | IDataItem>;
-}): IMinMax => {
-  const minMax: IMinMax = {
+  lineData: Array<string | number | DataItem>;
+  xAxisData: Array<string | number | DataItem>;
+}): MinMax => {
+  const minMax: MinMax = {
     minCount: 0,
     maxCount: 0,
     maxCountDiff: 0,
@@ -17,11 +17,11 @@ export const getMinMax = ({
   };
 
   const sortFn = (
-    a: string | number | IDataItem,
-    b: string | number | IDataItem
+    a: string | number | DataItem,
+    b: string | number | DataItem
   ) => Number.parseInt(`${a}`) - Number.parseInt(`${b}`);
 
-  const getValue = (item: string | number | IDataItem) =>
+  const getValue = (item: string | number | DataItem) =>
     typeof item === "object" ? item.value : item;
 
   const countData = lineData.map(getValue).sort(sortFn);
@@ -58,23 +58,12 @@ export const getOptions = ({
     },
     formatter: "{c}",
   },
-  dataZoom: [
-    {
-      show: false,
-      realtime: true,
-    },
-    {
-      type: "inside",
-      show: false,
-      realtime: false,
-    },
-  ],
   grid: [
     {
       left: 10,
       top: 0,
       right: 40,
-      bottom: 0,
+      bottom: 20,
     },
   ],
   xAxis: [
@@ -131,6 +120,7 @@ export const getOptions = ({
         ],
         silent: true,
       },
+      connectNulls: true
     },
     {
       name: "scatter",
