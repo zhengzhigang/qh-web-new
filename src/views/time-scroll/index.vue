@@ -42,6 +42,36 @@
       <div v-if="state.timeData" class="time-scroll__content">
         <time-header></time-header>
         <div class="time-scroll__content-main" id="timeContnet">
+          <time-card
+            :xAxisData="cardData.xData"
+            :lineData="cardData.lineData"
+            :scatterData="cardData.scatterData"
+            title="政治事件"
+            :type="1"></time-card>
+          <time-card
+            :xAxisData="cardData.xData"
+            :lineData="cardData.lineData"
+            :scatterData="cardData.scatterData"
+            title="自然事件"
+            :type="2"></time-card>
+          <time-card
+            :xAxisData="cardData.xData"
+            :lineData="cardData.lineData"
+            :scatterData="cardData.scatterData"
+            title="人物事件"
+            :type="3"></time-card>
+            <time-card
+              :xAxisData="cardData.xData"
+              :lineData="cardData.lineData"
+              :scatterData="cardData.scatterData"
+              title="人物事件"
+              :type="4"></time-card>
+            <time-card
+              :xAxisData="cardData.xData"
+              :lineData="cardData.lineData"
+              :scatterData="cardData.scatterData"
+              title="人物事件"
+              :type="5"></time-card>
           <time-dynasty></time-dynasty>
           <time-ruler :lineX="state.lineX"></time-ruler>
           <time-relation></time-relation>
@@ -72,12 +102,14 @@ import TimeExpand from './TimeExpand.vue'
 import TimeRuler from './TimeRuler.vue'
 import TimeDataSummary from './TimeDataSummary.vue'
 import TimeRelation from './TimeRelation.vue'
+import TimeCard from './TimeCard.vue'
 
 import {
   historicalEventOptions,
   personalEventOptions,
   worksOptions,
-  summaryData
+  summaryData,
+  cardData
 } from './luodiye'
 
 let timeContnet = null

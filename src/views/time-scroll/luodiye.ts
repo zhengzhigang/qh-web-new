@@ -51,9 +51,40 @@ const worksOptions = [
   { label: '作品六', value: 6 }
 ]
 
+const cardData = {
+  xData: [620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720],
+  lineData: [
+    { id: "1", value: "33" },
+    { id: "2", value: "55" },
+    { id: "3", value: "44" },
+    { id: "4", value: "66" },
+    { id: "5", value: "22" },
+    { id: "6", value: "33" },
+    { id: "7", value: "55" },
+    { id: "8", value: "44" },
+    { id: "9", value: "66" },
+    { id: "10", value: "22" },
+    { id: "11", value: "33" },
+  ],
+  scatterData: [
+    { id: "1", value: "1" },
+    { id: "2", value: "0" },
+    { id: "3", value: "1" },
+    { id: "4", value: "0" },
+    { id: "5", value: "1" },
+    { id: "6", value: "1" },
+    { id: "7", value: "0" },
+    { id: "8", value: "1" },
+    { id: "9", value: "0" },
+    { id: "10", value: "1" },
+    { id: "11", value: "1" },
+  ]
+}
+
 export {
   historicalEventOptions,
   personalEventOptions,
   worksOptions,
-  summaryData
+  summaryData,
+  cardData
 }
