@@ -76,7 +76,7 @@
           <time-ruler :lineX="state.lineX"></time-ruler>
           <time-relation></time-relation>
           <time-expand></time-expand>
-          <div class="time-scroll__content-line" :style="{ left: `${state.lineX}px` }"></div>
+          <div class="time-scroll__content-line" :style="{ left: `${state.lineX - 2}px` }"></div>
         </div>
         <time-line
           v-if="state.summaryData.list && state.summaryData.list.length"

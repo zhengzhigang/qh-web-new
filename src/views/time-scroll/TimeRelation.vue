@@ -1,13 +1,31 @@
 <template>
   <div class="time-relation">
-    <el-button class="time-relation__button" type="primary" color="#A79B7A">相关人物</el-button>
+    <el-button
+      class="time-relation__button"
+      type="primary"
+      color="#A79B7A"
+      @click="showRelation"
+    >相关人物</el-button>
     <div
       class="time-relation__axle-main"
-      :style="{ width: `${mainWidth}px` }"
+      :style="{ width: `${mainWidth}px`, marginBottom: isShowRelation ? '44px' : '24px' }"
     >
       {{ props.dataList.name }}({{ props.dataList.startYear }}-{{ props.dataList.endYear }})
+      <div
+        v-for="item in (props.dataList.endYear - props.dataList.startYear)"
+        :key="item"
+        class="time-relation__axle-mark"
+        :style="{
+          left: mainWidth / (props.dataList.endYear - props.dataList.startYear) * item + 'px',
+          height: scaleHeight(item, props.dataList.endYear - props.dataList.startYear)
+        }"
+      >
+        <span
+          v-if="scaleHeight(item, props.dataList.endYear - props.dataList.startYear)"
+          class="time-relation__axle-mark-year">{{ item }}</span>
+      </div>
     </div>
-    <div>
+    <div v-if="isShowRelation">
       <div
         v-for="(item, index) in props.dataList.relations"
         :key="index"
@@ -17,8 +35,6 @@
           left: `${(item.startYear - start) / allYear * 100}%`
         }"
       >
-      {{ item.startYear  }}=={{ start }}
-
         {{ item.name }}({{ item.startYear }}-{{ item.endYear }})
       </div>
     </div>
@@ -60,7 +76,7 @@ const props = withDefaults(defineProps<Props>(), {
       {
         name: '杜甫',
         startYear: 667,
-        endYear: 721,
+        endYear: 705,
       },
       {
         name: '李白',
@@ -88,6 +104,7 @@ const props = withDefaults(defineProps<Props>(), {
 const all = 1052
 const start = ref(0)
 const end = ref(0)
+const isShowRelation = ref(false)
 const allYear = computed(() => {
   return end.value - start.value
 })
@@ -99,6 +116,32 @@ const mainWidth = computed(() => {
   return space.value * (props.dataList.endYear - props.dataList.startYear) / 2
 })
 
+/**
+ * 计算刻度的高度，控制是否可见
+ * @param year 当前年龄
+ * @param s 开始年龄
+ * @param e 结束年龄
+ */
+const scaleHeight = (curr, years) => {
+  // 如果整10结尾，结尾显示数字后移2个，前移2个
+  if (years % 10 === 0 && years === curr) {
+    return 0
+  }
+  if ((curr === 2) || (years % 10 === 0 && curr === years - 2)) {
+    return '6px'
+  }
+
+  if (curr % 10 === 0) {
+    return '6px'
+  } else {
+    return 0
+  }
+}
+
+const showRelation = () => {
+  isShowRelation.value = true
+}
+
 onMounted(() => {
   start.value = props.dataList.startYear - 20
   end.value = props.dataList.endYear + 20
@@ -106,31 +149,58 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .time-relation {
-  margin: 0 64px 0 58px;
   position: relative;
+  margin: 0 64px 0 58px;
+
+  &__button {
+    position: absolute;
+    right: 0;
+    color: #fff;
+  }
+
+  .relation-line {
+    height: 18px;
+    border-radius: 9px;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: center;
+  }
 
   &__axle {
     &-main {
+      position: relative;
       margin-left: auto;
       margin-right: auto;
-      margin-bottom: 44px;
-      height: 18px;
       background: #734D00;
-      border-radius: 9px;
-      font-size: 14px;
       color: #FCF9F1;
-      text-align: center;
+
+      @extend .relation-line;
+
+    }
+    
+    &-mark {
+      position: absolute;
+      bottom: 0;
+      width: 1px;
+      background: #CFC2A0;
+
+      &-year {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 14px;
+        color: #6D6A63;
+      }
     }
 
     &-relation {
       position: relative;
-      height: 18px;
       margin-bottom: 10px;
-      border-radius: 9px;
       background: #CFC2A0;
-      font-size: 14px;
       color: #6D6A63;
-      text-align: center;
+
+      @extend .relation-line;
     }
   }
 }

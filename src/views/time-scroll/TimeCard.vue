@@ -118,7 +118,7 @@ const generateContinuousArray = (start, end) => {
 // y轴数据补空处理，x轴数据做连续处理
 const option = ref<EChartsOption>({
   ...getOptions({
-    xAxisData: generateContinuousArray(props.xAxisData[0], props.xAxisData[xAxisData.length - 1]),
+    xAxisData: generateContinuousArray(props.xAxisData[0], props.xAxisData[props.xAxisData.length - 1]),
     minMax,
     lineData: arrFillNull(props.xAxisData, props.lineData),
     scatterData,
