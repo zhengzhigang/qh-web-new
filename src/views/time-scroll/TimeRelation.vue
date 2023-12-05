@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   dataList: {
     name: '李白',
     startYear: 640,
-    endYear: 702,
+    endYear: 700,
     relations: [
       {
         name: '杜甫',
@@ -93,10 +93,10 @@ const allYear = computed(() => {
 })
 // 每个刻度间隔px, 每个刻度是2年
 const space = computed(() => {
-  return Math.floor(all / ((props.dataList.endYear - props.dataList.startYear) / 2))
+  return Math.floor(all / ((end.value - start.value) / 2))
 })
 const mainWidth = computed(() => {
-  return space.value * (end.value - start.value) / 2
+  return space.value * (props.dataList.endYear - props.dataList.startYear) / 2
 })
 
 onMounted(() => {
@@ -106,7 +106,7 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .time-relation {
-  margin: 0 64px 0 5;
+  margin: 0 64px 0 58px;
   position: relative;
 
   &__axle {

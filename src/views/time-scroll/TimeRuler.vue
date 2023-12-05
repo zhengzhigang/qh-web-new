@@ -2,18 +2,18 @@
   <div class="time-ruler">
     <div class="time-ruler__main">
       <span
-        v-for="(item, index) in Math.floor((end - start) / 2)"
+        v-for="(item, index) in Math.ceil((end - start) / 2)"
         :key="item"
         class="time-ruler__line"
         :style="{ left: `${index * space}px` }"
         :class="{
           long: (index * 2) % 10 === 0,
-          bottom: (Math.floor(index / 5)) % 2 === 1
+          bottom: (index / 5) % 2 === 1
         }"
       >
         <span
           class="time-ruler__line-number"
-          :class="{ bottom: (Math.floor(index / 5)) % 2 === 1 }"
+          :class="{ bottom: (index / 5) % 2 === 1 }"
         >
           {{ (index * 2) % 10 === 0 ? (start + index * 2) : '' }}
         </span>
@@ -22,7 +22,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, watch } from 'vue'
+import { watch } from 'vue'
 import { throttle } from 'lodash-es'
 import { mainStore  } from '@/pinia/main'
 const store = mainStore()
@@ -33,9 +33,9 @@ interface Props {
 // 总共1052px
 const all = 1052
 const start = 620
-const end = 722 + 2
+const end = 720
 // 每个刻度间隔px, 每个刻度是2年
-const space = Math.floor(all / ((end - start) / 2))
+const space = all / ((end - start) / 2)
 
 const props = withDefaults(defineProps<Props>(), {
   lineX: 0
