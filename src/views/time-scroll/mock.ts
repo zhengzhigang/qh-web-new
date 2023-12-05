@@ -81,10 +81,75 @@ const cardData = {
   ]
 }
 
+// 人物关系
+const relationData = {
+  name: '李白',
+  startYear: 640,
+  endYear: 700,
+  relations: [
+    {
+      name: '杜甫',
+      startYear: 628,
+      endYear: 660,
+    },
+    {
+      name: '杜甫',
+      startYear: 663,
+      endYear: 718,
+    },
+    {
+      name: '杜甫',
+      startYear: 656,
+      endYear: 720,
+    },
+    {
+      name: '杜甫',
+      startYear: 632,
+      endYear: 702,
+    },
+    {
+      name: '杜甫',
+      startYear: 667,
+      endYear: 705,
+    },
+    {
+      name: '李白',
+      startYear: 680,
+      endYear: 715,
+    },
+    {
+      name: '李白',
+      startYear: 645,
+      endYear: 702,
+    },
+    {
+      name: '李白',
+      startYear: 650,
+      endYear: 712,
+    },
+    {
+      name: '李白',
+      startYear: 628,
+      endYear: 668,
+    }
+  ]
+}
+
+// 视角
+const angleViewData = [
+  { label: '唐代', start: 600, end: 650 },
+  { label: '五代', start: 650, end: 660 },
+  { label: '十国', start: 660, end: 700 }
+]
+
+
+
 export {
   historicalEventOptions,
   personalEventOptions,
   worksOptions,
   summaryData,
-  cardData
+  cardData,
+  relationData,
+  angleViewData
 }

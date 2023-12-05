@@ -61,7 +61,7 @@
         size="large"
       >
         <el-option
-          v-for="item in props.historicalEventOptions"
+          v-for="item in historicalEventOptions"
           :key="item.value"
           :label="item.label"
           :value="item.value"
@@ -82,7 +82,7 @@
         size="large"
       >
         <el-option
-          v-for="item in props.personalEventOptions"
+          v-for="item in personalEventOptions"
           :key="item.value"
           :label="item.label"
           :value="item.value"
@@ -105,16 +105,16 @@ import { ElMessage } from 'element-plus'
 
 interface Props {
   timeType: string // 时间轴类型 history-历史时间轴 personal-个人时间轴
-  historicalEventOptions: any
-  personalEventOptions: any
-  worksOptions: any
+  historicalEventOptions: any[]
+  personalEventOptions: any[]
+  worksOptions: any[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
   timeType: 'history',
-  historicalEventOptions: [],
-  personalEventOptions: [],
-  worksOptions: []
+  historicalEventOptions: () => [],
+  personalEventOptions: () => [],
+  worksOptions: () => []
 })
 
 const params = reactive({

@@ -2,15 +2,15 @@
   <div class="time-data-summary">
     <div class="time-data-summary__item">
       <p class="time-data-summary__title">已系年事件数</p>
-      <span class="time-data-summary__number">{{ props.eventNumber.toLocaleString() }}</span>
+      <span class="time-data-summary__number">{{ eventNumber.toLocaleString() }}</span>
     </div>
     <div class="time-data-summary__item">
       <p class="time-data-summary__title">已系年作品数</p>
-      <span class="time-data-summary__number">{{ props.workNumber.toLocaleString() }}</span>
+      <span class="time-data-summary__number">{{ workNumber.toLocaleString() }}</span>
     </div>
     <div class="time-data-summary__item">
       <p class="time-data-summary__title">已系年关系数</p>
-      <span class="time-data-summary__number">{{ props.relationNumber.toLocaleString() }}</span>
+      <span class="time-data-summary__number">{{ relationNumber.toLocaleString() }}</span>
     </div>
   </div>
 </template>
@@ -21,7 +21,7 @@ interface Props {
   relationNumber: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   eventNumber: 0,
   workNumber: 0,
   relationNumber: 0

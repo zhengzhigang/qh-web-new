@@ -1,6 +1,6 @@
 <template>
   <div class="time-expand">
-    <div class="time-expand__left">{{ props.title }}</div>
+    <div class="time-expand__left">{{ title }}</div>
     <div class="time-expand__right">
       <div class="time-expand__chart" id="timeExpandChart" style="width: 1095px; height: 265px;"></div>
       <div class="time-expand__expend">
@@ -19,7 +19,7 @@ interface Props {
   title?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   title: '诗类'
 })
 
@@ -31,7 +31,6 @@ const option = {
     top: 46
   },
   xAxis: {
-    // show: false,
     type: 'category',
     name: '年',
     nameTextStyle: {
@@ -107,6 +106,7 @@ const init = () => {
   myEcharts.setOption(option)
 }
 
+// 监听鼠标移动到哪一年
 watch(() => store.currentYear, (val) => {
   console.log('===', val)
 })

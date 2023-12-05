@@ -10,24 +10,24 @@
       class="time-relation__axle-main"
       :style="{ width: `${mainWidth}px`, marginBottom: isShowRelation ? '44px' : '24px' }"
     >
-      {{ props.dataList.name }}({{ props.dataList.startYear }}-{{ props.dataList.endYear }})
+      {{ data.name }}({{ data.startYear }}-{{ data.endYear }})
       <div
-        v-for="item in (props.dataList.endYear - props.dataList.startYear)"
+        v-for="item in (data.endYear - data.startYear)"
         :key="item"
         class="time-relation__axle-mark"
         :style="{
-          left: mainWidth / (props.dataList.endYear - props.dataList.startYear) * item + 'px',
-          height: scaleHeight(item, props.dataList.endYear - props.dataList.startYear)
+          left: mainWidth / (data.endYear - data.startYear) * item + 'px',
+          height: scaleHeight(item, data.endYear - data.startYear)
         }"
       >
         <span
-          v-if="scaleHeight(item, props.dataList.endYear - props.dataList.startYear)"
+          v-if="scaleHeight(item, data.endYear - data.startYear)"
           class="time-relation__axle-mark-year">{{ item }}</span>
       </div>
     </div>
     <div v-if="isShowRelation">
       <div
-        v-for="(item, index) in props.dataList.relations"
+        v-for="(item, index) in data.relations"
         :key="index"
         class="time-relation__axle-relation"
         :style="{
@@ -44,62 +44,11 @@
 import { computed, onMounted, ref } from 'vue'
 
 interface Props {
-  dataList: any
+  data: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  dataList: {
-    name: '李白',
-    startYear: 640,
-    endYear: 700,
-    relations: [
-      {
-        name: '杜甫',
-        startYear: 628,
-        endYear: 660,
-      },
-      {
-        name: '杜甫',
-        startYear: 663,
-        endYear: 718,
-      },
-      {
-        name: '杜甫',
-        startYear: 656,
-        endYear: 720,
-      },
-      {
-        name: '杜甫',
-        startYear: 632,
-        endYear: 702,
-      },
-      {
-        name: '杜甫',
-        startYear: 667,
-        endYear: 705,
-      },
-      {
-        name: '李白',
-        startYear: 680,
-        endYear: 715,
-      },
-      {
-        name: '李白',
-        startYear: 645,
-        endYear: 702,
-      },
-      {
-        name: '李白',
-        startYear: 650,
-        endYear: 712,
-      },
-      {
-        name: '李白',
-        startYear: 628,
-        endYear: 668,
-      }
-    ]
-  }
+  data: () => ({})
 })
 const all = 1052
 const start = ref(0)
@@ -113,7 +62,7 @@ const space = computed(() => {
   return Math.floor(all / ((end.value - start.value) / 2))
 })
 const mainWidth = computed(() => {
-  return space.value * (props.dataList.endYear - props.dataList.startYear) / 2
+  return space.value * (props.data.endYear - props.data.startYear) / 2
 })
 
 /**
@@ -143,8 +92,8 @@ const showRelation = () => {
 }
 
 onMounted(() => {
-  start.value = props.dataList.startYear - 20
-  end.value = props.dataList.endYear + 20
+  start.value = props.data.startYear - 20
+  end.value = props.data.endYear + 20
 })
 </script>
 <style lang="scss" scoped>

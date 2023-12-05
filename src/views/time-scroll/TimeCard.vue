@@ -1,9 +1,7 @@
 <template>
-  <div class="time-card" :style="{
-    background: 'url(' + bg + ') center/100%'
-  }">
-    <div class="time-card__left" :style="{ background: colors[type] }">{{ props.title }}</div>
-    <div class="time-card__right">
+  <div class="time-card">
+    <div class="time-card__left" :style="{ background: colors[type] }">{{ title }}</div>
+    <div class="time-card__right" :class="[[`type${type}`]]">
       <v-chart
         ref="chartRef"
         class="chart"
@@ -56,15 +54,6 @@ use([
 connect('group')
 provide(THEME_KEY, 'light');
 
-// 标题颜色
-const colors = {
-  1: '#A79B7A',
-  2: '#007D57',
-  3: '#A17400',
-  4: '#8C8D27',
-  5: '#734D00'
-}
-
 const props = withDefaults(defineProps<Props>(), {
   title: '',
   group: 'group',
@@ -77,8 +66,15 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emits = defineEmits(['showDetail', 'toggleExpand'])
 
+// 标题颜色
+const colors = {
+  1: '#A79B7A',
+  2: '#007D57',
+  3: '#A17400',
+  4: '#8C8D27',
+  5: '#734D00'
+}
 const minMax = getMinMax(props)
-
 const scatterData = [{ value: '0' }, ...props.scatterData, { value: '0' }].map(
   (scatter) =>
     `${scatter.value}` === '0'
@@ -88,9 +84,6 @@ const scatterData = [{ value: '0' }, ...props.scatterData, { value: '0' }].map(
 
 const chartRef = ref()
 const isExpanded = ref(false)
-const bg = computed(() => {
-  return `@/assets/time-card-bg0${props.type}.png`
-})
 
 // 数据补空处理
 const arrFillNull = (tmpl, list) => {
@@ -115,7 +108,7 @@ const generateContinuousArray = (start, end) => {
   return Array.from({ length: end - start + 1 }, (_, index) => start + index)
 }
 
-// y轴数据补空处理，x轴数据做连续处理
+// y轴数据连续处理，x轴数据做连续处理
 const option = ref<EChartsOption>({
   ...getOptions({
     xAxisData: generateContinuousArray(props.xAxisData[0], props.xAxisData[props.xAxisData.length - 1]),
@@ -126,9 +119,6 @@ const option = ref<EChartsOption>({
   }),
   ...props.option,
 });
-
-console.log('===========', toRaw(option.value))
-
 
 const handleClick = (e: any) => {
   if (e.seriesName === 'scatter') {
@@ -161,10 +151,6 @@ onMounted(() => {
   margin-bottom: 10px;
   width: 100%;
   height: 80px;
-  
-  &.type1 {
-    background: url('../../assets/time-card-bg01.png') center/100%;
-  }
 
   &__left {
     display: inline-flex;
@@ -183,7 +169,26 @@ onMounted(() => {
     position: relative;
     flex: 1;
     padding: 9px 39px 0 9px;
-    background: url("@/assets/time-bg-01.png") center/100%;
+
+    &.type1 {
+      background: url('../../assets/time-card-bg01.png') center/100%;
+    }
+
+    &.type2 {
+      background: url('../../assets/time-card-bg02.png') center/100%;
+    }
+
+    &.type3 {
+      background: url('../../assets/time-card-bg03.png') center/100%;
+    }
+
+    &.type4 {
+      background: url('../../assets/time-card-bg04.png') center/100%;
+    }
+
+    &.type5 {
+      background: url('../../assets/time-card-bg05.png') center/100%;
+    }
   }
 
   &__expend {

@@ -14,7 +14,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   title: '各年份事件数',
-  data: []
+  data: () => []
 })
 
 let myEcharts = null

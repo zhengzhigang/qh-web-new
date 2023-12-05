@@ -2,7 +2,7 @@
   <div class="time-line">
     <div v-if="isShowTab" class="time-line__tabs">
       <span
-        v-for="(item, index) in props.tabs"
+        v-for="(item, index) in tabs"
         :key="index"
         class="time-line__tab"
         :class="{ active: active === item.value }"
@@ -125,7 +125,7 @@ const props = withDefaults(defineProps<Props>(), {
     { label: '关系信息', value: 3 }
   ],
   title: '折线图',
-  data: []
+  data: () => []
 })
 const active = ref(1)
 

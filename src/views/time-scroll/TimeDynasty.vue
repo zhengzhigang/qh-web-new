@@ -1,7 +1,7 @@
 <template>
   <div class="time-dynasty">
     <span
-      v-for="(item, index) in props.dynastyList"
+      v-for="(item, index) in dynastyList"
       :key="index"
       class="time-dynasty__item"
       :style="getStyle(item)">{{ item.label }}</span>
@@ -13,17 +13,13 @@ import { onMounted } from 'vue';
 interface Props {
   start: number
   end: number
-  dynastyList?: any
+  dynastyList?: any[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
   start: 600,
   end: 700,
-  dynastyList: [
-    { label: '唐代', start: 600, end: 650 },
-    { label: '五代', start: 650, end: 660 },
-    { label: '十国', start: 660, end: 700 }
-  ]
+  dynastyList: () => []
 })
 
 const getStyle = ({ start, end }) => {

@@ -72,9 +72,9 @@
               :scatterData="cardData.scatterData"
               title="人物事件"
               :type="5"></time-card>
-          <time-dynasty></time-dynasty>
+          <time-dynasty :dynastyList="angleViewData"></time-dynasty>
           <time-ruler :lineX="state.lineX"></time-ruler>
-          <time-relation></time-relation>
+          <time-relation :data="relationData"></time-relation>
           <time-expand></time-expand>
           <div class="time-scroll__content-line" :style="{ left: `${state.lineX - 2}px` }"></div>
         </div>
@@ -103,14 +103,15 @@ import TimeRuler from './TimeRuler.vue'
 import TimeDataSummary from './TimeDataSummary.vue'
 import TimeRelation from './TimeRelation.vue'
 import TimeCard from './TimeCard.vue'
-
 import {
   historicalEventOptions,
   personalEventOptions,
   worksOptions,
   summaryData,
-  cardData
-} from './luodiye'
+  cardData,
+  relationData,
+  angleViewData
+} from './mock'
 
 let timeContnet = null
 
