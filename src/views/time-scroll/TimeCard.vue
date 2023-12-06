@@ -34,12 +34,9 @@ import { EChartsOption, DataItem } from './type'
 
 interface Props {
   group?: string
-  option?: EChartsOption
-  xAxisData: Array<string | number>
-  lineData: Array<DataItem>
-  scatterData: Array<DataItem>
   title: string
   type: number
+  data: any[]
 }
 
 use([
@@ -57,11 +54,7 @@ provide(THEME_KEY, 'light');
 const props = withDefaults(defineProps<Props>(), {
   title: '',
   group: 'group',
-  option: () => ({}),
-  style: () => ({}),
-  xAxisData: () => [],
-  lineData: () => [],
-  scatterData: () => [],
+  data: () => [],
   type: 1
 });
 const emits = defineEmits(['showDetail', 'toggleExpand'])
@@ -74,16 +67,40 @@ const colors = {
   4: '#8C8D27',
   5: '#734D00'
 }
-const minMax = getMinMax(props)
-const scatterData = [{ value: '0' }, ...props.scatterData, { value: '0' }].map(
-  (scatter) =>
-    `${scatter.value}` === '0'
-      ? undefined
-      : { ...scatter, value: minMax.maxCount + (minMax.maxCountDiff * 4) / 5 }
-);
+
 
 const chartRef = ref()
 const isExpanded = ref(false)
+let xAxisData: any[] = []
+let yAxisData: any[] = []
+let scatterData: any[] = []
+// y轴数据连续处理，x轴数据做连续处理
+const option = ref<EChartsOption>({})
+let minMax: any = null
+
+
+setTimeout(() => {
+  const scatterData2 = [
+      { id: "1", value: "1" },
+      { id: "2", value: "0" },
+      { id: "3", value: "1" },
+      { id: "4", value: "0" },
+      { id: "5", value: "1" },
+      { id: "6", value: "1" },
+      { id: "7", value: "0" },
+      { id: "8", value: "1" },
+      { id: "9", value: "0" },
+      { id: "10", value: "1" },
+      { id: "11", value: "1" },
+  ].map(
+    (scatter) =>
+      `${scatter.value}` === '0'
+        ? undefined
+        : { ...scatter, value: minMax.maxCount + (minMax.maxCountDiff * 4) / 5 }
+  );
+  console.log('====', scatterData2)
+})
+
 
 // 数据补空处理
 const arrFillNull = (tmpl, list) => {
@@ -108,17 +125,41 @@ const generateContinuousArray = (start, end) => {
   return Array.from({ length: end - start + 1 }, (_, index) => start + index)
 }
 
-// y轴数据连续处理，x轴数据做连续处理
-const option = ref<EChartsOption>({
-  ...getOptions({
-    xAxisData: generateContinuousArray(props.xAxisData[0], props.xAxisData[props.xAxisData.length - 1]),
+// 处理数据
+const conductData = () => {
+  let xData = []
+  let yData = []
+  let dropData = []
+  props.data.forEach(item => {
+    xData.push(item.year)
+    yData.push(item.eventNumber)
+    // if (item.majorEvents) {
+
+    // }
+    dropData.push({ value: item.majorEvents })
+  })
+  xAxisData = generateContinuousArray(xData[0], xData[xData.length - 1])
+  yAxisData = arrFillNull(xData, yData)
+  minMax = getMinMax({ lineData: yData, xAxisData: xData })
+  console.log('++++', arrFillNull(xData, dropData))
+  scatterData = arrFillNull(xData, dropData).map((scatter) => {
+    return (!scatter || scatter.value) ? null : { value: minMax.maxCount + (minMax.maxCountDiff * 4) / 5 }
+  })
+
+
+}
+
+// 设置option
+const setOptions = () => {
+  option.value = getOptions({
+    xAxisData: xAxisData,
     minMax,
-    lineData: arrFillNull(props.xAxisData, props.lineData),
-    scatterData,
+    lineData: yAxisData,
+    scatterData: scatterData,
     color: colors[props.type]
-  }),
-  ...props.option,
-});
+  })
+  // console.log(toRaw(option.value))
+}
 
 const handleClick = (e: any) => {
   if (e.seriesName === 'scatter') {
@@ -133,6 +174,9 @@ const toggleExpand = () => {
 
 // TODO 手动触发yooltip
 onMounted(() => {
+  conductData()
+  setOptions()
+
   setTimeout(() => {
     chartRef.value.dispatchAction({
       type: 'showTip',

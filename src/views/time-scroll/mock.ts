@@ -51,35 +51,121 @@ const worksOptions = [
   { label: '作品六', value: 6 }
 ]
 
-const cardData = {
-  xData: [620, 623, 635, 636, 660, 670, 674, 690, 708, 710, 720],
-  lineData: [
-    { id: "1", value: "33" },
-    { id: "2", value: "55" },
-    { id: "3", value: "44" },
-    { id: "4", value: "66" },
-    { id: "5", value: "22" },
-    { id: "6", value: "33" },
-    { id: "7", value: "55" },
-    { id: "8", value: "44" },
-    { id: "9", value: "66" },
-    { id: "10", value: "22" },
-    { id: "11", value: "33" },
-  ],
-  scatterData: [
-    { id: "1", value: "1" },
-    { id: "2", value: "0" },
-    { id: "3", value: "1" },
-    { id: "4", value: "0" },
-    { id: "5", value: "1" },
-    { id: "6", value: "1" },
-    { id: "7", value: "0" },
-    { id: "8", value: "1" },
-    { id: "9", value: "0" },
-    { id: "10", value: "1" },
-    { id: "11", value: "1" },
-  ]
-}
+const cardData1 = [
+  {
+    year: 620,
+    eventNumber: 33,
+    majorEvents: true
+  },
+  {
+    year: 623,
+    eventNumber: 44,
+    majorEvents: false
+  },
+  {
+    year: 635,
+    eventNumber: 55,
+    majorEvents: false
+  },
+  {
+    year: 636,
+    eventNumber: 66,
+    majorEvents: false
+  },
+  {
+    year: 660,
+    eventNumber: 22,
+    majorEvents: true
+  },
+  {
+    year: 670,
+    eventNumber: 33,
+    majorEvents: true
+  },
+  {
+    year: 674,
+    eventNumber: 55,
+    majorEvents: false
+  },
+  {
+    year: 690,
+    eventNumber: 44,
+    majorEvents: true
+  },
+  {
+    year: 708,
+    eventNumber: 66,
+    majorEvents: true
+  },
+  {
+    year: 710,
+    eventNumber: 22,
+    majorEvents: true
+  },
+  {
+    year: 720,
+    eventNumber: 33,
+    majorEvents: false
+  },
+]
+
+const cardData5 = [
+  {
+    year: 622,
+    eventNumber: 33,
+    majorEvents: true
+  },
+  {
+    year: 630,
+    eventNumber: 44,
+    majorEvents: false
+  },
+  {
+    year: 635,
+    eventNumber: 55,
+    majorEvents: false
+  },
+  {
+    year: 638,
+    eventNumber: 66,
+    majorEvents: true
+  },
+  {
+    year: 653,
+    eventNumber: 22,
+    majorEvents: true
+  },
+  {
+    year: 660,
+    eventNumber: 33,
+    majorEvents: false
+  },
+  {
+    year: 684,
+    eventNumber: 55,
+    majorEvents: false
+  },
+  {
+    year: 690,
+    eventNumber: 44,
+    majorEvents: false
+  },
+  {
+    year: 702,
+    eventNumber: 66,
+    majorEvents: true
+  },
+  {
+    year: 709,
+    eventNumber: 22,
+    majorEvents: true
+  },
+  {
+    year: 720,
+    eventNumber: 33,
+    majorEvents: true
+  },
+]
 
 // 人物关系
 const relationData = {
@@ -136,10 +222,25 @@ const relationData = {
 }
 
 // 视角
+const angleTabs = [
+  { label: '朝代', value: 0 },
+  { label: '皇帝', value: 1 },
+  { label: '年号', value: 2 }
+]
 const angleViewData = [
   { label: '唐代', start: 600, end: 650 },
   { label: '五代', start: 650, end: 660 },
   { label: '十国', start: 660, end: 700 }
+]
+const filterOptions = [
+  { label: '选项一', value: 1 },
+  { label: '选项二', value: 2 },
+  { label: '选项三', value: 3 },
+  { label: '选项四', value: 4 },
+  { label: '选项五', value: 5 },
+  { label: '选项六', value: 6 },
+  { label: '选项七', value: 7 },
+  { label: '选项八', value: 8 }
 ]
 
 
@@ -149,7 +250,10 @@ export {
   personalEventOptions,
   worksOptions,
   summaryData,
-  cardData,
+  cardData1,
+  cardData5,
   relationData,
-  angleViewData
+  angleViewData,
+  angleTabs,
+  filterOptions
 }

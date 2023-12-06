@@ -5,7 +5,7 @@
       <div>
         <span class="time-header__tab-text">视角选择</span>
         <span
-          v-for="(item, index) in options"
+          v-for="(item, index) in tabs"
           :key="index"
           class="time-header__tab-item"
           :class="{ active: item.value === active }"
@@ -83,6 +83,16 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
 
+interface Props {
+  tabs: any[]
+  filterOptions: any[]
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  tabs: () => [],
+  filterOptions: () => []
+})
+
 const emits = defineEmits(['switch'])
 
 const exportParams = reactive({
@@ -90,21 +100,7 @@ const exportParams = reactive({
   element: 1,
   filterOptions: []
 })
-const options = ref([
-  { label: '朝代', value: 0 },
-  { label: '皇帝', value: 1 },
-  { label: '年号', value: 2 }
-])
-const filterOptions = ref([
-  { label: '选项一', value: 1 },
-  { label: '选项二', value: 2 },
-  { label: '选项三', value: 3 },
-  { label: '选项四', value: 4 },
-  { label: '选项五', value: 5 },
-  { label: '选项六', value: 6 },
-  { label: '选项七', value: 7 },
-  { label: '选项八', value: 8 }
-])
+
 const active = ref(0)
 const isShowExportDialog = ref(false)
 const isCheckAll = ref(false)
@@ -117,14 +113,14 @@ const switchTab = (value) => {
 
 // 全选
 const handleCheckAllChange = (val ) => {
-  exportParams.filterOptions = val ? filterOptions.value.map((item) => item.value) : []
+  exportParams.filterOptions = val ? props.filterOptions.map((item) => item.value) : []
   isIndeterminate.value = false
 }
 
 const handleCheckedChange = (value: number[]) => {
   const checkedCount = value.length
-  isCheckAll.value = checkedCount === filterOptions.value.length
-  isIndeterminate.value = checkedCount > 0 && checkedCount < filterOptions.value.length
+  isCheckAll.value = checkedCount === props.filterOptions.length
+  isIndeterminate.value = checkedCount > 0 && checkedCount < props.filterOptions.length
 }
 
 const closeExport = () => {

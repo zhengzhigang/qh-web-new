@@ -40,38 +40,31 @@
       </div>
       <!-- 时间轴 -->
       <div v-if="state.timeData" class="time-scroll__content">
-        <time-header></time-header>
+        <time-header
+          :tabs="angleTabs"
+          :filterOptions="filterOptions"
+        ></time-header>
         <div class="time-scroll__content-main" id="timeContnet">
           <time-card
-            :xAxisData="cardData.xData"
-            :lineData="cardData.lineData"
-            :scatterData="cardData.scatterData"
+            :data="cardData1"
             title="政治事件"
             :type="1"></time-card>
           <time-card
-            :xAxisData="cardData.xData"
-            :lineData="cardData.lineData"
-            :scatterData="cardData.scatterData"
+            :data="cardData5"
             title="自然事件"
             :type="2"></time-card>
           <time-card
-            :xAxisData="cardData.xData"
-            :lineData="cardData.lineData"
-            :scatterData="cardData.scatterData"
+            :data="cardData1"
             title="人物事件"
             :type="3"></time-card>
-            <time-card
-              :xAxisData="cardData.xData"
-              :lineData="cardData.lineData"
-              :scatterData="cardData.scatterData"
-              title="人物事件"
-              :type="4"></time-card>
-            <time-card
-              :xAxisData="cardData.xData"
-              :lineData="cardData.lineData"
-              :scatterData="cardData.scatterData"
-              title="人物事件"
-              :type="5"></time-card>
+          <time-card
+            :data="cardData5"
+            title="人物事件"
+            :type="4"></time-card>
+          <time-card
+            :data="cardData1"
+            title="人物事件"
+            :type="5"></time-card>
           <time-dynasty :dynastyList="angleViewData"></time-dynasty>
           <time-ruler :lineX="state.lineX"></time-ruler>
           <time-relation :data="relationData"></time-relation>
@@ -108,9 +101,11 @@ import {
   personalEventOptions,
   worksOptions,
   summaryData,
-  cardData,
+  cardData1,
+  cardData5,
   relationData,
-  angleViewData
+  angleViewData,
+  angleTabs
 } from './mock'
 
 let timeContnet = null
