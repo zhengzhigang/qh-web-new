@@ -58,7 +58,22 @@ const cardData1 = [
     majorEvents: true
   },
   {
+    year: 622,
+    eventNumber: 36,
+    majorEvents: true
+  },
+  {
     year: 623,
+    eventNumber: 44,
+    majorEvents: false
+  },
+  {
+    year: 628,
+    eventNumber: 24,
+    majorEvents: false
+  },
+  {
+    year: 630,
     eventNumber: 44,
     majorEvents: false
   },
@@ -73,8 +88,33 @@ const cardData1 = [
     majorEvents: false
   },
   {
+    year: 640,
+    eventNumber: 48,
+    majorEvents: false
+  },
+  {
+    year: 647,
+    eventNumber: 66,
+    majorEvents: false
+  },
+  {
+    year: 652,
+    eventNumber: 60,
+    majorEvents: false
+  },
+  {
+    year: 658,
+    eventNumber: 56,
+    majorEvents: false
+  },
+  {
     year: 660,
     eventNumber: 22,
+    majorEvents: true
+  },
+  {
+    year: 664,
+    eventNumber: 20,
     majorEvents: true
   },
   {
@@ -88,8 +128,23 @@ const cardData1 = [
     majorEvents: false
   },
   {
+    year: 681,
+    eventNumber: 50,
+    majorEvents: false
+  },
+  {
+    year: 684,
+    eventNumber: 55,
+    majorEvents: false
+  },
+  {
     year: 690,
     eventNumber: 44,
+    majorEvents: true
+  },
+  {
+    year: 696,
+    eventNumber: 34,
     majorEvents: true
   },
   {
@@ -100,6 +155,11 @@ const cardData1 = [
   {
     year: 710,
     eventNumber: 22,
+    majorEvents: true
+  },
+  {
+    year: 714,
+    eventNumber: 40,
     majorEvents: true
   },
   {

@@ -105,7 +105,8 @@ import {
   cardData5,
   relationData,
   angleViewData,
-  angleTabs
+  angleTabs,
+  filterOptions
 } from './mock'
 
 let timeContnet = null
@@ -207,9 +208,9 @@ onBeforeUnmount(() => {
 
     &-line {
       position: absolute;
-      top: 0;
+      top: 52px;
+      bottom: 52px;
       width: 1px;
-      height: 100%;
       z-index: 1;
       background: #6D6A63;
     }

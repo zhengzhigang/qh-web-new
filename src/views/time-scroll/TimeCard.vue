@@ -28,9 +28,11 @@ import {
   MarkLineComponent,
 } from "echarts/components"
 import VChart, { THEME_KEY } from "vue-echarts"
-import { ref, provide, onMounted, computed, toRaw } from 'vue'
+import { ref, provide, onMounted, watch } from 'vue'
 import { getMinMax, getOptions } from './time-util'
-import { EChartsOption, DataItem } from './type'
+import { EChartsOption } from './type'
+import { mainStore as useMainStore } from '@/pinia/main'
+const store = useMainStore()
 
 interface Props {
   group?: string
@@ -78,30 +80,6 @@ let scatterData: any[] = []
 const option = ref<EChartsOption>({})
 let minMax: any = null
 
-
-setTimeout(() => {
-  const scatterData2 = [
-      { id: "1", value: "1" },
-      { id: "2", value: "0" },
-      { id: "3", value: "1" },
-      { id: "4", value: "0" },
-      { id: "5", value: "1" },
-      { id: "6", value: "1" },
-      { id: "7", value: "0" },
-      { id: "8", value: "1" },
-      { id: "9", value: "0" },
-      { id: "10", value: "1" },
-      { id: "11", value: "1" },
-  ].map(
-    (scatter) =>
-      `${scatter.value}` === '0'
-        ? undefined
-        : { ...scatter, value: minMax.maxCount + (minMax.maxCountDiff * 4) / 5 }
-  );
-  console.log('====', scatterData2)
-})
-
-
 // 数据补空处理
 const arrFillNull = (tmpl, list) => {
   let newList = []
@@ -133,20 +111,14 @@ const conductData = () => {
   props.data.forEach(item => {
     xData.push(item.year)
     yData.push(item.eventNumber)
-    // if (item.majorEvents) {
-
-    // }
     dropData.push({ value: item.majorEvents })
   })
   xAxisData = generateContinuousArray(xData[0], xData[xData.length - 1])
   yAxisData = arrFillNull(xData, yData)
   minMax = getMinMax({ lineData: yData, xAxisData: xData })
-  console.log('++++', arrFillNull(xData, dropData))
   scatterData = arrFillNull(xData, dropData).map((scatter) => {
     return (!scatter || scatter.value) ? null : { value: minMax.maxCount + (minMax.maxCountDiff * 4) / 5 }
   })
-
-
 }
 
 // 设置option
@@ -158,7 +130,14 @@ const setOptions = () => {
     scatterData: scatterData,
     color: colors[props.type]
   })
-  // console.log(toRaw(option.value))
+}
+
+const showToolTip = (index) => {
+  chartRef.value.dispatchAction({
+    type: 'showTip',
+    seriesIndex: 0,
+    dataIndex: index
+  });
 }
 
 const handleClick = (e: any) => {
@@ -172,18 +151,16 @@ const toggleExpand = () => {
   emits('toggleExpand', isExpanded.value)
 }
 
-// TODO 手动触发yooltip
+watch(() => store.currentYear, (val) => {
+  const index = xAxisData.findIndex((item) => item === val)
+  if (index > -1) {
+    showToolTip(index)
+  }
+})
+
 onMounted(() => {
   conductData()
   setOptions()
-
-  setTimeout(() => {
-    chartRef.value.dispatchAction({
-      type: 'showTip',
-      x: 500,
-      y: 33,
-    });
-  }, 3000)
 });
 </script>
 

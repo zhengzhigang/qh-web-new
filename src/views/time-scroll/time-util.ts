@@ -46,16 +46,9 @@ export const getOptions = ({
   color
 }): EChartsOption => ({
   tooltip: {
-    // show: false,
+    show: true,
+    enterable: false,
     trigger: "axis",
-    axisPointer: {
-      animation: false,
-      // lineStyle: {
-      //   type: "solid",
-      //   width: 1,
-      //   color: "red",
-      // },
-    },
     formatter: "{c}",
   },
   grid: [

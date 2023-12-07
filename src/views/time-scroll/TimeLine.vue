@@ -13,8 +13,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import * as echarts from 'echarts'
+import { mainStore as useMainStore } from '@/pinia/main'
+const store = useMainStore()
 
 interface Props {
   isShowTab?: boolean
@@ -80,7 +82,9 @@ const option = {
     }
   },
   tooltip: {
-    trigger: 'axis'
+    trigger: 'axis',
+    alwaysShowContent: false,
+    formatter: '{c}'
   },
   yAxis: {
     type: 'value',
@@ -137,7 +141,18 @@ const init = () => {
   myEcharts = echarts.init(document.getElementById('timeline'))
 
   myEcharts.setOption(option)
+  setTimeout(() => {
+    myEcharts.dispatchAction({
+      type: 'showTip',
+      x: 678,
+      y: 20
+    })
+  }, 1000)
 }
+
+watch(() => store.currentYear, (val) => {
+  console.log('====', val)
+})
 
 onMounted(() => {
   option.title.text = props.title
