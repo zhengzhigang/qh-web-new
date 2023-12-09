@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper bg-white">
         <div class="header h-220px">
-            <div class="w-1140px ml-auto mr-auto">
+            <div class="ml-auto mr-auto">
                 <Header :type="2"></Header>
             </div>
         </div>
@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup>
-import Header from '@/components/header.vue';
+import Header from '@/components/headerNew.vue';
 import Footer from '@/components/footer.vue';
 import { computed, reactive, ref,onMounted } from 'vue'
 import {useRouter} from 'vue-router';

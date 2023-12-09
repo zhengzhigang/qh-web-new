@@ -1,8 +1,9 @@
 <template>
-  <div class="time-card">
+  <div class="time-card" :style="{ height: `${isExpanded ? 283 : 80}px` }">
     <div class="time-card__left" :style="{ background: colors[type] }">{{ title }}</div>
     <div class="time-card__right" :class="[[`type${type}`]]">
       <v-chart
+        v-if="!isExpanded"
         ref="chartRef"
         class="chart"
         :option="option"
@@ -10,18 +11,20 @@
         :group="group"
         @click="handleClick"
       />
+      <div v-else class="time-card__expand-chart" ref="expandChartRef" style="width: 1095px; height: 265px;"></div>
+
       <div class="time-card__expend"  @click="toggleExpand">
         <img
-          v-show="!isExpanded"
+          v-show="isExpanded"
           class="time-card__expend-img"
           src="../../assets/time-shrink.png" alt="">
         <img
-          v-show="isExpanded"
+          v-show="!isExpanded"
           class="time-card__expend-img"
           src="../../assets/time-expand.png" alt="">
       </div>
       <el-tooltip
-        popper-class="time-relation__tooltip-box"
+        popper-class="time-card__tooltip-box"
         ref="tooltipRef"
         placement="right"
         effect="light">
@@ -32,7 +35,7 @@
           </div>
         </template>
           <span
-            class="time-relation__axle-tooltip"
+            class="time-card__axle-tooltip"
             :style="{ position: 'absolute', left: tipX + 5 +'px', top: tipY + 'px' }">
         </span></el-tooltip>
     </div>
@@ -40,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, provide, onMounted, watch, nextTick } from 'vue'
+import { ref, provide, onMounted, watch, nextTick, reactive } from 'vue'
 import { use, connect } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart, ScatterChart } from 'echarts/charts'
@@ -54,6 +57,8 @@ import VChart, { THEME_KEY } from "vue-echarts"
 import { getMinMax, getOptions } from './time-util'
 import { EChartsOption } from './type'
 import { mainStore as useMainStore } from '@/pinia/main'
+import * as echarts from 'echarts'
+
 const store = useMainStore()
 
 interface Props {
@@ -72,9 +77,9 @@ use([
   GridComponent,
   DataZoomComponent,
   MarkLineComponent,
-]);
+])
 connect('group')
-provide(THEME_KEY, 'light');
+provide(THEME_KEY, 'light')
 
 const props = withDefaults(defineProps<Props>(), {
   title: '',
@@ -82,7 +87,7 @@ const props = withDefaults(defineProps<Props>(), {
   data: () => [],
   type: 1,
   isShowScatter: true
-});
+})
 const emits = defineEmits(['showDetail', 'toggleExpand'])
 
 // 标题颜色
@@ -94,8 +99,8 @@ const colors = {
   5: '#734D00'
 }
 
-
 const chartRef = ref()
+const expandChartRef = ref()
 const tooltipRef = ref()
 const isExpanded = ref(false)
 let xAxisData: any[] = []
@@ -106,6 +111,77 @@ const tipY = ref(0)
 // y轴数据连续处理，x轴数据做连续处理
 const option = ref<EChartsOption>({})
 let minMax: any = null
+let expandEcharts = null
+const expandOption = reactive({
+  grid: {
+    left: 46,
+    right: 46,
+    top: 46
+  },
+  xAxis: {
+    type: 'category',
+    name: '年',
+    nameTextStyle: {
+      color: 'rgba(134, 128, 112, 0.6)',
+      verticalAlign: 'top',
+      lineHeight: 28
+    },
+    data: xAxisData,
+    splitLine: {
+      show: false
+    },
+    // x轴字体颜色
+    axisLabel: {
+      color: 'rgba(134, 128, 112, 0.6)'
+    },
+    // x轴刻度
+    axisTick: {
+      show: false
+    },
+    // x轴线
+    axisLine: {
+      lineStyle: {
+        color: '#EAEAEA',
+        width: 0.5
+      }
+    }
+  },
+  tooltip: {
+    trigger: 'axis',
+    formatter: '{c}'
+  },
+  yAxis: {
+    type: 'value',
+    name: '个',
+    nameTextStyle: {
+      color: 'rgba(134, 128, 112, 0.6)',
+      align: 'right'
+    },
+    data: [
+      0, 20, 40, 60, 80, 100
+    ],
+    axisLabel: {
+      color: 'rgba(134, 128, 112, 0.6)'
+    }
+  },
+  series: [
+    {
+      type: 'bar',
+      data: yAxisData,
+      itemStyle: {
+        color: '#C2B594',
+        borderRadius: 4
+      },
+      barWidth: 8,
+      label: {
+        show: true,
+        position: 'outside',
+        fontSize: 14,
+        color: '#6D6A63'
+      }
+    }
+  ]
+})
 
 // 数据补空处理
 const arrFillNull = (tmpl, list) => {
@@ -161,11 +237,16 @@ const setOptions = () => {
 }
 
 const showToolTip = (index) => {
-  chartRef.value.dispatchAction({
+  const data = {
     type: 'showTip',
     seriesIndex: 0,
     dataIndex: index
-  });
+  }
+  if (isExpanded.value) {
+    expandEcharts.dispatchAction(data)
+  } else {
+    chartRef.value.dispatchAction(data)
+  }
 }
 
 const handleClick = (e: any) => {
@@ -178,10 +259,19 @@ const handleClick = (e: any) => {
     tooltipRef.value.onOpen()
     tooltipRef.value.updatePopper()
   })
-};
+}
 
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value
+  nextTick(() => {
+    if (isExpanded.value) {
+      // 展开
+      initExpand()
+    } else {
+      // 收起
+      setOptions()
+    }
+  })
   emits('toggleExpand', {
     xAxisData,
     yAxisData
@@ -193,8 +283,22 @@ const toggleExpand = () => {
   })
 }
 
-watch(() => store.isExpandTyoe, (val) => {
-  // 如果isExpandTyoe发生了变化，说明展开或者收起了其他轨道
+const getExpandOptions = () => {
+  expandOption.xAxis.data = xAxisData
+  expandOption.series[0].data = yAxisData
+  return expandOption
+}
+
+const initExpand = () => {
+  expandEcharts = echarts.init(expandChartRef.value)
+  expandEcharts.group = 'group'
+  echarts.connect('group')
+
+  expandEcharts.setOption(getExpandOptions())
+}
+
+watch(() => store.isExpandType, (val) => {
+  // 如果isExpandType发生了变化，说明展开或者收起了其他轨道
   if (val !== props.type) {
     isExpanded.value = false
   } else {
@@ -212,7 +316,7 @@ watch(() => store.currentYear, (val) => {
 onMounted(() => {
   conductData()
   setOptions()
-});
+})
 </script>
 
 <style scoped lang="scss">
@@ -220,7 +324,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   position: relative;
-  margin-bottom: 10px;
+  margin-bottom: 1px;
   width: 100%;
   height: 80px;
 
@@ -275,6 +379,11 @@ onMounted(() => {
       height: 30px;
     }
   }
+
+  &__expand-chart {
+    background: #fff;
+    border-radius: 4px;
+  }
 }
 .chart-wrap {
 }
@@ -300,5 +409,14 @@ onMounted(() => {
   background-color: #a3aebc;
   color: #fff;
   cursor: pointer;
+}
+</style>
+<style lang="scss">
+.time-card__tooltip-box {
+  box-shadow: 0px 4px 7px 0px rgba(109,106,99,0.47);
+
+  .el-popper__arrow {
+    display: none;
+  }
 }
 </style>

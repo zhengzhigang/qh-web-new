@@ -148,6 +148,8 @@ watch(() => props.lineX, (v) => {
 </style>
 <style lang="scss">
 .time-ruler__tooltip-box {
+  box-shadow: 0px 4px 7px 0px rgba(109,106,99,0.47);
+
   .el-popper__arrow {
     display: none;
   }

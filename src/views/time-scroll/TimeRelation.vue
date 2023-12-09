@@ -1,11 +1,14 @@
 <template>
   <div class="time-relation">
-    <el-button
+    <span class="time-relation__button"
+    @click="showRelation"
+    >相关人物</span>
+    <!-- <el-button
       class="time-relation__button"
       type="primary"
       color="#A79B7A"
       @click="showRelation"
-    >相关人物</el-button>
+    >相关人物</el-button> -->
     <div
       v-if="isShowRelation"
       class="time-relation__expend"
@@ -45,11 +48,12 @@
           v-if="scaleHeight(item, data.endYear - data.startYear)"
           class="time-relation__axle-mark-year">{{ item }}</span>
       </div>
+      <span class="time-relation__axle-text">（岁）</span>
     </div>
     <!-- 关联人物时间轴 -->
     <div v-if="isShowRelation">
       <div
-        v-for="(item, index) in data.relations"
+        v-for="(item, index) in relations"
         :key="index"
         class="time-relation__axle-relation"
         :style="{
@@ -64,11 +68,19 @@
           placement="top-start"
           effect="light">
           <template #content>
-            <div style="max-width: 270px;">{{ relationsEventValue[index] }}</div>
+            <div style="max-width: 270px;">
+              {{
+                store.currentYear < item.startYear
+                  ? 0
+                  : store.currentYear > item.endYear
+                    ? (item.endYear - item.startYear)
+                    : (store.currentYear - item.startYear)
+              }}
+            </div>
           </template>
             <span
               class="time-relation__axle-tooltip"
-              :style="{ left: (store.currentYear - data.relations[index].startYear) * space / 2 + 'px' }">
+              :style="{ left: (store.currentYear - relations[index].startYear) * space / 2 + 'px' }">
           </span></el-tooltip>
       </div>
     </div>
@@ -87,15 +99,22 @@ const props = withDefaults(defineProps<Props>(), {
   data: () => ({})
 })
 const mainToolTipRef = ref()
+// 时间轴总宽度
 const all = 1052
+// 标尺开始时间（主人公出生年-20）
 const start = ref(0)
+// 标尺结束时间（主人公出生年+20）
 const end = ref(0)
+// 是否显示关联人物
 const isShowRelation = ref(false)
+// 当前显示的主人公事件
 const mainEventValue = ref('')
+// 主人公所有事件合集
 const mainEventMap = reactive({})
+// 关联人物DOM ref 合集
 const relationRefs = reactive({})
-const relationsEventValue = reactive([])
-const relationsMap = reactive([])
+// 关联人物数据
+const relations = ref([])
 
 // 获取关系任务循环列表ref
 const getRelationRef = (el, index) => {
@@ -148,16 +167,18 @@ const showMainEvent = (year) => {
   }
 }
 
-const showRelationYear = (year, index) => {
-  if (relationsMap[index][year]) {
-    relationsEventValue[index] = relationsMap[index][year]
-    relationRefs[`relation_0${index}`].onOpen()
-    relationRefs[`relation_0${index}`].updatePopper()
-  } else {
+// 显示关联人物的年龄
+const showRelationYearsOld = (year, index) => {
+  const startYear = relations.value[index].startYear
+  const endYear = relations.value[index].endYear
+  if (year < startYear || year > endYear) {
     const t = setTimeout(() => {
       relationRefs[`relation_0${index}`].onClose()
       clearTimeout(t)
     })
+  } else {
+    relationRefs[`relation_0${index}`].onOpen()
+    relationRefs[`relation_0${index}`].updatePopper()
   }
 }
 
@@ -165,28 +186,21 @@ const getMainEventMap = () => {
   props.data.events.forEach((item) => {
     mainEventMap[item.year] = item.event
   })
-
-  props.data.relations.forEach((item, index) => {
-    const obj = {}
-    item.events.forEach((v) => {
-      obj[v.year] = v.number
-    })
-    relationsMap[index] = { ...obj }
-  })
 }
 
 // 监听鼠标移动到哪一年
 watch(() => store.currentYear, (val) => {
   showMainEvent(val)
   if (!isShowRelation.value) return
-  relationsMap.forEach((item, index) => {
-    showRelationYear(val, index)
+  relations.value.forEach((item, index) => {
+    showRelationYearsOld(val, index)
   })
 })
 
 onMounted(() => {
   start.value = props.data.startYear - 20
   end.value = props.data.endYear + 20
+  relations.value = props.data.relations
 
   // 处理数据接口，方便查询，查询的时候不再循环
   getMainEventMap()
@@ -199,8 +213,21 @@ onMounted(() => {
 
   &__button {
     position: absolute;
+    display: block;
+    width: 100px;
+    height: 35px;
+    line-height: 35px;
     right: 0;
+    font-size: 16px;
     color: #fff;
+    background-color: #A79B7A;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #c1b9a2;
+    }
   }
 
   .relation-line {
@@ -242,7 +269,7 @@ onMounted(() => {
     &-relation {
       position: relative;
       margin-bottom: 10px;
-      background: #CFC2A0;
+      background: rgba(207,194,160,0.2);
       color: #6D6A63;
 
       @extend .relation-line;
@@ -252,6 +279,14 @@ onMounted(() => {
       position: absolute;
       display: block;
       bottom: 6px;
+    }
+
+    &-text {
+      position: absolute;
+      top: 23px;
+      right: -38px;
+      font-size: 14px;
+      color: #6D6A63;
     }
   }
 
@@ -271,6 +306,8 @@ onMounted(() => {
 </style>
 <style lang="scss">
 .time-relation__tooltip-box {
+  box-shadow: 0px 4px 7px 0px rgba(109,106,99,0.47);
+
   .el-popper__arrow {
     display: none;
   }

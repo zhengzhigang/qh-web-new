@@ -24,7 +24,7 @@ const props = defineProps({
 const changeTopMenu = (type: number) => {
     if(type==1) router.push({path: "home"});
     if(type==2) router.push({path: "tag"});
-    if(type==3) router.push({path: "timeScroll"});
+    if(type==3) router.push({path: "timeScrollNew"});
 }
 
 const linkPage = (routePage:any) =>{

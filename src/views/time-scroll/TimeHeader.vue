@@ -1,6 +1,7 @@
 <template>
   <div class="time-header">
-    <span>时间标尺</span>
+    <!-- flex布局 勿删 -->
+    <span></span>
     <div class="time-header__tab">
       <div>
         <span class="time-header__tab-text">视角选择</span>
@@ -148,6 +149,8 @@ const confirmExport = () => {
 
     &-text {
       margin-right: 13px;
+      font-size: 16px;
+      color: #6D6A63;
     }
 
     &-item {

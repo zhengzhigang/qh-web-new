@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper bg-white">
         <div class="header h-400px">
-            <div class="w-1140px ml-auto mr-auto">
+            <div class="ml-auto mr-auto">
                 <!-- <div class="flex pt-25px pb-25px">
                     <img class="log" style="cursor: pointer;" src="@/assets/logo.png" @click="linkPage('home')">
                     <div class="nav flex justify-center items-end ml-20px">
@@ -11,7 +11,8 @@
                     </div>
                 </div> -->
                 <Header :type="1"></Header>
-                <div class="search-wrapper pl-170px pt-66px">
+                <!-- <Header :type="1"></Header> -->
+                <div class="w-1140px search-wrapper ml-auto mr-auto pl-170px pt-66px">
                     <div class="search-type flex">
                         <span :class="poemTabActive[0] == true ? 'active' : ''" @click="changePoemTab(true,false,false)">诗人</span>
                         <span :class="poemTabActive[1] == true ? 'active' : ''" @click="changePoemTab(false,true,false)">诗题</span>
@@ -166,7 +167,7 @@
 
 <script lang="ts" setup>
 // import Pagination from '@/components/Pagination.vue'
-import Header from '@/components/header.vue';
+import Header from '@/components/headerNew.vue';
 import canvasPage from './canvas.vue'
 import { computed, reactive, ref,onMounted } from 'vue'
 import {useRouter} from 'vue-router';

@@ -17,7 +17,7 @@ export const mainStore = defineStore('main', {
         }, // 切换会议室信息
         currentYear: 0, // 时间轴鼠标所在位置对应的年份
         isExpand: false,
-        isExpandTyoe: null
+        isExpandType: null
     }),
     actions: {
         updateCheckVideo(check: boolean) {
@@ -53,7 +53,7 @@ export const mainStore = defineStore('main', {
         },
         updateExpandState(data = {}) {
             this.isExpand = data.val
-            this.isExpandTyoe = data.type
+            this.isExpandType = data.type
         }
     }
 })

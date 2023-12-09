@@ -48,40 +48,30 @@
           <time-card
             :data="cardData1"
             title="政治事件"
-            :type="1"
-            @toggleExpand="toggleExpand"></time-card>
+            :type="1"></time-card>
           <time-card
             :data="cardData5"
             title="自然事件"
-            :type="2"
-            @toggleExpand="toggleExpand"></time-card>
+            :type="2"></time-card>
           <time-card
             :data="cardData1"
             title="人物经历"
             :isShowScatter="false"
-            :type="3"
-            @toggleExpand="toggleExpand"></time-card>
+            :type="3"></time-card>
           <time-card
             :data="cardData5"
             title="人物事件"
-            :type="4"
-            @toggleExpand="toggleExpand"></time-card>
+            :type="4"></time-card>
           <time-card
             :data="cardData1"
             title="人物事件"
-            :type="5"
-            @toggleExpand="toggleExpand"></time-card>
+            :type="5"></time-card>
           <time-dynasty :dynastyList="angleViewData"></time-dynasty>
           <time-ruler
             :lineX="state.lineX"
             :rulerData="rulerData"
           ></time-ruler>
           <time-relation :data="relationData"></time-relation>
-          <time-expand
-            v-if="store.isExpand"
-            :xAxisData="state.xAxisData"
-            :yAxisData="state.yAxisData"
-          ></time-expand>
           <div
             v-show="state.isShowLine"
             class="time-scroll__content-line"
@@ -109,13 +99,10 @@ import TimeHeader from './TimeHeader.vue'
 import TimeLine from './TimeLine.vue'
 import TimeBar from './TimeBar.vue'
 import TimeDynasty from './TimeDynasty.vue'
-import TimeExpand from './TimeExpand.vue'
 import TimeRuler from './TimeRuler.vue'
 import TimeDataSummary from './TimeDataSummary.vue'
 import TimeRelation from './TimeRelation.vue'
 import TimeCard from './TimeCard.vue'
-import { mainStore as useMainStore } from '@/pinia/main'
-const store = useMainStore()
 
 import {
   historicalEventOptions,
@@ -143,10 +130,7 @@ const state = reactive({
   personalEventOptions: [], // 个人事件选项
   worksOptions: [], // 作品选项
   summaryData: {}, // 落地页数据
-  timeData: {},
-  // 展开数据
-  xAxisData: [],
-  yAxisData: []
+  timeData: {}
 })
 
 // 获取筛选项数据
@@ -192,12 +176,6 @@ const moveTimeLine = (event) => {
 const getTimeContnetRect = () => {
   const rect = timeContnet.getBoundingClientRect()
   state.offsetLeft = rect.left
-}
-
-// 展开轨道
-const toggleExpand = (data) => {
-  state.xAxisData = data.xAxisData
-  state.yAxisData = data.yAxisData
 }
 
 onMounted(() => {
