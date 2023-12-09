@@ -164,6 +164,7 @@ onMounted(() => {
     color: #6D6A63;
     cursor: pointer;
     border-radius: 4px;
+    background: #FCF9F1;
 
     &.active,
     &:hover {

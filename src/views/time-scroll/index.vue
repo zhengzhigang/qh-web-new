@@ -87,6 +87,8 @@
             class="time-scroll__content-line"
             :style="{ left: `${state.lineX - 2}px` }"></div>
         </div>
+      </div>
+      <div style="margin-bottom: 75px;">
         <time-line
           v-if="state.summaryData.list && state.summaryData.list.length"
           :title="state.summaryData.title"

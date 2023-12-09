@@ -1,5 +1,6 @@
 <template>
   <div class="time-ruler">
+    {{ rulerData.startYear }}
     <div class="time-ruler__main">
       <span
         v-for="(item, index) in Math.ceil((rulerData.end - rulerData.start) / 2)"
@@ -18,11 +19,23 @@
           {{ (index * 2) % 10 === 0 ? (rulerData.start + index * 2) : '' }}
         </span>
       </span>
+      <el-tooltip
+        popper-class="time-ruler__tooltip-box"
+        ref="mainTooTop"
+        placement="top-start"
+        effect="light">
+        <template #content>
+          <div style="max-width: 270px;">{{ mainEventValue }}</div>
+        </template>
+          <span
+            class="time-ruler__tooltip"
+            :style="{ left: (store.currentYear - rulerData.start) * space / 2 + 'px' }">
+        </span></el-tooltip>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, watch } from 'vue'
+import { computed, watch, ref, reactive } from 'vue'
 import { throttle } from 'lodash-es'
 import { mainStore  } from '@/pinia/main'
 const store = mainStore()
@@ -38,10 +51,22 @@ const props = withDefaults(defineProps<Props>(), {
 })
 // 总共1052px
 const all = 1052
+const mainTooTop = ref()
+const mainEventMap = reactive({})
+const mainEventValue = ref('')
 // 每个刻度间隔px, 每个刻度是2年
 const space = computed(() => {
   return all / ((props.rulerData.end - props.rulerData.start) / 2)
 })
+
+// 查询主人公当前年份是否有事件，如果有就弹出
+const showMainEvent = (year) => {
+  if (mainEventMap[year]) {
+    mainEventValue.value = mainEventMap[year]
+    mainTooTop.value.onOpen()
+    mainTooTop.value.updatePopper()
+  }
+}
 
 // 计算当前鼠标所属年份
 const getCurrentYear = (mouseX) => {
@@ -50,14 +75,22 @@ const getCurrentYear = (mouseX) => {
     const year = Math.floor(base / space.value * 2 + props.rulerData.start)
     if (year <= props.rulerData.end) {
       store.updateYear(year)
+      showMainEvent(year)
     }
   }
 }
 
 const throttleGetYear = throttle(getCurrentYear)
 
+const getMainEventMap = () => {
+  props.rulerData.events.forEach((item) => {
+    mainEventMap[item.year] = item.event
+  })
+}
+
 watch(() => props.lineX, (v) => {
   throttleGetYear(v)
+  getMainEventMap()
 })
 </script>
 <style lang="scss" scoped>
@@ -104,6 +137,19 @@ watch(() => props.lineX, (v) => {
       bottom: 1px;
       top: auto;
     }
+  }
+
+  &__tooltip {
+    position: absolute;
+    display: block;
+    bottom: 46px;
+  }
+}
+</style>
+<style lang="scss">
+.time-ruler__tooltip-box {
+  .el-popper__arrow {
+    display: none;
   }
 }
 </style>

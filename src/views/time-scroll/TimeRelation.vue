@@ -22,7 +22,7 @@
       <!-- 主人公事件tootltip -->
       <el-tooltip
         popper-class="time-relation__tooltip-box"
-        ref="mainTooTop"
+        ref="mainToolTipRef"
         placement="top-start"
         effect="light">
         <template #content>
@@ -68,14 +68,14 @@
           </template>
             <span
               class="time-relation__axle-tooltip"
-              :style="{ left: (store.currentYear - props.data.relations[index].startYear) * space / 2 + 'px' }">
+              :style="{ left: (store.currentYear - data.relations[index].startYear) * space / 2 + 'px' }">
           </span></el-tooltip>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch, nextTick, reactive } from 'vue'
+import { computed, onMounted, ref, watch, reactive } from 'vue'
 import { mainStore  } from '@/pinia/main'
 const store = mainStore()
 
@@ -86,7 +86,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   data: () => ({})
 })
-const mainTooTop = ref()
+const mainToolTipRef = ref()
 const all = 1052
 const start = ref(0)
 const end = ref(0)
@@ -143,8 +143,8 @@ const showRelation = () => {
 const showMainEvent = (year) => {
   if (mainEventMap[year]) {
     mainEventValue.value = mainEventMap[year]
-    mainTooTop.value.onOpen()
-    mainTooTop.value.updatePopper()
+    mainToolTipRef.value.onOpen()
+    mainToolTipRef.value.updatePopper()
   }
 }
 

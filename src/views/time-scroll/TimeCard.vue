@@ -20,11 +20,27 @@
           class="time-card__expend-img"
           src="../../assets/time-expand.png" alt="">
       </div>
+      <el-tooltip
+        popper-class="time-relation__tooltip-box"
+        ref="tooltipRef"
+        placement="right"
+        effect="light">
+        <template #content>
+          <div style="max-width: 270px;">
+            <p>事件名称</p>
+            <p>这里是事件概述内容这里是事件概述内容</p>
+          </div>
+        </template>
+          <span
+            class="time-relation__axle-tooltip"
+            :style="{ position: 'absolute', left: tipX + 5 +'px', top: tipY + 'px' }">
+        </span></el-tooltip>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, provide, onMounted, watch, nextTick } from 'vue'
 import { use, connect } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart, ScatterChart } from 'echarts/charts'
@@ -35,7 +51,6 @@ import {
   MarkLineComponent,
 } from "echarts/components"
 import VChart, { THEME_KEY } from "vue-echarts"
-import { ref, provide, onMounted, watch } from 'vue'
 import { getMinMax, getOptions } from './time-util'
 import { EChartsOption } from './type'
 import { mainStore as useMainStore } from '@/pinia/main'
@@ -81,10 +96,13 @@ const colors = {
 
 
 const chartRef = ref()
+const tooltipRef = ref()
 const isExpanded = ref(false)
 let xAxisData: any[] = []
 let yAxisData: any[] = []
 let scatterData: any[] = []
+const tipX = ref(0)
+const tipY = ref(0)
 // y轴数据连续处理，x轴数据做连续处理
 const option = ref<EChartsOption>({})
 let minMax: any = null
@@ -151,9 +169,15 @@ const showToolTip = (index) => {
 }
 
 const handleClick = (e: any) => {
-  if (e.seriesName === 'scatter') {
-    emits('showDetail', e.data.id)
-  }
+  const { offsetX, offsetY } = e.event
+  console.log(offsetX, offsetY)
+  tipX.value = offsetX
+  tipY.value = offsetY
+
+  nextTick(() => {
+    tooltipRef.value.onOpen()
+    tooltipRef.value.updatePopper()
+  })
 };
 
 const toggleExpand = () => {
