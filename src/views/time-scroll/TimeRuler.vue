@@ -2,7 +2,7 @@
   <div class="time-ruler">
     <div class="time-ruler__main">
       <span
-        v-for="(item, index) in Math.ceil((end - start) / 2)"
+        v-for="(item, index) in Math.ceil((rulerData.end - rulerData.start) / 2)"
         :key="item"
         class="time-ruler__line"
         :style="{ left: `${index * space}px` }"
@@ -15,44 +15,46 @@
           class="time-ruler__line-number"
           :class="{ bottom: (index / 5) % 2 === 1 }"
         >
-          {{ (index * 2) % 10 === 0 ? (start + index * 2) : '' }}
+          {{ (index * 2) % 10 === 0 ? (rulerData.start + index * 2) : '' }}
         </span>
       </span>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 import { throttle } from 'lodash-es'
 import { mainStore  } from '@/pinia/main'
 const store = mainStore()
 
 interface Props {
   lineX: number
+  rulerData: any
 }
-// 总共1052px
-const all = 1052
-const start = 620
-const end = 720
-// 每个刻度间隔px, 每个刻度是2年
-const space = all / ((end - start) / 2)
 
 const props = withDefaults(defineProps<Props>(), {
+  rulerData: () => ({}),
   lineX: 0
+})
+// 总共1052px
+const all = 1052
+// 每个刻度间隔px, 每个刻度是2年
+const space = computed(() => {
+  return all / ((props.rulerData.end - props.rulerData.start) / 2)
 })
 
 // 计算当前鼠标所属年份
 const getCurrentYear = (mouseX) => {
   const base = mouseX - 58
   if (base >= 0) {
-    const year = Math.floor(base / space * 2 + start)
-    if (year <= end) {
+    const year = Math.floor(base / space.value * 2 + props.rulerData.start)
+    if (year <= props.rulerData.end) {
       store.updateYear(year)
     }
   }
 }
 
-const throttleGetYear = throttle(getCurrentYear, 300)
+const throttleGetYear = throttle(getCurrentYear)
 
 watch(() => props.lineX, (v) => {
   throttleGetYear(v)

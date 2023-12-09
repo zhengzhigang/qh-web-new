@@ -15,8 +15,6 @@
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue'
 import * as echarts from 'echarts'
-import { mainStore as useMainStore } from '@/pinia/main'
-const store = useMainStore()
 
 interface Props {
   isShowTab?: boolean
@@ -55,19 +53,7 @@ const option = {
     },
     // x轴字体颜色
     axisLabel: {
-      textStyle: {
-        color: 'rgba(134, 128, 112, 0.6)',
-      },
-      formatter: (item,index)=>{
-          let a = [618, 636, 638, 668, 678, 698, 708, 738]
-          let b = [0, 1, 2, 5, 6, 8, 9, 12]
-          for(let i in b){
-             if(index===b[i]){
-              return a[i]
-            }
-          }
-         return ''
-      }
+      color: 'rgba(134, 128, 112, 0.6)'
     },
     // x轴刻度
     axisTick:{
@@ -97,9 +83,7 @@ const option = {
       0, 20, 40, 60, 80, 100
     ],
     axisLabel: {
-      textStyle: {
-        color: 'rgba(134, 128, 112, 0.6)',
-      }
+      color: 'rgba(134, 128, 112, 0.6)'
     }
   },
   series: [
@@ -109,9 +93,7 @@ const option = {
       symbol: 'circle',
       symbolSize: 8,
       itemStyle: {
-        normal: {
-          color: '#C2B594'
-        }
+        color: '#C2B594'
       },
       lineStyle: {
         color: '#C2B594'
@@ -149,10 +131,6 @@ const init = () => {
     })
   }, 1000)
 }
-
-watch(() => store.currentYear, (val) => {
-  console.log('====', val)
-})
 
 onMounted(() => {
   option.title.text = props.title

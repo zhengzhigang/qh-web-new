@@ -49,7 +49,7 @@ export const getOptions = ({
     show: true,
     enterable: false,
     trigger: "axis",
-    formatter: "{c}",
+    formatter: "{c}"
   },
   grid: [
     {
@@ -126,7 +126,7 @@ export const getOptions = ({
       },
       itemStyle: {
         color
-      },
+      }
     },
   ],
 });

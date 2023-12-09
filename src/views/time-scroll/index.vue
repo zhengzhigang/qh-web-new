@@ -66,10 +66,16 @@
             title="人物事件"
             :type="5"></time-card>
           <time-dynasty :dynastyList="angleViewData"></time-dynasty>
-          <time-ruler :lineX="state.lineX"></time-ruler>
+          <time-ruler
+            :lineX="state.lineX"
+            :rulerData="rulerData"
+          ></time-ruler>
           <time-relation :data="relationData"></time-relation>
           <time-expand></time-expand>
-          <div class="time-scroll__content-line" :style="{ left: `${state.lineX - 2}px` }"></div>
+          <div
+            v-show="state.isShowLine"
+            class="time-scroll__content-line"
+            :style="{ left: `${state.lineX - 2}px` }"></div>
         </div>
         <time-line
           v-if="state.summaryData.list && state.summaryData.list.length"
@@ -106,13 +112,15 @@ import {
   relationData,
   angleViewData,
   angleTabs,
-  filterOptions
+  filterOptions,
+  rulerData
 } from './mock'
 
 let timeContnet = null
 
 const state = reactive({
   loading: false,
+  isShowLine: false,
   tabIndex: 0, // 选中tab索引
   lineX: 0, // 时间线的x轴坐标
   offsetLeft: 0, // 时间轴区域元素的offsetLeft值的和
@@ -154,7 +162,13 @@ const search = () => {
 }
 
 const moveTimeLine = (event) => {
-  state.lineX = event.clientX - state.offsetLeft
+  const x = event.clientX - state.offsetLeft
+  if (x - 49 < 0 || x - 49 > 1052) {
+    state.isShowLine = false
+  } else {
+    state.lineX = x
+    state.isShowLine = true
+  }
 }
 
 const getTimeContnetRect = () => {

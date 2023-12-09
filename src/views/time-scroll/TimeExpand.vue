@@ -46,9 +46,7 @@ const option = {
     },
     // x轴字体颜色
     axisLabel: {
-      textStyle: {
-        color: 'rgba(134, 128, 112, 0.6)',
-      }
+      color: 'rgba(134, 128, 112, 0.6)'
     },
     // x轴刻度
     axisTick: {
@@ -76,9 +74,7 @@ const option = {
       0, 20, 40, 60, 80, 100
     ],
     axisLabel: {
-      textStyle: {
-        color: 'rgba(134, 128, 112, 0.6)',
-      }
+      color: 'rgba(134, 128, 112, 0.6)'
     }
   },
   series: [
@@ -87,7 +83,7 @@ const option = {
       data: [20, 8, 50, 55, 20, 47, 28, 66, 80, 55, 37, 50, 67, 23, 20, 47, 30],
       itemStyle: {
         color: '#C2B594',
-        barBorderRadius: 4
+        borderRadius: 4
       },
       barWidth: 8,
       label: {
@@ -102,13 +98,14 @@ const option = {
 
 const init = () => {
   myEcharts = echarts.init(document.getElementById('timeExpandChart'))
+  myEcharts.group = 'group'
+  echarts.connect('group')
 
   myEcharts.setOption(option)
 }
 
 // 监听鼠标移动到哪一年
 watch(() => store.currentYear, (val) => {
-  console.log('===', val)
 })
 
 onMounted(() => {

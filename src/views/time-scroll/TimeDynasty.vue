@@ -11,8 +11,8 @@
 import { onMounted } from 'vue';
 
 interface Props {
-  start: number
-  end: number
+  start?: number
+  end?: number
   dynastyList?: any[]
 }
 
