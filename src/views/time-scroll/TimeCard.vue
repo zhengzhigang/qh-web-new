@@ -11,7 +11,14 @@
         @click="handleClick"
       />
       <div class="time-card__expend"  @click="toggleExpand">
-        <img class="time-card__expend-img" src="../../assets/time-shrink.png" alt="">
+        <img
+          v-show="!isExpanded"
+          class="time-card__expend-img"
+          src="../../assets/time-shrink.png" alt="">
+        <img
+          v-show="isExpanded"
+          class="time-card__expend-img"
+          src="../../assets/time-expand.png" alt="">
       </div>
     </div>
   </div>
@@ -39,6 +46,7 @@ interface Props {
   title: string
   type: number
   data: any[]
+  isShowScatter: boolean
 }
 
 use([
@@ -57,7 +65,8 @@ const props = withDefaults(defineProps<Props>(), {
   title: '',
   group: 'group',
   data: () => [],
-  type: 1
+  type: 1,
+  isShowScatter: true
 });
 const emits = defineEmits(['showDetail', 'toggleExpand'])
 
@@ -128,7 +137,8 @@ const setOptions = () => {
     minMax,
     lineData: yAxisData,
     scatterData: scatterData,
-    color: colors[props.type]
+    color: colors[props.type],
+    isShowScatter: props.isShowScatter
   })
 }
 
@@ -148,8 +158,25 @@ const handleClick = (e: any) => {
 
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value
-  emits('toggleExpand', isExpanded.value)
+  emits('toggleExpand', {
+    xAxisData,
+    yAxisData
+  })
+
+  store.updateExpandState({
+    val: isExpanded.value,
+    type: props.type
+  })
 }
+
+watch(() => store.isExpandTyoe, (val) => {
+  // 如果isExpandTyoe发生了变化，说明展开或者收起了其他轨道
+  if (val !== props.type) {
+    isExpanded.value = false
+  } else {
+    isExpanded.value = true
+  }
+})
 
 watch(() => store.currentYear, (val) => {
   const index = xAxisData.findIndex((item) => item === val)

@@ -10,21 +10,26 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, watch } from 'vue'
+import { nextTick, watch, reactive } from 'vue'
 import * as echarts from 'echarts'
 import { mainStore  } from '@/pinia/main'
 const store = mainStore()
 
 interface Props {
   title?: string
+  xAxisData: any[]
+  yAxisData: any[]
+
 }
 
-withDefaults(defineProps<Props>(), {
-  title: '诗类'
+const props = withDefaults(defineProps<Props>(), {
+  title: '诗类',
+  xAxisData: () => [],
+  yAxisData: () => []
 })
 
 let myEcharts = null
-const option = {
+const option = reactive({
   grid: {
     left: 46,
     right: 46,
@@ -38,9 +43,7 @@ const option = {
       verticalAlign: 'top',
       lineHeight: 28
     },
-    data: [
-      618, 628, 638, 648, 658, 668, 678, 688, 698, 708, 718, 728, 738, 748, 758, 768, 778, 798
-    ],
+    data: props.xAxisData,
     splitLine: {
       show: false
     },
@@ -61,7 +64,8 @@ const option = {
     }
   },
   tooltip: {
-    trigger: 'axis'
+    trigger: 'axis',
+    formatter: '{c}'
   },
   yAxis: {
     type: 'value',
@@ -80,7 +84,7 @@ const option = {
   series: [
     {
       type: 'bar',
-      data: [20, 8, 50, 55, 20, 47, 28, 66, 80, 55, 37, 50, 67, 23, 20, 47, 30],
+      data: props.yAxisData,
       itemStyle: {
         color: '#C2B594',
         borderRadius: 4
@@ -94,6 +98,12 @@ const option = {
       }
     }
   ]
+})
+
+const getOptions = () => {
+  option.xAxis.data = props.xAxisData
+  option.series[0].data = props.yAxisData
+  return option
 }
 
 const init = () => {
@@ -101,16 +111,18 @@ const init = () => {
   myEcharts.group = 'group'
   echarts.connect('group')
 
-  myEcharts.setOption(option)
+  myEcharts.setOption(getOptions())
 }
 
 // 监听鼠标移动到哪一年
 watch(() => store.currentYear, (val) => {
 })
 
-onMounted(() => {
-  init()
-})
+watch(() => props.xAxisData, (val) => {
+  nextTick(() => {
+    init()
+  })
+}, { immediate: true })
 </script>
 <style lang="scss" scoped>
 .time-expand {

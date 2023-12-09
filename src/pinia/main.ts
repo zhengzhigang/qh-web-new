@@ -16,6 +16,8 @@ export const mainStore = defineStore('main', {
             sponsorUserAvatar: ''
         }, // 切换会议室信息
         currentYear: 0, // 时间轴鼠标所在位置对应的年份
+        isExpand: false,
+        isExpandTyoe: null
     }),
     actions: {
         updateCheckVideo(check: boolean) {
@@ -48,6 +50,10 @@ export const mainStore = defineStore('main', {
         },
         updateYear(val: number) {
             this.currentYear = val
+        },
+        updateExpandState(data = {}) {
+            this.isExpand = data.val
+            this.isExpandTyoe = data.type
         }
     }
 })

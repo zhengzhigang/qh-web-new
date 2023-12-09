@@ -43,7 +43,8 @@ export const getOptions = ({
   minMax,
   lineData,
   scatterData,
-  color
+  color,
+  isShowScatter
 }): EChartsOption => ({
   tooltip: {
     show: true,
@@ -95,7 +96,7 @@ export const getOptions = ({
       lineStyle: {
         color
       },
-      markLine: {
+      markLine: isShowScatter ? {
         symbol: "none",
         label: {
           show: false,
@@ -112,7 +113,7 @@ export const getOptions = ({
           },
         ],
         silent: true,
-      },
+      } : {},
       connectNulls: true
     },
     {
@@ -120,7 +121,7 @@ export const getOptions = ({
       type: "line",
       symbol: "circle",
       symbolSize: 6,
-      data: scatterData,
+      data: isShowScatter ? scatterData : [],
       lineStyle: {
         color: "rgba(0, 0, 0, 0)",
       },
