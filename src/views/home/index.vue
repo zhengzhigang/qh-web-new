@@ -125,7 +125,10 @@
                     <template v-else>
                         <li v-for="item in datas.esPage.records">
                             <div class="production">
-                                <span class="title">{{ item.title }} <span v-if="poemTabActive[2]">{{ item.authorSourceDO?.excelName }}</span></span>
+                                <span class="title" v-html="item.title"></span>&nbsp;
+                                <span
+                                    v-if="(poemTabActive[1] || poemTabActive[2]) && item.authorSourceDO?.excelName"
+                                    class="title">{{ item.authorSourceDO?.excelName }}</span>
                                 <p v-html="item.content"></p>
                             </div>
                         </li>
