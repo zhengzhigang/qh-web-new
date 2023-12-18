@@ -125,7 +125,7 @@
                     <template v-else>
                         <li v-for="item in datas.esPage.records">
                             <div class="production">
-                                <span class="title" v-html="item.title"></span>
+                                <span class="title">{{ item.title }} <span v-if="poemTabActive[2]">{{ item.authorSourceDO?.excelName }}</span></span>
                                 <p v-html="item.content"></p>
                             </div>
                         </li>
