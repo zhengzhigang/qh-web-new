@@ -66,7 +66,7 @@ interface Props {
   title: string
   type: number
   data: any[]
-  isShowScatter: boolean
+  isShowScatter?: boolean
 }
 
 use([

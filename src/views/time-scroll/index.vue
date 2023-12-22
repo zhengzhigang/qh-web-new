@@ -69,7 +69,7 @@
           <time-dynasty :dynastyList="angleViewData"></time-dynasty>
           <time-ruler
             :lineX="state.lineX"
-            :rulerData="rulerData"
+            :rulerData="state.rulerData"
           ></time-ruler>
           <time-relation :data="relationData"></time-relation>
           <div
@@ -91,6 +91,12 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import {
+  getHistoryEventListApi,
+  getIndividualEventListApi,
+  getPostListApi,
+  getHistoryStaticsApi
+} from '@/api/common'
 import Header from '@/components/headerNew.vue';
 import Footer from '@/components/footer.vue';
 import TimeTabs from './TimeTabs.vue'
@@ -103,11 +109,11 @@ import TimeRuler from './TimeRuler.vue'
 import TimeDataSummary from './TimeDataSummary.vue'
 import TimeRelation from './TimeRelation.vue'
 import TimeCard from './TimeCard.vue'
+import {
+  HistoryParams
+} from './time-scroll'
 
 import {
-  historicalEventOptions,
-  personalEventOptions,
-  worksOptions,
   summaryData,
   cardData1,
   cardData5,
@@ -120,7 +126,10 @@ import {
 
 let timeContnet = null
 
-const state = reactive({
+const state = reactive<{
+  timeData: HistoryParams
+  [key: string]: any
+}>({
   loading: false,
   isShowLine: false,
   tabIndex: 0, // 选中tab索引
@@ -130,17 +139,20 @@ const state = reactive({
   personalEventOptions: [], // 个人事件选项
   worksOptions: [], // 作品选项
   summaryData: {}, // 落地页数据
-  timeData: {}
+  timeData: {
+    // 时间范围 618-1014
+    startYear: 618,
+    endYear: 1014,
+    postTypeList: [],
+    historyEventTypeList: [],
+    individualEventTypeList: []
+  },
+  rulerData: {
+    start: 0,
+    end: 0,
+    events: []
+  }
 })
-
-// 获取筛选项数据
-const getFilterData = () => {
-  setTimeout(() => {
-    state.historicalEventOptions = historicalEventOptions
-    state.personalEventOptions = personalEventOptions
-    state.worksOptions = worksOptions
-  }, 300)
-}
 
 // 获取落地页数据
 const getLandingPageData = () => {
@@ -157,10 +169,19 @@ const switchTab = (index) => {
 }
 
 // 搜索
-const search = () => {
-  setTimeout(() => {
-    state.timeData = {}
-  }, 300)
+const search = async (data: HistoryParams) => {
+  state.timeData = data
+
+  // 设置标尺的开始结束时间
+  state.rulerData.start = Number(data.startYear)
+  state.rulerData.end = Number(data.endYear)
+
+  state.loading = true
+  const res: any = await getHistoryStaticsApi(data)
+  if (res.success) {
+    console.log('####', res)
+  }
+  state.loading = false
 }
 
 const moveTimeLine = (event) => {
@@ -178,8 +199,40 @@ const getTimeContnetRect = () => {
   state.offsetLeft = rect.left
 }
 
+// 获取历史事件类型
+const getHistoryEventList = async () => {
+  const res: any = await getHistoryEventListApi()
+  if (res.success) {
+    state.historicalEventOptions = res.data
+  }
+}
+
+// 获取个人事件类型
+const getIndividualEventList = async () => {
+  const res: any = await getIndividualEventListApi()
+  if (res.success) {
+    state.personalEventOptions = res.data
+  }
+}
+
+// 获取编年史作品类型
+const getPostList = async () => {
+  const res: any = await getPostListApi()
+  if (res.success) {
+    state.worksOptions = res.data
+  }
+}
+
+// 获取历史时间轴页面数据
+const getHistoryStatics = async () => {
+  const res = await getHistoryStaticsApi()
+}
+
 onMounted(() => {
-  getFilterData()
+  getHistoryEventList()
+  getIndividualEventList()
+  getPostList()
+
   getLandingPageData()
   
   timeContnet = document.getElementById('timeContnet')

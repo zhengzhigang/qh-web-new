@@ -1,6 +1,5 @@
 <template>
   <div class="time-ruler">
-    {{ rulerData.startYear }}
     <div class="time-ruler__main">
       <span
         v-for="(item, index) in Math.ceil((rulerData.end - rulerData.start) / 2)"

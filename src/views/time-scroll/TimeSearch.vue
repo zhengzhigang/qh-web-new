@@ -29,7 +29,7 @@
     <div class="time-search__item">
       <span class="time-search__item-prefix">作品筛选</span>
       <el-select
-        v-model="params.works"
+        v-model="params.postTypeList"
         class="time-search__item-input"
         multiple
         collapse-tags
@@ -40,17 +40,17 @@
         size="large"
       >
         <el-option
-          v-for="item in props.worksOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          v-for="(item, index) in props.worksOptions"
+          :key="index"
+          :label="item"
+          :value="item"
         />
       </el-select>
     </div>
     <div class="time-search__item">
       <span class="time-search__item-prefix">历史事件</span>
       <el-select
-        v-model="params.historicalEvent"
+        v-model="params.historyEventTypeList"
         class="time-search__item-input"
         multiple
         collapse-tags
@@ -61,17 +61,17 @@
         size="large"
       >
         <el-option
-          v-for="item in historicalEventOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          v-for="(item, index) in historicalEventOptions"
+          :key="index"
+          :label="item"
+          :value="item"
         />
       </el-select>
     </div>
     <div class="time-search__item">
       <span class="time-search__item-prefix">个人事件</span>
       <el-select
-        v-model="params.personalEvent"
+        v-model="params.individualEventTypeList"
         class="time-search__item-input"
         multiple
         collapse-tags
@@ -82,10 +82,10 @@
         size="large"
       >
         <el-option
-          v-for="item in personalEventOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          v-for="(item, index) in personalEventOptions"
+          :key="index"
+          :label="item"
+          :value="item"
         />
       </el-select>
     </div>
@@ -100,14 +100,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { reactive, toRaw } from 'vue'
 import { ElMessage } from 'element-plus'
 
 interface Props {
   timeType: string // 时间轴类型 history-历史时间轴 personal-个人时间轴
-  historicalEventOptions: any[]
-  personalEventOptions: any[]
-  worksOptions: any[]
+  historicalEventOptions: string[]
+  personalEventOptions: string[]
+  worksOptions: string[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -121,9 +121,9 @@ const params = reactive({
   startYear: '',
   endYear: '',
   author: '',
-  works: [],
-  historicalEvent: [],
-  personalEvent: []
+  postTypeList: [],
+  historyEventTypeList: [],
+  individualEventTypeList: []
 })
 const emits = defineEmits(['search'])
 
@@ -154,7 +154,7 @@ const validate = () => {
 
 const search = () => {
   if (!validate()) return
-  emits('search', params)
+  emits('search', toRaw(params))
 }
 </script>
 <style lang="scss" scoped>
