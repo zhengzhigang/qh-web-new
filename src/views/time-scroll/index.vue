@@ -4,8 +4,7 @@
       <Header :type="3"></Header>
     </div>
     <div
-      class="time-scroll__main" 
-      id="eqweqw"
+      class="time-scroll__main"
       v-loading.fullscreen.lock="state.loading"
       element-loading-text="加载中、请稍候..."
       element-loading-background="rgba(216, 207, 180, 0.4)"
@@ -21,7 +20,7 @@
         @search="search"
       ></time-search>
       <!-- 落地页 -->
-      <div v-if="!state.timeData" style="margin-top: -40px;">
+      <div v-if="!state.isSearch" style="margin-top: -40px;">
         <time-data-summary
           :eventNumber="state.summaryData.eventNumber"
           :workNumber="state.summaryData.workNumber"
@@ -39,39 +38,45 @@
           :data="state.summaryData.list"></time-line>
       </div>
       <!-- 时间轴 -->
-      <div v-if="state.timeData" class="time-scroll__content">
+      <div v-if="state.isSearch" class="time-scroll__content">
         <time-header
           :tabs="angleTabs"
           :filterOptions="filterOptions"
         ></time-header>
         <div class="time-scroll__content-main" id="timeContnet">
+          <!-- 事件轨道 -->
           <time-card
-            :data="cardData1"
-            title="政治事件"
-            :type="1"></time-card>
+            v-for="(item, index) in state.eventsList"
+            :key="index"
+            :data="item.list"
+            :title="item.title"
+            :type="item.type"></time-card>
           <time-card
-            :data="cardData5"
-            title="自然事件"
-            :type="2"></time-card>
-          <time-card
-            :data="cardData1"
-            title="人物经历"
-            :isShowScatter="false"
-            :type="3"></time-card>
-          <time-card
-            :data="cardData5"
-            title="人物事件"
-            :type="4"></time-card>
-          <time-card
-            :data="cardData1"
-            title="人物事件"
+            :data="state.individualEvent.list"
+            :title="state.individualEvent.title"
             :type="5"></time-card>
+
+          <!-- 视角 -->
           <time-dynasty :dynastyList="angleViewData"></time-dynasty>
+
+          <!-- 标尺 -->
           <time-ruler
             :lineX="state.lineX"
-            :rulerData="state.rulerData"
+            :data="state.rulerData"
           ></time-ruler>
-          <time-relation :data="relationData"></time-relation>
+
+          <!-- 人物关系 -->
+          <time-relation
+            v-if="state.tabIndex === 1"
+            :data="relationData"></time-relation>
+
+          <!-- 作品轨道 -->
+          <time-card
+            v-for="(item, index) in state.worksList"
+            :key="index"
+            :data="item.list"
+            :title="item.title"
+            :type="item.type + 5"></time-card>
           <div
             v-show="state.isShowLine"
             class="time-scroll__content-line"
@@ -90,7 +95,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import { reactive, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import {
   getHistoryEventListApi,
   getIndividualEventListApi,
@@ -115,13 +120,10 @@ import {
 
 import {
   summaryData,
-  cardData1,
-  cardData5,
   relationData,
   angleViewData,
   angleTabs,
-  filterOptions,
-  rulerData
+  filterOptions
 } from './mock'
 
 let timeContnet = null
@@ -130,8 +132,10 @@ const state = reactive<{
   timeData: HistoryParams
   [key: string]: any
 }>({
+  isSearch: false,
   loading: false,
   isShowLine: false,
+  scale: 1,  // 间隔
   tabIndex: 0, // 选中tab索引
   lineX: 0, // 时间线的x轴坐标
   offsetLeft: 0, // 时间轴区域元素的offsetLeft值的和
@@ -151,7 +155,10 @@ const state = reactive<{
     start: 0,
     end: 0,
     events: []
-  }
+  },
+  individualEvent: {}, // 人物经历
+  eventsList: [], // 历史事件
+  worksList: [] // 作品事件
 })
 
 // 获取落地页数据
@@ -169,29 +176,13 @@ const switchTab = (index) => {
 }
 
 // 搜索
-const search = async (data: HistoryParams) => {
-  state.timeData = data
+const search = async (params: HistoryParams) => {
+  state.timeData = params
+  state.eventsList = []
+  state.worksList = []
+  state.individualEvent = {}
 
-  // 设置标尺的开始结束时间
-  state.rulerData.start = Number(data.startYear)
-  state.rulerData.end = Number(data.endYear)
-
-  state.loading = true
-  const res: any = await getHistoryStaticsApi(data)
-  if (res.success) {
-    console.log('####', res)
-  }
-  state.loading = false
-}
-
-const moveTimeLine = (event) => {
-  const x = event.clientX - state.offsetLeft
-  if (x - 49 < 0 || x - 49 > 1052) {
-    state.isShowLine = false
-  } else {
-    state.lineX = x
-    state.isShowLine = true
-  }
+  getHistoryStatics(params)
 }
 
 const getTimeContnetRect = () => {
@@ -224,8 +215,65 @@ const getPostList = async () => {
 }
 
 // 获取历史时间轴页面数据
-const getHistoryStatics = async () => {
-  const res = await getHistoryStaticsApi()
+const getHistoryStatics = async (params) => {
+  state.loading = true
+  const res: any = await getHistoryStaticsApi(params)
+  if (res.success) {
+    const data = res.data.map
+    state.scale = res.data.scale
+    state.timeData.historyEventTypeList.forEach((item, index) => {
+      state.eventsList.push({
+        type: index + 1,
+        title: item,
+        list: data[item]
+      })
+    })
+    state.timeData.postTypeList.forEach((item, index) => {
+      state.worksList.push({
+        type: index + 1,
+        title: item,
+        list: data[item]
+      })
+    })
+    state.individualEvent = {
+      type: 5,
+      title: '人物经历',
+      list: data.individualEvent
+    }
+    // 设置标尺的开始结束时间
+    const start = data.individualEvent[0].year
+    const end = data.individualEvent[data.individualEvent.length - 1].year
+    state.rulerData.start = start % 2 === 1 ? start - 1 : start
+    state.rulerData.end = end % 2 ===1 ? end + 1 : end
+  }
+  state.loading = false
+
+  // 搜索，不再展示落地页
+  state.isSearch = true
+  nextTick(() => {
+    initLine()
+  })
+}
+
+// 鼠标移动，拿到当前鼠标停留在哪一年
+const moveTimeLine = (event) => {
+  const x = event.clientX - state.offsetLeft
+  if (x - 49 < 0 || x - 49 > 1052) {
+    state.isShowLine = false
+  } else {
+    state.lineX = x
+    state.isShowLine = true
+  }
+}
+
+// 初始化鼠标线
+const initLine = () => {
+  timeContnet = document.getElementById('timeContnet')
+  if (timeContnet) {
+    getTimeContnetRect()
+    timeContnet.addEventListener('mousemove', moveTimeLine)
+    window.addEventListener('resize', getTimeContnetRect)
+  }
 }
 
 onMounted(() => {
@@ -234,13 +282,6 @@ onMounted(() => {
   getPostList()
 
   getLandingPageData()
-  
-  timeContnet = document.getElementById('timeContnet')
-  if (timeContnet) {
-    getTimeContnetRect()
-    timeContnet.addEventListener('mousemove', moveTimeLine)
-    window.addEventListener('resize', getTimeContnetRect)
-  }
 })
 
 onBeforeUnmount(() => {

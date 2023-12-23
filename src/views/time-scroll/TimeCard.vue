@@ -96,7 +96,12 @@ const colors = {
   2: '#007D57',
   3: '#A17400',
   4: '#8C8D27',
-  5: '#734D00'
+  5: '#734D00',
+  6: '#A79B7A',
+  7: '#007D57',
+  8: '#A17400',
+  9: '#8C8D27',
+  10: '#734D00'
 }
 
 const chartRef = ref()
@@ -175,7 +180,7 @@ const expandOption = reactive({
       barWidth: 8,
       label: {
         show: true,
-        position: 'outside',
+        position: 'top',
         fontSize: 14,
         color: '#6D6A63'
       }
@@ -213,15 +218,17 @@ const conductData = () => {
   let dropData = []
   props.data.forEach(item => {
     xData.push(item.year)
-    yData.push(item.eventNumber)
-    dropData.push({ value: item.majorEvents })
+    yData.push(item.cnt)
+    dropData.push({ value: item.majorEvents || false })
   })
-  xAxisData = generateContinuousArray(xData[0], xData[xData.length - 1])
-  yAxisData = arrFillNull(xData, yData)
+  // xAxisData = generateContinuousArray(xData[0], xData[xData.length - 1])
+  xAxisData = xData
+  // yAxisData = arrFillNull(xData, yData)
+  yAxisData = yData
   minMax = getMinMax({ lineData: yData, xAxisData: xData })
-  scatterData = arrFillNull(xData, dropData).map((scatter) => {
-    return (!scatter || scatter.value) ? null : { value: minMax.maxCount + (minMax.maxCountDiff * 4) / 5 }
-  })
+  // scatterData = arrFillNull(xData, dropData).map((scatter) => {
+  //   return (!scatter || scatter.value) ? null : { value: minMax.maxCount + (minMax.maxCountDiff * 4) / 5 }
+  // })
 }
 
 // 设置option
@@ -306,10 +313,28 @@ watch(() => store.isExpandType, (val) => {
   }
 })
 
+// 查找数组中与当前鼠标所在年份相邻的年份
+const getSiblingYear = (year) => {
+  let diff = 9999999
+  let index = 0
+  for (let i = 0; i < xAxisData.length; i++) {
+    if (Math.abs(year - xAxisData[i]) < diff) {
+      diff = Math.abs(year - xAxisData[i])
+      index = i
+    } else {
+      continue
+    }
+  }
+  return index
+}
+
 watch(() => store.currentYear, (val) => {
   const index = xAxisData.findIndex((item) => item === val)
   if (index > -1) {
     showToolTip(index)
+  } else {
+    // 如果没有找到，就查找附近的
+    showToolTip(getSiblingYear(val))
   }
 })
 
@@ -363,6 +388,26 @@ onMounted(() => {
     }
 
     &.type5 {
+      background: url('../../assets/time-card-bg05.png') center/100%;
+    }
+
+    &.type6 {
+      background: url('../../assets/time-card-bg01.png') center/100%;
+    }
+
+    &.type7 {
+      background: url('../../assets/time-card-bg02.png') center/100%;
+    }
+
+    &.type8 {
+      background: url('../../assets/time-card-bg03.png') center/100%;
+    }
+
+    &.type9 {
+      background: url('../../assets/time-card-bg04.png') center/100%;
+    }
+
+    &.type10 {
       background: url('../../assets/time-card-bg05.png') center/100%;
     }
   }

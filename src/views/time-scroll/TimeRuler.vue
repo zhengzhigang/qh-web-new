@@ -2,20 +2,20 @@
   <div class="time-ruler">
     <div class="time-ruler__main">
       <span
-        v-for="(item, index) in Math.ceil((rulerData.end - rulerData.start) / 2)"
+        v-for="(item, index) in Math.ceil((data.end - data.start) / 2)"
         :key="item"
         class="time-ruler__line"
         :style="{ left: `${index * space}px` }"
         :class="{
-          long: (index * 2) % 10 === 0,
-          bottom: (index / 5) % 2 === 1
+          long: indexToyear(index) % 10 === 0,
+          bottom: (indexToyear(index) / 10) % 2 === 1 || parseInt(String(indexToyear(index) / 10)) % 2 === 1
         }"
       >
         <span
           class="time-ruler__line-number"
-          :class="{ bottom: (index / 5) % 2 === 1 }"
+          :class="{ bottom: (indexToyear(index) / 10) % 2 === 1 }"
         >
-          {{ (index * 2) % 10 === 0 ? (rulerData.start + index * 2) : '' }}
+          {{ indexToyear(index) % 10 === 0 ? indexToyear(index) : '' }}
         </span>
       </span>
       <el-tooltip
@@ -28,8 +28,9 @@
         </template>
           <span
             class="time-ruler__tooltip"
-            :style="{ left: (store.currentYear - rulerData.start) * space / 2 + 'px' }">
-        </span></el-tooltip>
+            :style="{ left: (store.currentYear - data.start) * space / 2 + 'px' }">
+        </span>
+      </el-tooltip>
     </div>
   </div>
 </template>
@@ -41,11 +42,11 @@ const store = mainStore()
 
 interface Props {
   lineX: number
-  rulerData: any
+  data: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  rulerData: () => ({}),
+  data: () => ({}),
   lineX: 0
 })
 // 总共1052px
@@ -55,8 +56,12 @@ const mainEventMap = reactive({})
 const mainEventValue = ref('')
 // 每个刻度间隔px, 每个刻度是2年
 const space = computed(() => {
-  return all / ((props.rulerData.end - props.rulerData.start) / 2)
+  return all / ((props.data.end - props.data.start) / 2)
 })
+
+const indexToyear = (index) => {
+  return props.data.start + index * 2
+}
 
 // 查询主人公当前年份是否有事件，如果有就弹出
 const showMainEvent = (year) => {
@@ -67,22 +72,23 @@ const showMainEvent = (year) => {
   }
 }
 
-// 计算当前鼠标所属年份
+// 计算当前鼠标所在位置对应的年份
 const getCurrentYear = (mouseX) => {
   const base = mouseX - 58
+  const start = props.data.start
   if (base >= 0) {
-    const year = Math.floor(base / space.value * 2 + props.rulerData.start)
-    if (year <= props.rulerData.end) {
+    const year = Math.floor(base / space.value * 2 + start)
+    if (year <= props.data.end) {
       store.updateYear(year)
       showMainEvent(year)
     }
   }
 }
 
-const throttleGetYear = throttle(getCurrentYear)
+const throttleGetYear = throttle(getCurrentYear, 200)
 
 const getMainEventMap = () => {
-  props.rulerData.events.forEach((item) => {
+  props.data.events.forEach((item) => {
     mainEventMap[item.year] = item.event
   })
 }

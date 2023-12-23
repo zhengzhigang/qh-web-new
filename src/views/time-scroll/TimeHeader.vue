@@ -15,14 +15,14 @@
           {{ item.label }}
         </span>
       </div>
-      <el-button
+      <!-- <el-button
         class="time-header__export"
         color="#6D6A63"
         @click="showExport"
       >
         <img class="time-header__export-img" src="../../assets/time-export.png" />
         数据导出
-      </el-button>
+      </el-button> -->
     </div>
   </div>
   <el-dialog

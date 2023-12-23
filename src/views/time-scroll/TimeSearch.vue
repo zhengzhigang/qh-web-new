@@ -118,8 +118,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const params = reactive({
-  startYear: '',
-  endYear: '',
+  startYear: 618,
+  endYear: 680,
   author: '',
   postTypeList: [],
   historyEventTypeList: [],
@@ -135,7 +135,7 @@ const isNumber = (input) => {
  
 
 const validate = () => {
-  if (props.timeType === 'personal') return true
+  // if (props.timeType === 'personal') return true
   if (props.timeType === 'history') {
     if (!isNumber(params.startYear) || !isNumber(params.endYear)) {
       ElMessage.error('起始年份和结束年份必须为数字')
@@ -147,9 +147,22 @@ const validate = () => {
       ElMessage.error('筛选年份范围应在50-500之间')
       return false
     }
-
-    return true
   }
+  if (!params.postTypeList.length) {
+    ElMessage.error('请选择作品筛选')
+    return false
+  }
+
+  if (!params.historyEventTypeList.length) {
+    ElMessage.error('请选择作历史事件')
+    return false
+  }
+
+  if (!params.individualEventTypeList.length) {
+    ElMessage.error('请选择个人事件')
+    return false
+  }
+  return true
 }
 
 const search = () => {
