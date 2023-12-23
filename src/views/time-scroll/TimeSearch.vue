@@ -142,11 +142,11 @@ const validate = () => {
       return false
     }
 
-    const yearDiff = Number(params.endYear) - Number(params.startYear)
-    if (yearDiff < 50 || yearDiff > 500) {
-      ElMessage.error('筛选年份范围应在50-500之间')
-      return false
-    }
+    // const yearDiff = Number(params.endYear) - Number(params.startYear)
+    // if (yearDiff < 50 || yearDiff > 500) {
+    //   ElMessage.error('筛选年份范围应在50-500之间')
+    //   return false
+    // }
   }
   if (!params.postTypeList.length) {
     ElMessage.error('请选择作品筛选')
