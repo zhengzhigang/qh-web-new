@@ -153,7 +153,8 @@ const expandOption = reactive({
   },
   tooltip: {
     trigger: 'axis',
-    formatter: '{c}'
+    formatter: '{c}',
+    transitionDuration: 0
   },
   yAxis: {
     type: 'value',

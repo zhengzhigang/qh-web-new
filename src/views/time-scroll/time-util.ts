@@ -50,7 +50,8 @@ export const getOptions = ({
     show: true,
     enterable: false,
     trigger: "axis",
-    formatter: "{c}"
+    formatter: "{c}",
+    transitionDuration: 0
   },
   grid: [
     {

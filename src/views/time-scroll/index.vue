@@ -63,6 +63,7 @@
           <time-ruler
             :lineX="state.lineX"
             :data="state.rulerData"
+            :scale="state.scale"
           ></time-ruler>
 
           <!-- 人物关系 -->
@@ -135,7 +136,7 @@ const state = reactive<{
   isSearch: false,
   loading: false,
   isShowLine: false,
-  scale: 1,  // 间隔
+  scale: 2,  // 间隔
   tabIndex: 0, // 选中tab索引
   lineX: 0, // 时间线的x轴坐标
   offsetLeft: 0, // 时间轴区域元素的offsetLeft值的和
@@ -243,8 +244,10 @@ const getHistoryStatics = async (params) => {
     // 设置标尺的开始结束时间
     const start = data.individualEvent[0].year
     const end = data.individualEvent[data.individualEvent.length - 1].year
-    state.rulerData.start = start % 2 === 1 ? start - 1 : start
-    state.rulerData.end = end % 2 ===1 ? end + 1 : end
+    // state.rulerData.start = start % 2 === 1 ? start - 1 : start
+    // state.rulerData.end = end % 2 ===1 ? end + 1 : end
+    state.rulerData.start = start
+    state.rulerData.end = end
   }
   state.loading = false
 

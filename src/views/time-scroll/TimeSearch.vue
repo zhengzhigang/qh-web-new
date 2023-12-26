@@ -118,8 +118,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const params = reactive({
-  startYear: 618,
-  endYear: 680,
+  startYear: '',
+  endYear: '',
   author: '',
   postTypeList: [],
   historyEventTypeList: [],

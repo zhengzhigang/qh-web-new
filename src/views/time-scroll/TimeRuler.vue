@@ -2,20 +2,17 @@
   <div class="time-ruler">
     <div class="time-ruler__main">
       <span
-        v-for="(item, index) in Math.ceil((data.end - data.start) / 2)"
+        v-for="(item, index) in Math.ceil((data.end - data.start) / scale)"
         :key="item"
         class="time-ruler__line"
         :style="{ left: `${index * space}px` }"
         :class="{
-          long: indexToyear(index) % 10 === 0,
-          bottom: (indexToyear(index) / 10) % 2 === 1 || parseInt(String(indexToyear(index) / 10)) % 2 === 1
+          long: scale === 1? indexToyear(index) % 5 === 0 : index % 5 === 0,
+          bottom: scale === 1 ? Math.floor(indexToyear(index) / 5) % 2 === 0 : Math.floor(index / 5) % 2 === 0
         }"
       >
-        <span
-          class="time-ruler__line-number"
-          :class="{ bottom: (indexToyear(index) / 10) % 2 === 1 }"
-        >
-          {{ indexToyear(index) % 10 === 0 ? indexToyear(index) : '' }}
+        <span v-if="scale === 1 || index % 5 === 0" class="time-ruler__line-number">
+          {{ indexToyear(index) % scale * 5 === 0 ? indexToyear(index) : '' }}
         </span>
       </span>
       <el-tooltip
@@ -28,7 +25,7 @@
         </template>
           <span
             class="time-ruler__tooltip"
-            :style="{ left: (store.currentYear - data.start) * space / 2 + 'px' }">
+            :style="{ left: (store.currentYear - data.start) * space / scale + 'px' }">
         </span>
       </el-tooltip>
     </div>
@@ -43,24 +40,26 @@ const store = mainStore()
 interface Props {
   lineX: number
   data: any
+  scale: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   data: () => ({}),
-  lineX: 0
+  lineX: 0,
+  scale: 2
 })
 // 总共1052px
 const all = 1052
 const mainTooTop = ref()
 const mainEventMap = reactive({})
 const mainEventValue = ref('')
-// 每个刻度间隔px, 每个刻度是2年
+// 每个刻度间隔px, 每个刻度是scale年
 const space = computed(() => {
-  return all / ((props.data.end - props.data.start) / 2)
+  return all / ((props.data.end - props.data.start) / props.scale)
 })
 
 const indexToyear = (index) => {
-  return props.data.start + index * 2
+  return props.data.start + index * props.scale
 }
 
 // 查询主人公当前年份是否有事件，如果有就弹出
@@ -77,7 +76,7 @@ const getCurrentYear = (mouseX) => {
   const base = mouseX - 58
   const start = props.data.start
   if (base >= 0) {
-    const year = Math.floor(base / space.value * 2 + start)
+    const year = Math.floor(base / space.value * props.scale + start)
     if (year <= props.data.end) {
       store.updateYear(year)
       showMainEvent(year)
@@ -122,25 +121,33 @@ watch(() => props.lineX, (v) => {
     &-number {
       position: absolute;
       left: 50%;
-      top: 31px;
+      top: 11px;
       line-height: 20px;
       transform: translateX(-50%);
       font-size: 12px;
       color: #CEC1A1;
-
-      &.bottom {
-        bottom: 31px;
-        top: auto;
-      }
     }
 
     &.long {
       height: 30px;
+
+      .time-ruler__line-number {
+        top: 31px;
+      }
     }
 
     &.bottom {
       bottom: 1px;
       top: auto;
+    }
+
+    &.bottom .time-ruler__line-number {
+      bottom: 11px;
+      top: auto;
+    }
+
+    &.long.bottom .time-ruler__line-number {
+      bottom: 31px;
     }
   }
 
