@@ -20,7 +20,7 @@
     <div v-if="timeType === 'personal'" class="time-search__item">
       <span class="time-search__item-prefix">作者</span>
       <el-input
-        v-model="params.author"
+        v-model="params.personName"
         placeholder="请输入人名"
         class="time-search__item-input"
         size="large"
@@ -120,10 +120,10 @@ const props = withDefaults(defineProps<Props>(), {
 const params = reactive({
   startYear: '',
   endYear: '',
-  author: '',
-  postTypeList: [],
-  historyEventTypeList: [],
-  individualEventTypeList: []
+  personName: '李白',
+  postTypeList: ['诗文集', '音乐/绘画'],
+  historyEventTypeList: ['军事类事件', '政治类事件'],
+  individualEventTypeList: ['社交活动', '地点类']
 })
 const emits = defineEmits(['search'])
 

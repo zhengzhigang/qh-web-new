@@ -11,7 +11,10 @@
           bottom: scale === 1 ? Math.floor(indexToyear(index) / 5) % 2 === 0 : Math.floor(index / 5) % 2 === 0
         }"
       >
-        <span v-if="scale === 1 || index % 5 === 0" class="time-ruler__line-number">
+        <span
+          v-if="scale === 1? indexToyear(index) % 5 === 0 : index % 5 === 0"
+          class="time-ruler__line-number"
+        >
           {{ indexToyear(index) % scale * 5 === 0 ? indexToyear(index) : '' }}
         </span>
       </span>
@@ -46,7 +49,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   data: () => ({}),
   lineX: 0,
-  scale: 2
+  scale: 1
 })
 // 总共1052px
 const all = 1052

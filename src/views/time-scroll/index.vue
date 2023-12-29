@@ -42,6 +42,9 @@
         <time-header
           :tabs="angleTabs"
           :filterOptions="filterOptions"
+          :start="state.rulerData.start"
+          :end="state.rulerData.end"
+          @switch="switchAngel"
         ></time-header>
         <div class="time-scroll__content-main" id="timeContnet">
           <!-- 事件轨道 -->
@@ -57,7 +60,12 @@
             :type="5"></time-card>
 
           <!-- 视角 -->
-          <time-dynasty :dynastyList="angleViewData"></time-dynasty>
+          <time-dynasty
+            v-if="state.angleViewData.length"
+            :dynastyList="state.angleViewData"
+            :start="state.rulerData.start"
+            :end="state.rulerData.end"
+          ></time-dynasty>
 
           <!-- 标尺 -->
           <time-ruler
@@ -101,7 +109,8 @@ import {
   getHistoryEventListApi,
   getIndividualEventListApi,
   getPostListApi,
-  getHistoryStaticsApi
+  getHistoryStaticsApi,
+  getPersonStaticsApi
 } from '@/api/common'
 import Header from '@/components/headerNew.vue';
 import Footer from '@/components/footer.vue';
@@ -122,7 +131,6 @@ import {
 import {
   summaryData,
   relationData,
-  angleViewData,
   angleTabs,
   filterOptions
 } from './mock'
@@ -159,7 +167,8 @@ const state = reactive<{
   },
   individualEvent: {}, // 人物经历
   eventsList: [], // 历史事件
-  worksList: [] // 作品事件
+  worksList: [], // 作品事件
+  angleViewData: []
 })
 
 // 获取落地页数据
@@ -182,8 +191,12 @@ const search = async (params: HistoryParams) => {
   state.eventsList = []
   state.worksList = []
   state.individualEvent = {}
+  if (state.tabIndex === 0) {
+    getHistoryStatics(params)
+  } else {
+    getPersonStatics(params)
+  }
 
-  getHistoryStatics(params)
 }
 
 const getTimeContnetRect = () => {
@@ -258,6 +271,50 @@ const getHistoryStatics = async (params) => {
   })
 }
 
+// 获取历史时间轴页面数据
+const getPersonStatics = async (params) => {
+  state.loading = true
+  const res: any = await getPersonStaticsApi(params)
+  if (res.success) {
+    const data = res.data.map
+    state.scale = res.data.scale
+    state.timeData.historyEventTypeList.forEach((item, index) => {
+      state.eventsList.push({
+        type: index + 1,
+        title: item,
+        list: data[item]
+      })
+    })
+    state.timeData.postTypeList.forEach((item, index) => {
+      state.worksList.push({
+        type: index + 1,
+        title: item,
+        list: data[item]
+      })
+    })
+    state.individualEvent = {
+      type: 5,
+      title: '人物经历',
+      list: data.individualEvent
+    }
+    // 设置标尺的开始结束时间
+    const start = data.individualEvent[0].year
+    const end = data.individualEvent[data.individualEvent.length - 1].year
+    // state.rulerData.start = start % 2 === 1 ? start - 1 : start
+    // state.rulerData.end = end % 2 ===1 ? end + 1 : end
+    state.rulerData.start = start
+    state.rulerData.end = end
+    console.log('@@@@@', start, end)
+  }
+  state.loading = false
+
+  // 搜索，不再展示落地页
+  state.isSearch = true
+  nextTick(() => {
+    initLine()
+  })
+}
+
 // 鼠标移动，拿到当前鼠标停留在哪一年
 const moveTimeLine = (event) => {
   const x = event.clientX - state.offsetLeft
@@ -277,6 +334,11 @@ const initLine = () => {
     timeContnet.addEventListener('mousemove', moveTimeLine)
     window.addEventListener('resize', getTimeContnetRect)
   }
+}
+
+// 设置视角数据
+const switchAngel = (data) => {
+  state.angleViewData = data
 }
 
 onMounted(() => {

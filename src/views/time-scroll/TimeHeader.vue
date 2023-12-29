@@ -82,19 +82,33 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import {
+  getYearByDynastyApi,
+  getYearByEmperorApi,
+  getYearByNianHaoApi
+} from '@/api/common'
 
 interface Props {
-  tabs: any[]
   filterOptions: any[]
+  start: number
+  end: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  tabs: () => [],
-  filterOptions: () => []
+  filterOptions: () => [],
+  start: 0,
+  end: 0
 })
 
 const emits = defineEmits(['switch'])
+
+// 视角
+const tabs = [
+  { label: '朝代', value: 0 },
+  { label: '皇帝', value: 1 },
+  { label: '年号', value: 2 }
+]
 
 const exportParams = reactive({
   range: '620年-680年',
@@ -106,11 +120,6 @@ const active = ref(0)
 const isShowExportDialog = ref(false)
 const isCheckAll = ref(false)
 const isIndeterminate = ref(false)
-
-const switchTab = (value) => {
-  active.value = value
-  emits('switch', value)
-}
 
 // 全选
 const handleCheckAllChange = (val ) => {
@@ -135,6 +144,82 @@ const showExport = () => {
 const confirmExport = () => {
   isShowExportDialog.value = false
 }
+
+// 根据朝代列出年份信息
+const getYearByDynasty = async () => {
+  try {
+    const res: any = await getYearByDynastyApi({
+      startYear: props.start,
+      endYear: props.end
+    })
+    if (res.code === 0) {
+      const data = res.data.map((item) => ({
+        label: item.dynasty,
+        start: item.minYear,
+        end: item.maxYear
+      }))
+      emits('switch', data)
+    } else {
+      emits('switch', [])
+    }
+  } catch(err) {
+    emits('switch', [])
+  }
+}
+
+// 根据皇帝列出年份信息
+const getYearByEmperor = async () => {
+  try {
+    const res: any = await getYearByEmperorApi({
+      startYear: props.start,
+      endYear: props.end
+    })
+    if (res.code === 0) {
+      const data = res.data.map((item) => ({
+        label: item.emperor,
+        start: item.minYear,
+        end: item.maxYear
+      }))
+      emits('switch', data)
+    } else {
+      emits('switch', [])
+    }
+  } catch(err) {
+    emits('switch', [])
+  }
+}
+
+// 根据年号列出年份信息
+const getYearByNianHao = async () => {
+  try {
+    const res: any = await getYearByNianHaoApi({
+      startYear: props.start,
+      endYear: props.end
+    })
+    if (res.code === 0) {
+      const data = res.data.map((item) => ({
+        label: item.nianHao,
+        start: item.minYear,
+        end: item.maxYear
+      }))
+      emits('switch', data)
+    } else {
+      emits('switch', [])
+    }
+  } catch(err) {
+    emits('switch', [])
+  }
+}
+
+const apis = [getYearByDynasty, getYearByEmperor, getYearByNianHao]
+const switchTab = (value) => {
+  active.value = value
+  apis[value]()
+}
+
+onMounted(() => {
+  switchTab(0)
+})
 </script>
 <style lang="scss" scoped>
 .time-header {

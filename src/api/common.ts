@@ -219,7 +219,43 @@ export function getPostListApi() {
 export function getHistoryStaticsApi(params = {}) {
   return request({
     method:'GET',
-    url: 'biannian/statics/listHistoryEventStatics',
+    url: 'biannian/statics/listHistoryScrollStatics',
+    params
+  })
+}
+
+// 个人时间轴页面数据
+export function getPersonStaticsApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/statics/listPersonScrollStatics',
+    params
+  })
+}
+
+// 根据朝代列出年份信息
+export function getYearByDynastyApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/year/listYearInfoByDynasty',
+    params
+  })
+}
+
+// 根据皇帝列出年份信息
+export function getYearByEmperorApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/year/listYearInfoByEmperor',
+    params
+  })
+}
+
+// 根据年号列出年份信息
+export function getYearByNianHaoApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/year/listYearInfoByNianHao',
     params
   })
 }
