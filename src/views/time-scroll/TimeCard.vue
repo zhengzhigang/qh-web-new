@@ -10,6 +10,7 @@
         autoresize
         :group="group"
         @click="handleClick"
+        @mouseout="handleMouseout"
       />
       <div v-else class="time-card__expand-chart" ref="expandChartRef" style="width: 1095px; height: 265px;"></div>
 
@@ -30,8 +31,8 @@
         effect="light">
         <template #content>
           <div style="max-width: 270px;">
-            <p>事件名称</p>
-            <p>这里是事件概述内容这里是事件概述内容</p>
+            <p class="time-card__tooltip-box-title">{{ currentEventName }}</p>
+            <p class="time-card__tooltip-box-desc">{{ currentEventDesc }}</p>
           </div>
         </template>
           <span
@@ -58,6 +59,7 @@ import { getMinMax, getOptions } from './time-util'
 import { EChartsOption } from './type'
 import { mainStore as useMainStore } from '@/pinia/main'
 import * as echarts from 'echarts'
+import { getImportantEventApi } from '@/api/common'
 
 const store = useMainStore()
 
@@ -66,6 +68,7 @@ interface Props {
   title: string
   type: number
   data: any[]
+  importantList: any[]
   isShowScatter?: boolean
 }
 
@@ -85,6 +88,7 @@ const props = withDefaults(defineProps<Props>(), {
   title: '',
   group: 'group',
   data: () => [],
+  importantList: () => [],
   type: 1,
   isShowScatter: true
 })
@@ -113,6 +117,10 @@ let yAxisData: any[] = []
 let scatterData: any[] = []
 const tipX = ref(0)
 const tipY = ref(0)
+// 当前点击的重大事件名
+const currentEventName = ref('')
+// 当前点击的重大事件描述
+const currentEventDesc = ref('')
 // y轴数据连续处理，x轴数据做连续处理
 const option = ref<EChartsOption>({})
 let minMax: any = null
@@ -220,16 +228,19 @@ const conductData = () => {
   props.data.forEach(item => {
     xData.push(item.year)
     yData.push(item.cnt)
-    dropData.push({ value: item.majorEvents || false })
   })
-  // xAxisData = generateContinuousArray(xData[0], xData[xData.length - 1])
-  xAxisData = xData
-  // yAxisData = arrFillNull(xData, yData)
-  yAxisData = yData
+  xAxisData = generateContinuousArray(xData[0], xData[xData.length - 1])
+  yAxisData = arrFillNull(xData, yData)
   minMax = getMinMax({ lineData: yData, xAxisData: xData })
-  // scatterData = arrFillNull(xData, dropData).map((scatter) => {
-  //   return (!scatter || scatter.value) ? null : { value: minMax.maxCount + (minMax.maxCountDiff * 4) / 5 }
-  // })
+  xAxisData.forEach((item) => {
+    const val = props.importantList.find((curr) => curr.year === item)
+    if (val) {
+      dropData.push({ value: minMax.maxCount + (minMax.maxCountDiff * 4) / 5, year: item })
+    } else {
+      dropData.push(null)
+    }
+  })
+  scatterData = dropData
 }
 
 // 设置option
@@ -262,11 +273,46 @@ const handleClick = (e: any) => {
   console.log(offsetX, offsetY)
   tipX.value = offsetX
   tipY.value = offsetY
+  if (e.seriesName !== 'scatter') return
+  getInportantEvents(e.data.year)
+}
 
-  nextTick(() => {
-    tooltipRef.value.onOpen()
-    tooltipRef.value.updatePopper()
+const handleMouseout = (e) => {
+  console.log(1111, e)
+  if (e.seriesName !== 'scatter') return
+  tooltipRef.value.onClose()
+}
+
+// 查找数组中与当前鼠标所在年份相邻的年份
+const getSiblingYear = (year) => {
+  let diff = 9999999
+  let index = 0
+  for (let i = 0; i < xAxisData.length; i++) {
+    if (Math.abs(year - xAxisData[i]) < diff && yAxisData[i] !== null) {
+      diff = Math.abs(year - xAxisData[i])
+      index = i
+    } else {
+      continue
+    }
+  }
+  return index
+}
+
+// 获取重要事件
+const getInportantEvents = async (year = 0) => {
+  const res: any = await getImportantEventApi({
+    year,
+    eventType: props.title
   })
+  if (res.code === 0) {
+    const event = res.data[0] || {}
+    currentEventName.value = event.eventName
+    currentEventDesc.value = event.eventDesc
+    nextTick(() => {
+      tooltipRef.value.onOpen()
+      tooltipRef.value.updatePopper()
+    })
+  }
 }
 
 const toggleExpand = () => {
@@ -314,24 +360,9 @@ watch(() => store.isExpandType, (val) => {
   }
 })
 
-// 查找数组中与当前鼠标所在年份相邻的年份
-const getSiblingYear = (year) => {
-  let diff = 9999999
-  let index = 0
-  for (let i = 0; i < xAxisData.length; i++) {
-    if (Math.abs(year - xAxisData[i]) < diff) {
-      diff = Math.abs(year - xAxisData[i])
-      index = i
-    } else {
-      continue
-    }
-  }
-  return index
-}
-
 watch(() => store.currentYear, (val) => {
   const index = xAxisData.findIndex((item) => item === val)
-  if (index > -1) {
+  if (index > -1 && yAxisData[index] !== null) {
     showToolTip(index)
   } else {
     // 如果没有找到，就查找附近的
@@ -463,6 +494,20 @@ onMounted(() => {
 
   .el-popper__arrow {
     display: none;
+  }
+
+  &-title {
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    color: #6D6A63;
+    line-height: 24px;
+  }
+
+  &-desc {
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    color: #6D6A63;
+    opacity: 0.5;
   }
 }
 </style>

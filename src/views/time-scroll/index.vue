@@ -52,6 +52,7 @@
             v-for="(item, index) in state.eventsList"
             :key="index"
             :data="item.list"
+            :importantList="item.importantList"
             :title="item.title"
             :type="item.type"></time-card>
           <time-card
@@ -239,14 +240,16 @@ const getHistoryStatics = async (params) => {
       state.eventsList.push({
         type: index + 1,
         title: item,
-        list: data[item]
+        list: data[item],
+        importantList: data[`${item}||important`] || [] // 重大事件
       })
     })
     state.timeData.postTypeList.forEach((item, index) => {
       state.worksList.push({
         type: index + 1,
         title: item,
-        list: data[item]
+        list: data[item],
+        importantList: data[`${item}||important`] || [] // 重大事件
       })
     })
     state.individualEvent = {

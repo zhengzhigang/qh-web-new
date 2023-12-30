@@ -259,3 +259,30 @@ export function getYearByNianHaoApi(params = {}) {
     params
   })
 }
+
+// 获取历史事件的重要事件
+export function getImportantEventApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/listImportantEventForHistoryPage',
+    params
+  })
+}
+
+// 获取个人时间轴的历史事件的重要事件
+export function getPersonImportantEventApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/listImportantEventForPerson',
+    params
+  })
+}
+
+// 获取个人时间轴的相关人物的信息
+export function getPersonInfoApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/listRelatedPersonInfo',
+    params
+  })
+}
