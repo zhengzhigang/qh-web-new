@@ -21,7 +21,7 @@
       class="time-relation__axle-main"
       :style="{ width: `${mainWidth}px`, marginBottom: isShowRelation ? '44px' : '24px' }"
     >
-      {{ data.name }}({{ data.startYear }}-{{ data.endYear }})
+      {{ person.name }}({{ person.startYear }}-{{ person.endYear }})
       <!-- 主人公事件tootltip -->
       <el-tooltip
         popper-class="time-relation__tooltip-box"
@@ -33,25 +33,25 @@
         </template>
           <span
             class="time-relation__axle-tooltip"
-            :style="{ left: (store.currentYear - props.data.startYear) * space / 2 + 'px' }">
+            :style="{ left: (store.currentYear - props.person.startYear) * space / 2 + 'px' }">
         </span></el-tooltip>
       <div
-        v-for="item in (data.endYear - data.startYear)"
+        v-for="item in (person.endYear - person.startYear)"
         :key="item"
         class="time-relation__axle-mark"
         :style="{
-          left: mainWidth / (data.endYear - data.startYear) * item + 'px',
-          height: scaleHeight(item, data.endYear - data.startYear)
+          left: mainWidth / (person.endYear - person.startYear) * item + 'px',
+          height: scaleHeight(item, person.endYear - person.startYear)
         }"
       >
         <span
-          v-if="scaleHeight(item, data.endYear - data.startYear)"
+          v-if="scaleHeight(item, person.endYear - person.startYear)"
           class="time-relation__axle-mark-year">{{ item }}</span>
       </div>
       <span class="time-relation__axle-text">（岁）</span>
     </div>
     <!-- 关联人物时间轴 -->
-    <div v-if="isShowRelation">
+    <div v-if="isShowRelation" class="time-relation__axle-relation-box">
       <div
         v-for="(item, index) in relations"
         :key="index"
@@ -89,14 +89,21 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch, reactive } from 'vue'
 import { mainStore  } from '@/pinia/main'
+import { getPersonInfoApi } from '@/api/common'
+import JSONBig from 'json-bigint'
+
 const store = mainStore()
 
 interface Props {
   data: any
+  personId: any
+  person: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  data: () => ({})
+  data: () => ({}),
+  personId: '',
+  person: () => ({})
 })
 const mainToolTipRef = ref()
 // 时间轴总宽度
@@ -129,7 +136,7 @@ const space = computed(() => {
   return Math.floor(all / ((end.value - start.value) / 2))
 })
 const mainWidth = computed(() => {
-  return space.value * (props.data.endYear - props.data.startYear) / 2
+  return space.value * (props.person.endYear - props.person.startYear) / 2
 })
 
 /**
@@ -155,6 +162,7 @@ const scaleHeight = (curr, years) => {
 }
 
 const showRelation = () => {
+  getPersonInfo()
   isShowRelation.value = !isShowRelation.value
 }
 
@@ -188,6 +196,20 @@ const getMainEventMap = () => {
   })
 }
 
+// 获取个人时间轴的相关人物的信息
+const getPersonInfo = async () => {
+  const res: any = await getPersonInfoApi({ bnPersonId: JSONBig.stringify(props.personId) })
+  if (res.code === 0) {
+    const list = res.data || []
+    relations.value = list.map((item) => ({
+      name: item.name,
+      startYear: item.birthYear,
+      endYear: item.deathYear,
+      events: []
+    }))
+  }
+}
+
 // 监听鼠标移动到哪一年
 watch(() => store.currentYear, (val) => {
   showMainEvent(val)
@@ -198,12 +220,13 @@ watch(() => store.currentYear, (val) => {
 })
 
 onMounted(() => {
-  start.value = props.data.startYear - 20
-  end.value = props.data.endYear + 20
-  relations.value = props.data.relations
+  start.value = props.person.startYear - 20
+  end.value = props.person.endYear + 20
+  // relations.value = props.data.relations
 
   // 处理数据接口，方便查询，查询的时候不再循环
-  getMainEventMap()
+  // getMainEventMap()
+  getPersonInfo()
 })
 </script>
 <style lang="scss" scoped>
@@ -273,6 +296,10 @@ onMounted(() => {
       color: #6D6A63;
 
       @extend .relation-line;
+
+      &-box {
+        overflow: hidden;
+      }
     }
 
     &-tooltip {

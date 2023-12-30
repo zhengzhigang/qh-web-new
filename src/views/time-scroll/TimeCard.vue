@@ -59,7 +59,8 @@ import { getMinMax, getOptions } from './time-util'
 import { EChartsOption } from './type'
 import { mainStore as useMainStore } from '@/pinia/main'
 import * as echarts from 'echarts'
-import { getImportantEventApi } from '@/api/common'
+import { getImportantEventApi, getPersonImportantEventApi } from '@/api/common'
+import JSONBig from 'json-bigint';
 
 const store = useMainStore()
 
@@ -70,6 +71,8 @@ interface Props {
   data: any[]
   importantList: any[]
   isShowScatter?: boolean
+  tabIndex: number
+  personId: any
 }
 
 use([
@@ -90,7 +93,9 @@ const props = withDefaults(defineProps<Props>(), {
   data: () => [],
   importantList: () => [],
   type: 1,
-  isShowScatter: true
+  isShowScatter: true,
+  tabIndex: 0,
+  personId: ''
 })
 const emits = defineEmits(['showDetail', 'toggleExpand'])
 
@@ -270,15 +275,18 @@ const showToolTip = (index) => {
 
 const handleClick = (e: any) => {
   const { offsetX, offsetY } = e.event
-  console.log(offsetX, offsetY)
   tipX.value = offsetX
   tipY.value = offsetY
   if (e.seriesName !== 'scatter') return
-  getInportantEvents(e.data.year)
+  if (props.tabIndex === 0) {
+    // 历史时间轴
+    getInportantEvents(e.data.year)
+  } else {
+    getPersonImportantEvent(e.data.year)
+  }
 }
 
 const handleMouseout = (e) => {
-  console.log(1111, e)
   if (e.seriesName !== 'scatter') return
   tooltipRef.value.onClose()
 }
@@ -298,7 +306,7 @@ const getSiblingYear = (year) => {
   return index
 }
 
-// 获取重要事件
+// 获取历史时间轴重要事件
 const getInportantEvents = async (year = 0) => {
   const res: any = await getImportantEventApi({
     year,
@@ -314,6 +322,25 @@ const getInportantEvents = async (year = 0) => {
     })
   }
 }
+
+// 获取个人时间轴重要事件
+const getPersonImportantEvent = async (year = 0) => {
+  const res: any = await getPersonImportantEventApi({
+    year,
+    eventType: props.title,
+    bnPersonId: JSONBig.stringify(props.personId)
+  })
+  if (res.code === 0) {
+    const event = res.data[0] || {}
+    currentEventName.value = event.eventName
+    currentEventDesc.value = event.eventDesc
+    nextTick(() => {
+      tooltipRef.value.onOpen()
+      tooltipRef.value.updatePopper()
+    })
+  }
+}
+
 
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value

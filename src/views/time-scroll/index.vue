@@ -54,11 +54,16 @@
             :data="item.list"
             :importantList="item.importantList"
             :title="item.title"
-            :type="item.type"></time-card>
+            :type="item.type"
+            :tabIndex="state.tabIndex"
+            :personId="state.personId"></time-card>
           <time-card
             :data="state.individualEvent.list"
+            :importantList="state.individualEvent.importantList"
             :title="state.individualEvent.title"
-            :type="5"></time-card>
+            :type="5"
+            :tabIndex="state.tabIndex"
+            :personId="state.personId"></time-card>
 
           <!-- 视角 -->
           <time-dynasty
@@ -78,7 +83,13 @@
           <!-- 人物关系 -->
           <time-relation
             v-if="state.tabIndex === 1"
-            :data="relationData"></time-relation>
+            :data="relationData"
+            :person="{
+              startYear: state.rulerData.start,
+              endYear: state.rulerData.end,
+              name: state.timeData.personName
+            }"
+            :personId="state.personId"></time-relation>
 
           <!-- 作品轨道 -->
           <time-card
@@ -128,6 +139,7 @@ import TimeCard from './TimeCard.vue'
 import {
   HistoryParams
 } from './time-scroll'
+import JSONBig from 'json-bigint';
 
 import {
   summaryData,
@@ -154,6 +166,7 @@ const state = reactive<{
   worksOptions: [], // 作品选项
   summaryData: {}, // 落地页数据
   timeData: {
+    personName: '',
     // 时间范围 618-1014
     startYear: 618,
     endYear: 1014,
@@ -169,7 +182,8 @@ const state = reactive<{
   individualEvent: {}, // 人物经历
   eventsList: [], // 历史事件
   worksList: [], // 作品事件
-  angleViewData: []
+  angleViewData: [],
+  personId: ''
 })
 
 // 获取落地页数据
@@ -274,31 +288,36 @@ const getHistoryStatics = async (params) => {
   })
 }
 
-// 获取历史时间轴页面数据
+// 获取个人时间轴页面数据
 const getPersonStatics = async (params) => {
   state.loading = true
   const res: any = await getPersonStaticsApi(params)
   if (res.success) {
     const data = res.data.map
+    state.personId = res.data.bnPersonId
     state.scale = res.data.scale
+
     state.timeData.historyEventTypeList.forEach((item, index) => {
       state.eventsList.push({
         type: index + 1,
         title: item,
-        list: data[item]
+        list: data[item],
+        importantList: data[`${item}||important`] || [] // 重大事件
       })
     })
     state.timeData.postTypeList.forEach((item, index) => {
       state.worksList.push({
         type: index + 1,
         title: item,
-        list: data[item]
+        list: data[item],
+        importantList: data[`${item}||important`] || [] // 重大事件
       })
     })
     state.individualEvent = {
       type: 5,
       title: '人物经历',
-      list: data.individualEvent
+      list: data.individualEvent,
+      importantList: data[`individualEvent||important`] || [] // 重大事件
     }
     // 设置标尺的开始结束时间
     const start = data.individualEvent[0].year
@@ -307,7 +326,6 @@ const getPersonStatics = async (params) => {
     // state.rulerData.end = end % 2 ===1 ? end + 1 : end
     state.rulerData.start = start
     state.rulerData.end = end
-    console.log('@@@@@', start, end)
   }
   state.loading = false
 

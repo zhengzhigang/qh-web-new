@@ -4,7 +4,7 @@
       v-for="(item, index) in dynastyList"
       :key="index"
       class="time-dynasty__item"
-      :style="getStyle(item)">{{ item.label }}</span>
+      :style="getStyle(item, index)">{{ item.label }}</span>
   </div>
 </template>
 <script lang="ts" setup>
@@ -22,10 +22,12 @@ const props = withDefaults(defineProps<Props>(), {
   dynastyList: () => []
 })
 
-const getStyle = ({ start, end }) => {
+const getStyle = ({ start, end }, index) => {
+  // isEnd用来处理间隙
+  const isEnd = index === props.dynastyList.length - 1
   return {
     left: `${(start - props.start) / (props.end - props.start) * 100}%`,
-    right: `${(props.end - end) / (props.end - props.start) * 100}%`
+    right: `${(props.end - end - (isEnd ? 0 : 1)) / (props.end - props.start) * 100}%`
   }
 }
 
