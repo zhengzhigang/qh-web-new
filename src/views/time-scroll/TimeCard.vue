@@ -59,7 +59,7 @@ import { getMinMax, getOptions } from './time-util'
 import { EChartsOption } from './type'
 import { mainStore as useMainStore } from '@/pinia/main'
 import * as echarts from 'echarts'
-import { getImportantEventApi, getPersonImportantEventApi } from '@/api/common'
+import { getImportantEventApi, getPersonImportantEventApi, getIndividualImportantEventApi } from '@/api/common'
 import JSONBig from 'json-bigint';
 
 const store = useMainStore()
@@ -282,6 +282,10 @@ const handleClick = (e: any) => {
     // 历史时间轴
     getInportantEvents(e.data.year)
   } else {
+    if (props.type === 5) {
+      getIndividualImportantEvent(e.data.year)
+      return
+    }
     getPersonImportantEvent(e.data.year)
   }
 }
@@ -313,13 +317,15 @@ const getInportantEvents = async (year = 0) => {
     eventType: props.title
   })
   if (res.code === 0) {
-    const event = res.data[0] || {}
-    currentEventName.value = event.eventName
-    currentEventDesc.value = event.eventDesc
-    nextTick(() => {
-      tooltipRef.value.onOpen()
-      tooltipRef.value.updatePopper()
-    })
+    if (res.data && res.data.length) {
+      const event = res.data[0] || {}
+      currentEventName.value = event.eventName
+      currentEventDesc.value = event.eventDesc
+      nextTick(() => {
+        tooltipRef.value.onOpen()
+        tooltipRef.value.updatePopper()
+      })
+    }
   }
 }
 
@@ -331,16 +337,37 @@ const getPersonImportantEvent = async (year = 0) => {
     bnPersonId: JSONBig.stringify(props.personId)
   })
   if (res.code === 0) {
-    const event = res.data[0] || {}
-    currentEventName.value = event.eventName
-    currentEventDesc.value = event.eventDesc
-    nextTick(() => {
-      tooltipRef.value.onOpen()
-      tooltipRef.value.updatePopper()
-    })
+    if (res.data && res.data.length) {
+      const event = res.data[0] || {}
+      currentEventName.value = event.eventName
+      currentEventDesc.value = event.eventDesc
+      nextTick(() => {
+        tooltipRef.value.onOpen()
+        tooltipRef.value.updatePopper()
+      })
+    }
   }
 }
 
+// 获取个人时间轴的人物经历的重要事件
+const getIndividualImportantEvent = async (year = 0) => {
+  const res: any = await getIndividualImportantEventApi({
+    year,
+    eventType: props.title,
+    bnPersonId: JSONBig.stringify(props.personId)
+  })
+  if (res.code === 0) {
+    if (res.data && res.data.length) {
+      const event = res.data[0] || {}
+      currentEventName.value = event.eventName
+      currentEventDesc.value = event.eventDesc
+      nextTick(() => {
+        tooltipRef.value.onOpen()
+        tooltipRef.value.updatePopper()
+      })
+    }
+  }
+}
 
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value

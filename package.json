@@ -16,6 +16,7 @@
         "axios": "^0.25.0",
         "d3": "^5.15.0",
         "echarts": "^5.4.3",
+        "echarts-wordcloud": "^2.1.0",
         "element-plus": "^2.2.18",
         "eslint-plugin-n": "^15.0.0 || ^16.0.0",
         "json-bigint": "^1.0.0",

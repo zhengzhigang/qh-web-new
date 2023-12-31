@@ -20,13 +20,18 @@
         @search="search"
       ></time-search>
       <!-- 落地页 -->
-      <div v-if="!state.isSearch" style="margin-top: -40px;">
-        <time-data-summary
-          :eventNumber="state.summaryData.eventNumber"
-          :workNumber="state.summaryData.workNumber"
-          :relationNumber="state.summaryData.relationNumber"
-        ></time-data-summary>
-        <time-bar
+      <div v-if="!state.isSearch" style="margin-top: -40px;margin-bottom: 75px;">
+        <time-data-summary></time-data-summary>
+        <div class="time-scroll__land">
+          <div class="time-scroll__land-item">
+            <time-pie></time-pie>
+          </div>
+          <div class="time-scroll__land-item">
+            <time-wordcloud></time-wordcloud>
+          </div>
+        </div>
+        <time-smooth-line title="各年份事件/作品数"></time-smooth-line>
+        <!-- <time-bar
           v-if="state.summaryData.list && state.summaryData.list.length"
           :title="state.summaryData.title"
           :data="state.summaryData.list"
@@ -35,7 +40,7 @@
           v-if="state.summaryData.list && state.summaryData.list.length"
           :isShowTab="false"
           :title="state.summaryData.title"
-          :data="state.summaryData.list"></time-line>
+          :data="state.summaryData.list"></time-line> -->
       </div>
       <!-- 时间轴 -->
       <div v-if="state.isSearch" class="time-scroll__content">
@@ -104,12 +109,12 @@
             :style="{ left: `${state.lineX - 2}px` }"></div>
         </div>
       </div>
-      <div style="margin-bottom: 75px;">
+      <!-- <div style="margin-bottom: 75px;">
         <time-line
           v-if="state.summaryData.list && state.summaryData.list.length"
           :title="state.summaryData.title"
           :data="state.summaryData.list"></time-line>
-      </div>
+      </div> -->
     </div>
     <Footer></Footer>
   </div>
@@ -136,17 +141,12 @@ import TimeRuler from './TimeRuler.vue'
 import TimeDataSummary from './TimeDataSummary.vue'
 import TimeRelation from './TimeRelation.vue'
 import TimeCard from './TimeCard.vue'
+import TimePie from './TimePie.vue'
+import TimeWordcloud from './TimeWordcloud.vue'
+import TimeSmoothLine from './TimeSmoothLine.vue'
 import {
   HistoryParams
 } from './time-scroll'
-import JSONBig from 'json-bigint';
-
-import {
-  summaryData,
-  relationData,
-  angleTabs,
-  filterOptions
-} from './mock'
 
 let timeContnet = null
 
@@ -185,15 +185,6 @@ const state = reactive<{
   angleViewData: [],
   personId: ''
 })
-
-// 获取落地页数据
-const getLandingPageData = () => {
-  state.loading = true
-  setTimeout(() => {
-    state.summaryData = summaryData
-    state.loading = false
-  }, 500)
-}
 
 // 切换tab
 const switchTab = (index) => {
@@ -366,8 +357,6 @@ onMounted(() => {
   getHistoryEventList()
   getIndividualEventList()
   getPostList()
-
-  getLandingPageData()
 })
 
 onBeforeUnmount(() => {
@@ -409,6 +398,16 @@ onBeforeUnmount(() => {
       width: 1px;
       z-index: 1;
       background: #6D6A63;
+    }
+  }
+
+  &__land {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 26px;
+
+    &-item {
+      width: 588px;
     }
   }
 }

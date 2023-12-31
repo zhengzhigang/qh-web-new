@@ -278,11 +278,75 @@ export function getPersonImportantEventApi(params = {}) {
   })
 }
 
+// 获取个人时间轴的人物经历的重要事件
+export function getIndividualImportantEventApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/listImportantEventForIndividual',
+    params
+  })
+}
+
 // 获取个人时间轴的相关人物的信息
 export function getPersonInfoApi(params = {}) {
   return request({
     method:'GET',
     url: 'biannian/listRelatedPersonInfo',
+    params
+  })
+}
+
+// 获取落地页头部统计数据
+export function getTotalCountApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/landPage/getTotalCount',
+    params
+  })
+}
+
+// 落地页图标-人物权重词云
+export function getlandPageApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/landPage/listPersonWeight',
+    params
+  })
+}
+
+// 落地页图标-作品分类统计
+export function getTotalCountAndPercentApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/landPage/getPostTotalCountAndPercent',
+    params
+  })
+}
+
+// 落地页图表-年份折线图
+export function getListYearPostWeightApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/landPage/listYearPostWeight',
+    params
+  })
+}
+
+// 根据开始结束年份列出年份具体信息
+export function getMainPersonEventApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/year/listYearDetailByStartYearAndEndYear',
+    params
+  })
+}
+
+
+// 历史时间轴看板页面人物概览-人物事件关系
+export function getListPersonBoardApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/statics/listPersonBoard',
     params
   })
 }

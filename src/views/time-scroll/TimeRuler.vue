@@ -35,9 +35,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, watch, ref, reactive } from 'vue'
+import { computed, watch, ref, reactive, onMounted } from 'vue'
 import { throttle } from 'lodash-es'
 import { mainStore  } from '@/pinia/main'
+import { getMainPersonEventApi } from '@/api/common'
 const store = mainStore()
 
 interface Props {
@@ -71,6 +72,8 @@ const showMainEvent = (year) => {
     mainEventValue.value = mainEventMap[year]
     mainTooTop.value.onOpen()
     mainTooTop.value.updatePopper()
+  } else {
+    mainTooTop.value.onClose()
   }
 }
 
@@ -89,15 +92,29 @@ const getCurrentYear = (mouseX) => {
 
 const throttleGetYear = throttle(getCurrentYear, 200)
 
-const getMainEventMap = () => {
-  props.data.events.forEach((item) => {
-    mainEventMap[item.year] = item.event
+const getMainEventMap = (list = []) => {
+  list.forEach((item) => {
+    mainEventMap[item.year] = item.yearDesc
   })
 }
 
 watch(() => props.lineX, (v) => {
   throttleGetYear(v)
-  getMainEventMap()
+})
+
+// 历史时间轴看板页面人物概览-人物事件关系
+const getMainPersonEvent = async () => {
+  const res: any = await getMainPersonEventApi({
+    startYear: props.data.start,
+    endYear: props.data.end
+  })
+  if (res.code === 0) {
+    getMainEventMap(res.data)
+  }
+}
+
+onMounted(() => {
+  getMainPersonEvent()
 })
 </script>
 <style lang="scss" scoped>

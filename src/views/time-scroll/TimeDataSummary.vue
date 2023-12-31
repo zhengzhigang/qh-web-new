@@ -2,29 +2,37 @@
   <div class="time-data-summary">
     <div class="time-data-summary__item">
       <p class="time-data-summary__title">已系年事件数</p>
-      <span class="time-data-summary__number">{{ eventNumber.toLocaleString() }}</span>
+      <span class="time-data-summary__number">{{ eventCnt.toLocaleString() }}</span>
     </div>
     <div class="time-data-summary__item">
       <p class="time-data-summary__title">已系年作品数</p>
-      <span class="time-data-summary__number">{{ workNumber.toLocaleString() }}</span>
+      <span class="time-data-summary__number">{{ postCnt.toLocaleString() }}</span>
     </div>
     <div class="time-data-summary__item">
       <p class="time-data-summary__title">已系年关系数</p>
-      <span class="time-data-summary__number">{{ relationNumber.toLocaleString() }}</span>
+      <span class="time-data-summary__number">{{ relCnt.toLocaleString() }}</span>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-interface Props {
-  eventNumber: number
-  workNumber: number
-  relationNumber: number
+import { onMounted, ref } from 'vue'
+import { getTotalCountApi } from '@/api/common'
+
+const eventCnt = ref(0)
+const postCnt = ref(0)
+const relCnt = ref(0)
+
+const getData = async () => {
+  const res: any = await getTotalCountApi()
+  if (res.code === 0) {
+    eventCnt.value = res.data.eventCnt
+    postCnt.value = res.data.postCnt
+    relCnt.value = res.data.relCnt
+  }
 }
 
-withDefaults(defineProps<Props>(), {
-  eventNumber: 0,
-  workNumber: 0,
-  relationNumber: 0
+onMounted(() => {
+  getData()
 })
 </script>
 <style lang="scss" scoped>
