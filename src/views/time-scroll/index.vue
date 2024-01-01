@@ -45,8 +45,6 @@
       <!-- 时间轴 -->
       <div v-if="state.isSearch" class="time-scroll__content">
         <time-header
-          :tabs="angleTabs"
-          :filterOptions="filterOptions"
           :start="state.rulerData.start"
           :end="state.rulerData.end"
           @switch="switchAngel"
@@ -115,6 +113,8 @@
           :title="state.summaryData.title"
           :data="state.summaryData.list"></time-line>
       </div> -->
+      <time-table v-if="state.isSearch && !state.loading" style="margin-bottom: 75px;"></time-table>
+
     </div>
     <Footer></Footer>
   </div>
@@ -144,6 +144,7 @@ import TimeCard from './TimeCard.vue'
 import TimePie from './TimePie.vue'
 import TimeWordcloud from './TimeWordcloud.vue'
 import TimeSmoothLine from './TimeSmoothLine.vue'
+import TimeTable from './TimeTable.vue'
 import {
   HistoryParams
 } from './time-scroll'

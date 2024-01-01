@@ -346,7 +346,25 @@ export function getMainPersonEventApi(params = {}) {
 export function getListPersonBoardApi(params = {}) {
   return request({
     method:'GET',
-    url: 'biannian/statics/listPersonBoard',
+    url: 'biannian/historyPageBoard/listPersonBoard',
+    params
+  })
+}
+
+// 历史时间轴看板页面事件标签概览-事件标签关系
+export function getEventIndividualBoardApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/historyPageBoard/listEventIndividualBoard',
+    params
+  })
+}
+
+// 历史时间轴看板页面事件地址概览-事件地址关系
+export function getEventAddressBoardApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/historyPageBoard/listEventAddressBoard',
     params
   })
 }
