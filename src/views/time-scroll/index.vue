@@ -86,7 +86,6 @@
           <!-- 人物关系 -->
           <time-relation
             v-if="state.tabIndex === 1"
-            :data="relationData"
             :person="{
               startYear: state.rulerData.start,
               endYear: state.rulerData.end,
@@ -113,7 +112,18 @@
           :title="state.summaryData.title"
           :data="state.summaryData.list"></time-line>
       </div> -->
-      <time-table v-if="state.isSearch && !state.loading" style="margin-bottom: 75px;"></time-table>
+      <time-table
+        v-if="state.isSearch && !state.loading && state.tabIndex === 0"
+        :start="state.rulerData.start"
+        :end="state.rulerData.end"
+        style="margin-bottom: 75px;"
+      ></time-table>
+      <time-person-table
+        v-if="state.isSearch && !state.loading && state.tabIndex === 1"
+        :personId="state.personId"
+        :start="state.rulerData.start"
+        :end="state.rulerData.end"
+      ></time-person-table>
 
     </div>
     <Footer></Footer>
@@ -135,7 +145,6 @@ import TimeTabs from './TimeTabs.vue'
 import TimeSearch from './TimeSearch.vue'
 import TimeHeader from './TimeHeader.vue'
 import TimeLine from './TimeLine.vue'
-import TimeBar from './TimeBar.vue'
 import TimeDynasty from './TimeDynasty.vue'
 import TimeRuler from './TimeRuler.vue'
 import TimeDataSummary from './TimeDataSummary.vue'
@@ -145,6 +154,7 @@ import TimePie from './TimePie.vue'
 import TimeWordcloud from './TimeWordcloud.vue'
 import TimeSmoothLine from './TimeSmoothLine.vue'
 import TimeTable from './TimeTable.vue'
+import TimePersonTable from './TimePersonTable.vue'
 import {
   HistoryParams
 } from './time-scroll'

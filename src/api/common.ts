@@ -368,3 +368,12 @@ export function getEventAddressBoardApi(params = {}) {
     params
   })
 }
+
+// 个人时间轴轴看板页需求--互动关系
+export function getEventRelPersonBoardApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/personPageBoard/listEventRelPersonBoard',
+    params
+  })
+}

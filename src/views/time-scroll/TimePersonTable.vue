@@ -9,7 +9,7 @@
         @click="switchTab(item.value)"
       >{{ item.label }}</span>
     </div>
-    <div class="time-table__table" v-loading="isLoading">
+    <div v-if="active === 1" class="time-table__table" v-loading="isLoading">
       <div class="time-table__top">
         <span class="time-table__top-title">人物概览</span>
         <div class="time-table__top-legends">
@@ -70,25 +70,34 @@
         </el-table>
       </div>
     </div>
+    <div v-else class="time-table__table" v-loading="isLoading">
+      <div class="time-table__content">
+        <time-bar></time-bar>
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import {
-  getListPersonBoardApi,
+  getEventRelPersonBoardApi,
   getEventIndividualBoardApi,
   getEventAddressBoardApi
 } from '@/api/common'
 import { onMounted, ref } from 'vue'
 import { default as vElTableInfiniteScroll } from "el-table-infinite-scroll";
+import JSONBig from 'json-bigint'
+import TimeBar from './TimeBar.vue'
 
 interface Props {
   start: number
   end: number
+  personId: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
   start: 0,
-  end: 0
+  end: 0,
+  personId: ''
 })
 
 const isLoading = ref(false)
@@ -96,7 +105,7 @@ const tableColumns = ref([])
 const tableData = ref([])
 const active = ref(1)
 const tabs = [
-  { label: '人物事件关系', value: 1 },
+  { label: '互动关系', value: 1 },
   { label: '事件标签关系', value: 2 },
   { label: '事件地址关系', value: 3 }
 ]
@@ -116,7 +125,7 @@ const switchTab = (index = 1) => {
 
 const getData = (isLoadMore = false) => {
   if (active.value === 1) {
-    getListPersonBoard()
+    getEventRelPersonBoard()
   }
 
   if (active.value === 2  && !isLoadMore) {
@@ -135,7 +144,7 @@ const makeData = (res: any = {}, field = 'userName') => {
   list.forEach((item, i) => {
     data[i] = {}
     data[i].userName = item[field]
-    data[i].total = item.totalCnt
+    data[i].total = item.cnt
     item.voList.forEach((curr) => {
       data[i][`${curr.year}_${curr.year - props.start}`] = curr.cnt
     })
@@ -149,15 +158,15 @@ const makeData = (res: any = {}, field = 'userName') => {
 }
 
 // 历史时间轴看板页面人物概览-人物事件关系
-const getListPersonBoard = async () => {
+const getEventRelPersonBoard = async () => {
   isLoading.value = true
-  const res: any = await getListPersonBoardApi({
+  const res: any = await getEventRelPersonBoardApi({
+    bnPersonId: JSONBig.stringify(props.personId),
     startYear: props.start,
-    endYear: props.end,
-    pageSize: 20,
-    pageNum: pageNumber.value
+    endYear: props.end
   })
   if (res.code === 0) {
+    console.log('%%%%', )
     makeData(res, 'userName')
   }
   isLoading.value = false
