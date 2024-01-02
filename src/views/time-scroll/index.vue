@@ -123,6 +123,7 @@
         :personId="state.personId"
         :start="state.rulerData.start"
         :end="state.rulerData.end"
+        :personName="state.timeData.personName"
       ></time-person-table>
 
     </div>

@@ -377,3 +377,21 @@ export function getEventRelPersonBoardApi(params = {}) {
     params
   })
 }
+
+// 个人轴看板--分词词频统计
+export function getFenCiStaticsApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/personPageBoard/fenCiStatics',
+    params
+  })
+}
+
+// 个人轴看板--年龄风格统计
+export function getFenCiAgeStyleBoardApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/personPageBoard/fenCiAgeStyleBoard',
+    params
+  })
+}

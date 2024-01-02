@@ -45,9 +45,7 @@ const option = {
       verticalAlign: 'top',
       lineHeight: 28
     },
-    data: [
-      618, 628, 638, 648, 658, 668, 678, 688, 698, 708, 718, 728, 738, 748, 758, 768, 778, 798
-    ],
+    data: [],
     splitLine: {
       show: false
     },

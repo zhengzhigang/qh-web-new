@@ -34,8 +34,6 @@
           header-row-class-name="time-table__table-header-row"
           row-class-name="time-table__table-row"
           cell-class-name="time-table__table-cell"
-          v-el-table-infinite-scroll="loadMore"
-          :infinite-scroll-disabled="isLoading"
         >
           <el-table-column fixed prop="userName" label="" width="61" align="center">
             <template #default="{ row }">
@@ -70,9 +68,40 @@
         </el-table>
       </div>
     </div>
-    <div v-else class="time-table__table" v-loading="isLoading">
-      <div class="time-table__content">
-        <time-bar></time-bar>
+    <div v-if="active === 2" class="time-table__table" v-loading="isLoading">
+      <div v-if="!isLoading" class="time-table__content">
+        <!-- 单词 -->
+        <time-bar
+          class="time-table__content-bar"
+          :data="singleWordData"
+          id="timebarChartSingle"
+          :title="`${personName}使用的TOP100词语的使用次数/优势比例`"
+        ></time-bar>
+        <!-- 多词 -->
+        <time-bar
+          class="time-table__content-bar"
+          :data="doubleWordData"
+          id="timebarChartDouble"
+          :title="`${personName}使用的TOP100词语的使用次数/优势比例`"
+        ></time-bar>
+      </div>
+    </div>
+    <div v-if="active === 3" class="time-table__table" v-loading="isLoading">
+      <div v-if="!isLoading" class="time-table__content">
+        <!-- 单词 -->
+        <time-bar
+          class="time-table__content-bar"
+          :data="singleWordYearData"
+          id="timebarChartYearSingle"
+          :title="`${personName}使用的TOP100词语的进度比例`"
+        ></time-bar>
+        <!-- 多词 -->
+        <time-bar
+          class="time-table__content-bar"
+          :data="doubleWordYearData"
+          id="timebarChartYearDouble"
+          :title="`${personName}使用的TOP100词语的进度比例`"
+        ></time-bar>
       </div>
     </div>
   </div>
@@ -80,11 +109,10 @@
 <script lang="ts" setup>
 import {
   getEventRelPersonBoardApi,
-  getEventIndividualBoardApi,
-  getEventAddressBoardApi
+  getFenCiStaticsApi,
+  getFenCiAgeStyleBoardApi,
 } from '@/api/common'
 import { onMounted, ref } from 'vue'
-import { default as vElTableInfiniteScroll } from "el-table-infinite-scroll";
 import JSONBig from 'json-bigint'
 import TimeBar from './TimeBar.vue'
 
@@ -92,12 +120,14 @@ interface Props {
   start: number
   end: number
   personId: any
+  personName: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   start: 0,
   end: 0,
-  personId: ''
+  personId: '',
+  personName: ''
 })
 
 const isLoading = ref(false)
@@ -106,34 +136,31 @@ const tableData = ref([])
 const active = ref(1)
 const tabs = [
   { label: '互动关系', value: 1 },
-  { label: '事件标签关系', value: 2 },
-  { label: '事件地址关系', value: 3 }
+  { label: '分词词频统计', value: 2 },
+  { label: '年龄风格统计', value: 3 }
 ]
-const pageNumber = ref(1)
-
-const loadMore = () => {
-  pageNumber.value++
-  getData(true)
-}
+const singleWordData = ref({})
+const doubleWordData = ref({})
+const singleWordYearData = ref({})
+const doubleWordYearData = ref({})
 
 const switchTab = (index = 1) => {
   if (active.value === index) return
   active.value = index
-  pageNumber.value = 1
   getData()
 }
 
-const getData = (isLoadMore = false) => {
+const getData = () => {
   if (active.value === 1) {
     getEventRelPersonBoard()
   }
 
-  if (active.value === 2  && !isLoadMore) {
-    getEventIndividualBoard()
+  if (active.value === 2) {
+    getFenCiStatics()
   }
 
   if (active.value === 3) {
-    getEventAddressBoard()
+    getFenCiAgeStyleBoard()
   }
 }
 
@@ -157,45 +184,64 @@ const makeData = (res: any = {}, field = 'userName') => {
   tableData.value = data
 }
 
-// 历史时间轴看板页面人物概览-人物事件关系
+// 个人时间轴轴看板页需求--互动关系
 const getEventRelPersonBoard = async () => {
   isLoading.value = true
   const res: any = await getEventRelPersonBoardApi({
-    bnPersonId: JSONBig.stringify(props.personId),
-    startYear: props.start,
-    endYear: props.end
+    bnPersonId: JSONBig.stringify(props.personId)
   })
   if (res.code === 0) {
-    console.log('%%%%', )
     makeData(res, 'userName')
   }
   isLoading.value = false
 }
 
-// 历史时间轴看板页面事件标签概览-事件标签关系
-const getEventIndividualBoard = async () => {
+// 个人轴看板--分词词频统计
+const getFenCiStatics = async () => {
   isLoading.value = true
-  const res: any = await getEventIndividualBoardApi({
-    startYear: props.start,
-    endYear: props.end
+  const res: any = await getFenCiStaticsApi({
+    personName: props.personName
   })
   if (res.code === 0) {
-    makeData(res, 'individualName')
+    const list = res.data || {}
+    const danci =  {x: [], y1: [], y2: [], tip1: '使用词数', tip2: '优势比'}
+    const duoci =  {x: [], y1: [], y2: [], tip1: '使用词数', tip2: '优势比'}
+    list.left.forEach((item) => {
+      danci.x.push(item.ci)
+      danci.y1.push(item.usedCnt)
+      danci.y2.push(item.advantage)
+    })
+    list.middle.forEach((item) => {
+      duoci.x.push(item.ci)
+      duoci.y1.push(item.usedCnt)
+      duoci.y2.push(item.advantage)
+    })
+    singleWordData.value = danci
+    doubleWordData.value = duoci
   }
   isLoading.value = false
 }
 
-// 历史时间轴看板页面事件地址概览-事件地址关系
-const getEventAddressBoard = async () => {
+// 个人轴看板--年龄风格统计
+const getFenCiAgeStyleBoard = async () => {
   isLoading.value = true
-  const res: any = await getEventAddressBoardApi({
-    startYear: props.start,
-    endYear: props.end,
-    pageSize: 20,
-    pageNum: pageNumber.value
+  const res: any = await getFenCiAgeStyleBoardApi({
+    personName: props.personName
   })
   if (res.code === 0) {
-    makeData(res, 'eventAddress')
+    const list = res.data || {}
+    const danci =  {x: [], y1: [], y2: [], tip1: '进度比例'}
+    const duoci =  {x: [], y1: [], y2: [], tip1: '进度比例'}
+    list.oneWordList.forEach((item) => {
+      danci.x.push(item.word)
+      danci.y1.push(item.ratio)
+    })
+    list.multipleWordList.forEach((item) => {
+      duoci.x.push(item.word)
+      duoci.y1.push(item.ratio)
+    })
+    singleWordYearData.value = danci
+    doubleWordYearData.value = duoci
   }
   isLoading.value = false
 }
@@ -212,7 +258,7 @@ const generatorColumns = () => {
 }
 onMounted(() => {
   generatorColumns()
-  switchTab()
+  getData()
 })
 </script>
 <style lang="scss" scoped>
@@ -340,6 +386,10 @@ onMounted(() => {
       width: 58px;
       box-sizing: border-box;
       border-left: 1px solid #EAEAEA;
+    }
+
+    &-bar {
+      width: 50%;
     }
   }
 }
