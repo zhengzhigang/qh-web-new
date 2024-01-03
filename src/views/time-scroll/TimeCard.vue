@@ -30,9 +30,9 @@
         placement="right"
         effect="light">
         <template #content>
-          <div style="max-width: 270px;">
-            <p class="time-card__tooltip-box-title">{{ currentEventName }}</p>
-            <p class="time-card__tooltip-box-desc">{{ currentEventDesc }}</p>
+          <div v-for="(item, index) in currentEvent" style="max-width: 270px;">
+            <p class="time-card__tooltip-box-title">{{ item.eventName }}</p>
+            <p class="time-card__tooltip-box-desc">{{ item.eventDesc }}</p>
           </div>
         </template>
           <span
@@ -122,6 +122,7 @@ let yAxisData: any[] = []
 let scatterData: any[] = []
 const tipX = ref(0)
 const tipY = ref(0)
+const currentEvent = ref([])
 // 当前点击的重大事件名
 const currentEventName = ref('')
 // 当前点击的重大事件描述
@@ -318,7 +319,8 @@ const getInportantEvents = async (year = 0) => {
   })
   if (res.code === 0) {
     if (res.data && res.data.length) {
-      const event = res.data[0] || {}
+      const event = res.data || []
+      currentEvent.value = event
       currentEventName.value = event.eventName
       currentEventDesc.value = event.eventDesc
       nextTick(() => {
@@ -338,7 +340,8 @@ const getPersonImportantEvent = async (year = 0) => {
   })
   if (res.code === 0) {
     if (res.data && res.data.length) {
-      const event = res.data[0] || {}
+      const event = res.data || []
+      currentEvent.value = event
       currentEventName.value = event.eventName
       currentEventDesc.value = event.eventDesc
       nextTick(() => {
@@ -358,7 +361,8 @@ const getIndividualImportantEvent = async (year = 0) => {
   })
   if (res.code === 0) {
     if (res.data && res.data.length) {
-      const event = res.data[0] || {}
+      const event = res.data || []
+      currentEvent.value = event
       currentEventName.value = event.eventName
       currentEventDesc.value = event.eventDesc
       nextTick(() => {

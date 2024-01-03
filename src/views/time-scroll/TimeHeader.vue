@@ -82,7 +82,7 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import {
   getYearByDynastyApi,
   getYearByEmperorApi,
@@ -93,12 +93,14 @@ interface Props {
   filterOptions: any[]
   start: number
   end: number
+  loading: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   filterOptions: () => [],
   start: 0,
-  end: 0
+  end: 0,
+  loading: false
 })
 
 const emits = defineEmits(['switch'])
@@ -216,6 +218,12 @@ const switchTab = (value) => {
   active.value = value
   apis[value]()
 }
+
+watch(() => props.loading, (val) => {
+  if (val) {
+    switchTab(0)
+  }
+})
 
 onMounted(() => {
   switchTab(0)

@@ -145,7 +145,7 @@ const singleWordYearData = ref({})
 const doubleWordYearData = ref({})
 
 const switchTab = (index = 1) => {
-  if (active.value === index) return
+  if (active.value === index || isLoading.value) return
   active.value = index
   getData()
 }

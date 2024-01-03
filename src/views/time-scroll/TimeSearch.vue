@@ -34,7 +34,7 @@
         multiple
         collapse-tags
         :max-collapse-tags="2"
-        :multiple-limit="4"
+        :multiple-limit="5"
         placeholder="请选择"
         style="width: 100%;"
         size="large"

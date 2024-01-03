@@ -108,7 +108,8 @@ const loadMore = () => {
 }
 
 const switchTab = (index = 1) => {
-  if (active.value === index) return
+  if (active.value === index || isLoading.value) return
+  tableData.value = []
   active.value = index
   pageNumber.value = 1
   getData()

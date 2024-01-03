@@ -29,20 +29,11 @@
           </div>
         </div>
         <time-smooth-line title="各年份事件/作品数"></time-smooth-line>
-        <!-- <time-bar
-          v-if="state.summaryData.list && state.summaryData.list.length"
-          :title="state.summaryData.title"
-          :data="state.summaryData.list"
-          style="state.margin-bottom: 26px;"></time-bar>
-        <time-line
-          v-if="state.summaryData.list && state.summaryData.list.length"
-          :isShowTab="false"
-          :title="state.summaryData.title"
-          :data="state.summaryData.list"></time-line> -->
       </div>
       <!-- 时间轴 -->
       <div v-if="state.isSearch" class="time-scroll__content">
         <time-header
+          :loading="state.loading"
           :start="state.rulerData.start"
           :end="state.rulerData.end"
           @switch="switchAngel"
@@ -100,15 +91,9 @@
           <div
             v-show="state.isShowLine"
             class="time-scroll__content-line"
-            :style="{ left: `${state.lineX - 2}px` }"></div>
+            :style="{ left: `${state.lineX - 3}px` }"></div>
         </div>
       </div>
-      <!-- <div style="margin-bottom: 75px;">
-        <time-line
-          v-if="state.summaryData.list && state.summaryData.list.length"
-          :title="state.summaryData.title"
-          :data="state.summaryData.list"></time-line>
-      </div> -->
       <time-person-table
         v-if="state.isSearch && !state.loading"
         :personId="state.personId"
