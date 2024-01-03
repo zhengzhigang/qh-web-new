@@ -11,7 +11,7 @@
     </div>
     <div class="time-table__table" v-loading="isLoading">
       <div class="time-table__top">
-        <span class="time-table__top-title">人物概览</span>
+        <!-- <span class="time-table__top-title">人物概览</span> -->
         <div class="time-table__top-legends">
           <div class="time-table__top-legend">
             <span class="time-table__top-legend-color weight1"></span>1-5

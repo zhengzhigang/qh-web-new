@@ -90,7 +90,7 @@ import {
 } from '@/api/common'
 
 interface Props {
-  filterOptions: any[]
+  filterOptions?: any[]
   start: number
   end: number
   loading: boolean

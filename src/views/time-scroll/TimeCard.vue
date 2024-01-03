@@ -1,6 +1,6 @@
 <template>
   <div class="time-card" :style="{ height: `${isExpanded ? 283 : 80}px` }">
-    <div class="time-card__left" :style="{ background: colors[type] }">{{ title }}</div>
+    <div class="time-card__left" :style="{ background: colors[type] }">{{ title.replace(/（.*）/, '') }}</div>
     <div class="time-card__right" :class="[[`type${type}`]]">
       <v-chart
         v-if="!isExpanded"
@@ -69,10 +69,10 @@ interface Props {
   title: string
   type: number
   data: any[]
-  importantList: any[]
+  importantList?: any[]
   isShowScatter?: boolean
-  tabIndex: number
-  personId: any
+  tabIndex?: number
+  personId?: any
 }
 
 use([

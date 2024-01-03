@@ -24,6 +24,7 @@ const option = {
   title: {
     text: '各年份事件数',
     left: 17,
+    top: 0,
     textStyle: {
       fontSize: 16,
       color: '#6D6A63'
@@ -82,20 +83,29 @@ const option = {
       }
     }
   },
-  yAxis: {
-    type: 'value',
-    // name: '个',
-    nameTextStyle: {
-      color: 'rgba(134, 128, 112, 0.6)',
-      align: 'right'
+  yAxis: [
+    {
+      type: 'value',
+      name: '使用次数',
+      nameTextStyle: {
+        color: 'rgba(134, 128, 112, 0.6)',
+        align: 'right'
+      },
+      axisLabel: {
+        color: 'rgba(134, 128, 112, 0.6)'
+      }
     },
-    // data: [
-    //   0, 20, 40, 60, 80, 100
-    // ],
-    axisLabel: {
-      color: 'rgba(134, 128, 112, 0.6)'
+    {
+      name: '优势比',
+      type: 'value',
+      position: 'right',
+      alignTicks: true,
+      axisLabel: {
+        formatter: '{value}',
+        color: 'rgba(134, 128, 112, 0.6)'
+      }
     }
-  },
+  ],
   series: [
     {
       type: 'bar',
@@ -118,6 +128,7 @@ const option = {
       type: 'line',
       name: 'legend2',
       symbol: 'circle',
+      yAxisIndex: 1,
       // smooth: true,
       symbolSize: 4,
       itemStyle: {

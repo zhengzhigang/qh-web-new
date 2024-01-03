@@ -95,7 +95,7 @@ import JSONBig from 'json-bigint'
 const store = mainStore()
 
 interface Props {
-  data: any
+  data?: any
   personId: any
   person: any
 }
@@ -200,7 +200,7 @@ const getMainEventMap = () => {
 const getPersonInfo = async () => {
   const res: any = await getPersonInfoApi({ bnPersonId: JSONBig.stringify(props.personId) })
   if (res.code === 0) {
-    const list = res.data || []
+    const list = (res.data || []).slice(0, 10)
     relations.value = list.map((item) => ({
       name: item.name,
       startYear: item.birthYear,
