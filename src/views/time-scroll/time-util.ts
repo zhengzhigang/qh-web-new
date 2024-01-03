@@ -119,13 +119,13 @@ export const getOptions = ({
     },
     {
       name: "scatter",
-      type: "line",
+      type: "scatter",
       symbol: "circle",
       symbolSize: 6,
       data: isShowScatter ? scatterData : [],
-      lineStyle: {
-        color: "rgba(0, 0, 0, 0)",
-      },
+      // lineStyle: {
+      //   color: "rgba(0, 0, 0, 0)",
+      // },
       itemStyle: {
         color
       }
