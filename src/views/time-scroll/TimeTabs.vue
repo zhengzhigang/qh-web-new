@@ -17,22 +17,34 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
-interface Props {
-  tabIndex: number
-}
+const router = useRouter();
+const route = useRoute();
 
-const props = withDefaults(defineProps<Props>(), {
-  tabIndex: 0
-})
+const tabIndex = ref(Number(route.query.index));
 
-const emits = defineEmits(['switch', 'export'])
+const emits = defineEmits(["switch", "export"]);
 
 // 切换tab
 const switchTab = (index) => {
-  emits('switch', index)
-}
+  // emits('switch', index)
+  let routeUrl;
+  if (index === 0) {
+    routeUrl = router.resolve({
+      path: "/timeScrollHistory",
+      query: { index: 0 },
+    });
+    window.open(routeUrl.href, "_blank");
+  } else {
+    routeUrl = router.resolve({
+      path: "/timeScrollPerson",
+      query: { index: 1 },
+    });
+  }
+  window.open(routeUrl.href, "_blank");
+};
 </script>
 <style lang="scss" scoped>
 .time-tabs {
@@ -51,8 +63,8 @@ const switchTab = (index) => {
     cursor: pointer;
 
     &.active {
-      background: #C2B594;
-      color: #FEFEFE;
+      background: #c2b594;
+      color: #fefefe;
       font-weight: bold;
     }
   }

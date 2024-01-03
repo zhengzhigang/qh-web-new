@@ -9,14 +9,12 @@
       element-loading-text="加载中、请稍候..."
       element-loading-background="rgba(216, 207, 180, 0.4)"
     >
-      <time-tabs
-        :tabIndex="state.tabIndex"
-        @switch="switchTab"></time-tabs>
+      <time-tabs></time-tabs>
       <time-search
         :historicalEventOptions="state.historicalEventOptions"
         :personalEventOptions="state.personalEventOptions"
         :worksOptions="state.worksOptions"
-        :timeType="state.tabIndex === 0 ? 'history' : 'personal'"
+        timeType="personal"
         @search="search"
       ></time-search>
       <!-- 落地页 -->
@@ -85,7 +83,6 @@
 
           <!-- 人物关系 -->
           <time-relation
-            v-if="state.tabIndex === 1"
             :person="{
               startYear: state.rulerData.start,
               endYear: state.rulerData.end,
@@ -112,14 +109,8 @@
           :title="state.summaryData.title"
           :data="state.summaryData.list"></time-line>
       </div> -->
-      <time-table
-        v-if="state.isSearch && !state.loading && state.tabIndex === 0"
-        :start="state.rulerData.start"
-        :end="state.rulerData.end"
-        style="margin-bottom: 75px;"
-      ></time-table>
       <time-person-table
-        v-if="state.isSearch && !state.loading && state.tabIndex === 1"
+        v-if="state.isSearch && !state.loading"
         :personId="state.personId"
         :start="state.rulerData.start"
         :end="state.rulerData.end"
@@ -132,7 +123,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { reactive, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import {
   getHistoryEventListApi,
   getIndividualEventListApi,
@@ -140,8 +131,8 @@ import {
   getHistoryStaticsApi,
   getPersonStaticsApi
 } from '@/api/common'
-import Header from '@/components/headerNew.vue';
-import Footer from '@/components/footer.vue';
+import Header from '@/components/headerNew.vue'
+import Footer from '@/components/footer.vue'
 import TimeTabs from './TimeTabs.vue'
 import TimeSearch from './TimeSearch.vue'
 import TimeHeader from './TimeHeader.vue'
@@ -159,6 +150,9 @@ import TimePersonTable from './TimePersonTable.vue'
 import {
   HistoryParams
 } from './time-scroll'
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 let timeContnet = null
 
@@ -170,7 +164,7 @@ const state = reactive<{
   loading: false,
   isShowLine: false,
   scale: 2,  // 间隔
-  tabIndex: 0, // 选中tab索引
+  tabIndex: Number(route.query.index), // 选中tab索引
   lineX: 0, // 时间线的x轴坐标
   offsetLeft: 0, // 时间轴区域元素的offsetLeft值的和
   historicalEventOptions: [], // 历史事件选项
@@ -198,23 +192,13 @@ const state = reactive<{
   personId: ''
 })
 
-// 切换tab
-const switchTab = (index) => {
-  state.tabIndex = index
-}
-
 // 搜索
 const search = async (params: HistoryParams) => {
   state.timeData = params
   state.eventsList = []
   state.worksList = []
   state.individualEvent = {}
-  if (state.tabIndex === 0) {
-    getHistoryStatics(params)
-  } else {
-    getPersonStatics(params)
-  }
-
+  getPersonStatics(params)
 }
 
 const getTimeContnetRect = () => {

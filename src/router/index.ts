@@ -50,9 +50,14 @@ const routes: Array<RouteRecordRaw> = [
         ]
     },
     {
-        path: '/timeScrollNew',
-        name: 'timeScrollNew',
-        component: () => import('../views/time-scroll/index.vue')
+        path: '/timeScrollHistory',
+        name: 'timeScrollHistory',
+        component: () => import('../views/time-scroll/History.vue')
+    },
+    {
+        path: '/timeScrollPerson',
+        name: 'timeScrollPerson',
+        component: () => import('../views/time-scroll/Person.vue')
     },
     {
         path: '/listStatusAuthorPageByStatusCode',

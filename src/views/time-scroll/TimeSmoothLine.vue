@@ -10,7 +10,7 @@ import { getListYearPostWeightApi } from '@/api/common'
 
 interface Props {
   title: string
-  data: any[]
+  data?: any[]
 }
 let myEcharts = null
 const yearList = ref([])

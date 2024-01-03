@@ -10,8 +10,8 @@ import { getTotalCountAndPercentApi } from '@/api/common'
 import JSONBig from 'json-bigint'
 
 interface Props {
-  title: string
-  data: any[]
+  title?: string
+  data?: any[]
 }
 let myEcharts = null
 const colors = ['#FAE9BC', '#C5AE75', '#A17400', '#8C8D27', '#5E4004', '#709977']
