@@ -291,7 +291,6 @@ onMounted(() => {
 
   &__table {
     width: 1200px;
-    height: 639px;
     padding: 22px 11px 25px;
     background: #FFFFFF;
     border-radius: 4px;
@@ -364,17 +363,10 @@ onMounted(() => {
   }
 
   &__content {
-    display: flex;
-    justify-content: space-between;
-
     &-left {
       flex-shrink: 0;
       width: 61px;
       background: #897F63;
-
-      &-item {
-        
-      }
     }
 
     &-center {
@@ -389,7 +381,8 @@ onMounted(() => {
     }
 
     &-bar {
-      width: 50%;
+      width: 100%;
+      margin-bottom: 30px;
     }
   }
 }

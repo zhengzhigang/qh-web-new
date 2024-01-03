@@ -37,7 +37,7 @@
           v-el-table-infinite-scroll="loadMore"
           :infinite-scroll-disabled="isLoading"
         >
-          <el-table-column fixed prop="userName" label="" width="61" align="center">
+          <el-table-column fixed prop="userName" label="" :width="active === 2 ? 120 : 61" align="center">
             <template #default="{ row }">
               <div class="time-table__table-ellipsis" :title="row.userName">{{ row.userName }}</div>
             </template>
