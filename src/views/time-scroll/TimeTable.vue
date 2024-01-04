@@ -51,15 +51,34 @@
             align="center"
           >
             <template  #default="{ row }">
-              <span
-                class="time-table__top-legend-color"
-                :class="{
-                  weight1: row[item.prop] <= 5,
-                  weight2: row[item.prop] > 5 && row[item.prop] <= 20,
-                  weight3: row[item.prop] > 20 && row[item.prop] <= 100,
-                  weight4: row[item.prop] > 100,
-                }"
-              >{{ row[item.prop] }}</span>
+              <el-tooltip
+                v-if="row[item.prop] && row[item.prop].num"
+                popper-class="time-card__tooltip-box"
+                ref="tooltipRef"
+                placement="right"
+                trigger="click"
+                effect="light">
+                <template #content>
+                  <div
+                    v-for="(item, index) in currentEvent"
+                    :key="index"
+                    style="max-width: 270px;"
+                  >
+                    <p class="time-card__tooltip-box-title">{{ item.userName || item.eventName || item.individualName }}</p>
+                    <p class="time-card__tooltip-box-desc">{{ item.eventDesc }}</p>
+                  </div>
+                </template>
+                <span
+                  class="time-table__top-legend-color"
+                  :class="{
+                    weight1: row[item.prop].num <= 5,
+                    weight2: row[item.prop].num > 5 && row[item.prop].num <= 20,
+                    weight3: row[item.prop].num > 20 && row[item.prop].num <= 100,
+                    weight4: row[item.prop].num > 100,
+                  }"
+                  @click="showEvent(row, row[item.prop].year)"
+                >{{ row[item.prop].num }}</span>
+              </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column
@@ -82,7 +101,8 @@ import {
   getAddressEventByYearApi
 } from '@/api/common'
 import { onMounted, ref } from 'vue'
-import { default as vElTableInfiniteScroll } from "el-table-infinite-scroll";
+import { default as vElTableInfiniteScroll } from 'el-table-infinite-scroll'
+import JSONBig from 'json-bigint'
 
 interface Props {
   start: number
@@ -104,6 +124,7 @@ const tabs = [
   { label: '事件地址关系', value: 3 }
 ]
 const pageNumber = ref(1)
+const currentEvent = ref([])
 
 const loadMore = () => {
   pageNumber.value++
@@ -140,8 +161,12 @@ const makeData = (res: any = {}, field = 'userName') => {
     data[i] = {}
     data[i].userName = item[field]
     data[i].total = item.totalCnt
+    data[i].bnPersonId = item.bnPersonId
     item.voList.forEach((curr) => {
-      data[i][`${curr.year}_${curr.year - props.start}`] = curr.cnt
+      data[i][`${curr.year}_${curr.year - props.start}`] = {
+        num: curr.cnt,
+        year: curr.year
+      }
     })
   })
   if (active.value === 1 || active.value === 3) {
@@ -205,6 +230,59 @@ const generatorColumns = () => {
   }
   tableColumns.value = columns
 }
+
+const showEvent = async (row, year) => {
+  currentEvent.value = []
+  if (active.value === 1) {
+    getPersonEventByYear(row, year)
+  }
+  if (active.value === 2) {
+    getIndividualEventByYear(row, year)
+  }
+  if (active.value === 3) {
+    getAddressEventByYear(row, year)
+  }
+}
+
+const getPersonEventByYear = async (row, year) => {
+  const res: any = await getPersonEventByYearApi({
+    bnPersonId: JSONBig.stringify(row.bnPersonId),
+    year
+  })
+  if (res.code === 0) {
+    if (res.data && res.data.length) {
+      const event = res.data || []
+      currentEvent.value = event
+    }
+  }
+}
+
+const getIndividualEventByYear = async (row, year) => {
+  const res: any = await getIndividualEventByYearApi({
+    individualName: row.userName,
+    year
+  })
+  if (res.code === 0) {
+    if (res.data && res.data.length) {
+      const event = res.data || []
+      currentEvent.value = event
+    }
+  }
+}
+
+const getAddressEventByYear = async (row, year) => {
+  const res: any = await getAddressEventByYearApi({
+    eventAddress: row.userName,
+    year
+  })
+  if (res.code === 0) {
+    if (res.data && res.data.length) {
+      const event = res.data || []
+      currentEvent.value = event
+    }
+  }
+}
+
 onMounted(() => {
   generatorColumns()
   switchTab()
@@ -292,6 +370,7 @@ onMounted(() => {
         color: #6D6A63;
         line-height: 16px;
         text-align: center;
+        cursor: pointer;
         
         &.weight1 {
           background: #FFECB8;
@@ -391,6 +470,29 @@ onMounted(() => {
     .cell {
       padding: 0 8px;
     }
+  }
+}
+</style>
+<style lang="scss">
+.time-card__tooltip-box {
+  box-shadow: 0px 4px 7px 0px rgba(109,106,99,0.47);
+
+  .el-popper__arrow {
+    display: none;
+  }
+
+  &-title {
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    color: #6D6A63;
+    line-height: 24px;
+  }
+
+  &-desc {
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    color: #6D6A63;
+    opacity: 0.5;
   }
 }
 </style>

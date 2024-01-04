@@ -49,16 +49,34 @@
             align="center"
           >
             <template  #default="{ row }">
-              <span
-                class="time-table__top-legend-color"
-                :class="{
-                  weight1: row[item.prop] <= 5,
-                  weight2: row[item.prop] > 5 && row[item.prop] <= 20,
-                  weight3: row[item.prop] > 20 && row[item.prop] <= 100,
-                  weight4: row[item.prop] > 100,
-                }"
-                @click="showEvent(row)"
-              >{{ row[item.prop] }}</span>
+              <el-tooltip
+                v-if="row[item.prop] && row[item.prop].num"
+                popper-class="time-card__tooltip-box"
+                ref="tooltipRef"
+                placement="right"
+                trigger="click"
+                effect="light">
+                <template #content>
+                  <div
+                    v-for="(item, index) in currentEvent"
+                    :key="index"
+                    style="max-width: 270px;"
+                  >
+                    <p class="time-card__tooltip-box-title">{{ item.eventAddress }}</p>
+                    <p class="time-card__tooltip-box-desc">{{ item.eventDesc }}</p>
+                  </div>
+                </template>
+                <span
+                  class="time-table__top-legend-color"
+                  :class="{
+                    weight1: row[item.prop].num <= 5,
+                    weight2: row[item.prop].num > 5 && row[item.prop].num <= 20,
+                    weight3: row[item.prop].num > 20 && row[item.prop].num <= 100,
+                    weight4: row[item.prop].num > 100,
+                  }"
+                  @click="showEvent(row, row[item.prop].year)"
+                >{{ row[item.prop].num }}</span>
+              </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column
@@ -145,6 +163,7 @@ const singleWordData = ref({})
 const doubleWordData = ref({})
 const singleWordYearData = ref({})
 const doubleWordYearData = ref({})
+const currentEvent = ref([])
 
 const switchTab = (index = 1) => {
   if (active.value === index || isLoading.value) return
@@ -174,8 +193,12 @@ const makeData = (res: any = {}, field = 'userName') => {
     data[i] = {}
     data[i].userName = item[field]
     data[i].total = item.cnt
+    data[i].id = item.bnPersonId
     item.voList.forEach((curr) => {
-      data[i][`${curr.year}_${curr.year - props.start}`] = curr.cnt
+      data[i][`${curr.year}_${curr.year - props.start}`] = {
+        num: curr.cnt,
+        year: curr.year
+      }
     })
   })
   if (active.value === 1 || active.value === 3) {
@@ -259,13 +282,21 @@ const generatorColumns = () => {
   tableColumns.value = columns
 }
 
-const showEvent = async (v) => {
-  // console.log(v)
-  // const res: any = await getRelPersonEventListByYearApi()
-  // if (res.code === 0) {
-
-  // }
+const showEvent = async (row, year) => {
+  currentEvent.value = []
+  const res: any = await getRelPersonEventListByYearApi({
+    bnPersonId: JSONBig.stringify(props.personId),
+    bnPersonIdTa: JSONBig.stringify(row.id),
+    year
+  })
+  if (res.code === 0) {
+    if (res.data && res.data.length) {
+      const event = res.data || []
+      currentEvent.value = event
+    }
+  }
 }
+
 onMounted(() => {
   generatorColumns()
   getData()
@@ -450,6 +481,29 @@ onMounted(() => {
     .cell {
       padding: 0 8px;
     }
+  }
+}
+</style>
+<style lang="scss">
+.time-card__tooltip-box {
+  box-shadow: 0px 4px 7px 0px rgba(109,106,99,0.47);
+
+  .el-popper__arrow {
+    display: none;
+  }
+
+  &-title {
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    color: #6D6A63;
+    line-height: 24px;
+  }
+
+  &-desc {
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    color: #6D6A63;
+    opacity: 0.5;
   }
 }
 </style>
