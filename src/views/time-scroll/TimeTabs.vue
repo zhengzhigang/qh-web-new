@@ -2,14 +2,14 @@
   <div class="time-tabs">
     <div
       class="time-tabs__item"
-      :class="{ active: tabIndex === 0 }"
+      :class="{ active: active === 0 }"
       @click="switchTab(0)"
     >
       历史时间轴
     </div>
     <div
       class="time-tabs__item"
-      :class="{ active: tabIndex === 1 }"
+      :class="{ active: active === 1 }"
       @click="switchTab(1)"
     >
       个人时间轴
@@ -17,13 +17,17 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
-const route = useRoute();
 
-const tabIndex = ref(Number(route.query.index));
+interface Props {
+  active: number
+}
+
+withDefaults(defineProps<Props>(), {
+  active: 0
+})
 
 const emits = defineEmits(["switch", "export"]);
 
@@ -33,14 +37,12 @@ const switchTab = (index) => {
   let routeUrl;
   if (index === 0) {
     routeUrl = router.resolve({
-      path: "/timeScrollHistory",
-      query: { index: 0 },
+      path: "/timeScrollHistory"
     });
     window.open(routeUrl.href, "_blank");
   } else {
     routeUrl = router.resolve({
-      path: "/timeScrollPerson",
-      query: { index: 1 },
+      path: "/timeScrollPerson"
     });
   }
   window.open(routeUrl.href, "_blank");

@@ -9,7 +9,7 @@
       element-loading-text="加载中、请稍候..."
       element-loading-background="rgba(216, 207, 180, 0.4)"
     >
-      <time-tabs></time-tabs>
+      <time-tabs :active="0"></time-tabs>
       <time-search
         :historicalEventOptions="state.historicalEventOptions"
         :personalEventOptions="state.personalEventOptions"
@@ -50,7 +50,7 @@
             :importantList="item.importantList"
             :title="item.title"
             :type="item.type"
-            :tabIndex="state.tabIndex"
+            :tabIndex="0"
             :personId="state.personId"
           ></time-card>
           <time-card
@@ -58,7 +58,7 @@
             :importantList="state.individualEvent.importantList"
             :title="state.individualEvent.title"
             :type="5"
-            :tabIndex="state.tabIndex"
+            :tabIndex="0"
             :personId="state.personId"
           ></time-card>
 
@@ -88,7 +88,7 @@
           <div
             v-show="state.isShowLine"
             class="time-scroll__content-line"
-            :style="{ left: `${state.lineX - 3}px` }"
+            :style="{ left: `${state.lineX - 2}px` }"
           ></div>
         </div>
       </div>
@@ -127,9 +127,6 @@ import TimeWordcloud from "./TimeWordcloud.vue"
 import TimeSmoothLine from "./TimeSmoothLine.vue"
 import TimeTable from "./TimeTable.vue"
 import { HistoryParams } from "./time-scroll"
-import { useRoute } from "vue-router"
-
-const route = useRoute()
 
 let timeContnet = null
 
@@ -141,7 +138,6 @@ const state = reactive<{
   loading: false,
   isShowLine: false,
   scale: 2, // 间隔
-  tabIndex: Number(route.query.index), // 选中tab索引
   lineX: 0, // 时间线的x轴坐标
   offsetLeft: 0, // 时间轴区域元素的offsetLeft值的和
   historicalEventOptions: [], // 历史事件选项

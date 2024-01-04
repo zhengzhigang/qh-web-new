@@ -45,7 +45,7 @@ const changeTopMenu = (type: number) => {
   if (type == 1) router.push({ path: "home" });
   if (type == 2) router.push({ path: "tag" });
   if (type == 3)
-    router.push({ path: "timeScrollHistory", query: { index: 0 } });
+    router.push({ path: "timeScrollHistory" });
 };
 
 const linkPage = (routePage: any) => {
