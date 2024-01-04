@@ -76,7 +76,10 @@
 import {
   getListPersonBoardApi,
   getEventIndividualBoardApi,
-  getEventAddressBoardApi
+  getEventAddressBoardApi,
+  getPersonEventByYearApi,
+  getIndividualEventByYearApi,
+  getAddressEventByYearApi
 } from '@/api/common'
 import { onMounted, ref } from 'vue'
 import { default as vElTableInfiniteScroll } from "el-table-infinite-scroll";

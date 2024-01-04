@@ -94,7 +94,7 @@
       </div>
       <time-table
         v-if="state.isSearch && !state.loading"
-        :start="state.rulerData.start"
+        :start="state.timeData.startYear"
         :end="state.rulerData.end"
         style="margin-bottom: 75px"
       ></time-table>

@@ -57,6 +57,7 @@
                   weight3: row[item.prop] > 20 && row[item.prop] <= 100,
                   weight4: row[item.prop] > 100,
                 }"
+                @click="showEvent(row)"
               >{{ row[item.prop] }}</span>
             </template>
           </el-table-column>
@@ -111,6 +112,7 @@ import {
   getEventRelPersonBoardApi,
   getFenCiStaticsApi,
   getFenCiAgeStyleBoardApi,
+  getRelPersonEventListByYearApi
 } from '@/api/common'
 import { onMounted, ref } from 'vue'
 import JSONBig from 'json-bigint'
@@ -256,6 +258,14 @@ const generatorColumns = () => {
   }
   tableColumns.value = columns
 }
+
+const showEvent = async (v) => {
+  // console.log(v)
+  // const res: any = await getRelPersonEventListByYearApi()
+  // if (res.code === 0) {
+
+  // }
+}
 onMounted(() => {
   generatorColumns()
   getData()
@@ -342,6 +352,7 @@ onMounted(() => {
         color: #6D6A63;
         line-height: 16px;
         text-align: center;
+        cursor: pointer;
         
         &.weight1 {
           background: #FFECB8;

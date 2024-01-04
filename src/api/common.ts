@@ -395,3 +395,39 @@ export function getFenCiAgeStyleBoardApi(params = {}) {
     params
   })
 }
+
+// 历史轴看板地址概览-当前地址当前年的事件列表
+export function getAddressEventByYearApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/historyPageBoard/listOneAddressEventByYear',
+    params
+  })
+}
+
+// 历史轴看板标签概览-当前标签当前年的事件列表
+export function getIndividualEventByYearApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/historyPageBoard/listOneIndividualEventByYear',
+    params
+  })
+}
+
+// 历史轴看板人物概览-当前人物当前年的事件列表
+export function getPersonEventByYearApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/historyPageBoard/listOnePersonEventByYear',
+    params
+  })
+}
+
+// 个人轴看板互动关系--当前两个人当年的事件列表
+export function getRelPersonEventListByYearApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'biannian/personPageBoard/listRelPersonEventListByYear',
+    params
+  })
+}

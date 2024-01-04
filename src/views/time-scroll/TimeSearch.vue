@@ -141,6 +141,19 @@ const validate = () => {
       ElMessage.error('起始年份和结束年份必须为数字')
       return false
     }
+    
+    if (
+      (params.startYear < 618 || params.startYear > 1014) ||
+      (params.endYear < 618 || params.endYear > 1014)
+    ) {
+      ElMessage.error('搜索范围为618-1014')
+      return false
+    }
+
+    if (params.startYear > params.endYear) {
+      ElMessage.error('开始年份应小于结束年份')
+      return false
+    }
 
     // const yearDiff = Number(params.endYear) - Number(params.startYear)
     // if (yearDiff < 50 || yearDiff > 500) {
