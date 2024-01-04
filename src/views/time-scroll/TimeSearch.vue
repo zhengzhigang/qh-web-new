@@ -259,7 +259,7 @@ const search = () => {
   
       .el-input__wrapper,
       .el-select__tags {
-        padding-left: 90px;
+        padding-left: 90px !important;
       }
   
       .el-select__tags .el-tag {
