@@ -1,8 +1,5 @@
 <template>
   <div class="time-relation">
-    <span class="time-relation__button"
-    @click="showRelation"
-    >相关人物</span>
     <!-- <el-button
       class="time-relation__button"
       type="primary"
@@ -14,12 +11,15 @@
       class="time-relation__expend"
       @click="showRelation"
     >
-      <img class="time-relation__expend-img" src="../../assets/time-shrink.png" alt="">
+      <img class="time-relation__expend-img" src="../../assets/time-shrink.png">
     </div>
     <!-- 主人公时间轴 -->
     <div
       class="time-relation__axle-main"
-      :style="{ width: `${mainWidth}px`, marginBottom: isShowRelation ? '44px' : '24px' }"
+      :style="{
+        width: `${mainWidth}px`,
+        marginBottom: isShowRelation ? '44px' : '24px',
+      }"
     >
       {{ person.name }}({{ person.startYear }}-{{ person.endYear }})
       <!-- 主人公事件tootltip -->
@@ -50,6 +50,11 @@
       </div>
       <span class="time-relation__axle-text">（岁）</span>
     </div>
+    <div style="display: flex;flex-direction: row-reverse;margin-bottom: 10px;">
+      <span class="time-relation__button"
+      @click="showRelation"
+      >相关人物</span>
+    </div>
     <!-- 关联人物时间轴 -->
     <div v-if="isShowRelation" class="time-relation__axle-relation-box">
       <div
@@ -57,8 +62,8 @@
         :key="index"
         class="time-relation__axle-relation"
         :style="{
-          width: `${(item.endYear - item.startYear) / allYear * 100}%`,
-          left: `${(item.startYear - start) / allYear * 100}%`
+          width: `${((item.endYear - item.startYear) / allYear) * 100}%`,
+          left: `${((item.startYear - start) / allYear) * 100}%`
         }"
       >
         {{ item.name }}({{ item.startYear }}-{{ item.endYear }})
@@ -78,7 +83,7 @@
               }}
             </div>
           </template>
-            <span
+          <span
               class="time-relation__axle-tooltip"
               :style="{ left: (store.currentYear - relations[index].startYear) * space / 2 + 'px' }">
           </span></el-tooltip>
@@ -145,7 +150,7 @@ const mainWidth = computed(() => {
  * @param s 开始年龄
  * @param e 结束年龄
  */
-const scaleHeight = (curr, years) => {
+ const scaleHeight = (curr, years) => {
   // 如果整10结尾，结尾显示数字后移2个，前移2个
   if (years % 10 === 0 && years === curr) {
     return 0
@@ -220,8 +225,8 @@ watch(() => store.currentYear, (val) => {
 })
 
 onMounted(() => {
-  start.value = props.person.startYear - 20
-  end.value = props.person.endYear + 20
+  start.value = props.person.startYear
+  end.value = props.person.endYear
   // relations.value = props.data.relations
 
   // 处理数据接口，方便查询，查询的时候不再循环
@@ -235,7 +240,7 @@ onMounted(() => {
   margin: 0 64px 0 58px;
 
   &__button {
-    position: absolute;
+    // position: absolute;
     display: block;
     width: 100px;
     height: 35px;
@@ -243,7 +248,7 @@ onMounted(() => {
     right: 0;
     font-size: 16px;
     color: #fff;
-    background-color: #A79B7A;
+    background-color: #a79b7a;
     text-align: center;
     border-radius: 4px;
     cursor: pointer;
@@ -266,18 +271,17 @@ onMounted(() => {
       position: relative;
       margin-left: auto;
       margin-right: auto;
-      background: #734D00;
-      color: #FCF9F1;
+      background: #734d00;
+      color: #fcf9f1;
 
       @extend .relation-line;
-
     }
-    
+
     &-mark {
       position: absolute;
       bottom: 0;
       width: 1px;
-      background: #CFC2A0;
+      background: #cfc2a0;
 
       &-year {
         position: absolute;
@@ -285,15 +289,15 @@ onMounted(() => {
         left: 50%;
         transform: translateX(-50%);
         font-size: 14px;
-        color: #6D6A63;
+        color: #6d6a63;
       }
     }
 
     &-relation {
       position: relative;
       margin-bottom: 10px;
-      background: rgba(207,194,160,0.2);
-      color: #6D6A63;
+      background: rgba(207, 194, 160, 0.2);
+      color: #6d6a63;
 
       @extend .relation-line;
 
@@ -313,7 +317,7 @@ onMounted(() => {
       top: 23px;
       right: -38px;
       font-size: 14px;
-      color: #6D6A63;
+      color: #6d6a63;
     }
   }
 
@@ -333,7 +337,7 @@ onMounted(() => {
 </style>
 <style lang="scss">
 .time-relation__tooltip-box {
-  box-shadow: 0px 4px 7px 0px rgba(109,106,99,0.47);
+  box-shadow: 0px 4px 7px 0px rgba(109, 106, 99, 0.47);
 
   .el-popper__arrow {
     display: none;

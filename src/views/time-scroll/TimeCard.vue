@@ -30,7 +30,11 @@
         placement="right"
         effect="light">
         <template #content>
-          <div v-for="(item, index) in currentEvent" style="max-width: 270px;">
+          <div
+            v-for="(item, index) in currentEvent"
+            :key="index"
+            style="max-width: 270px;"
+          >
             <p class="time-card__tooltip-box-title">{{ item.eventName }}</p>
             <p class="time-card__tooltip-box-desc">{{ item.eventDesc }}</p>
           </div>
@@ -425,6 +429,13 @@ watch(() => store.currentYear, (val) => {
   } else {
     // 如果没有找到，就查找附近的
     showToolTip(getSiblingYear(val))
+  }
+})
+
+watch(() => props.data, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    conductData()
+    setOptions()
   }
 })
 
