@@ -118,12 +118,12 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const params = reactive({
-  startYear: 618,
-  endYear: 750,
-  personName: '李白',
-  postTypeList: ['诗文集', '音乐/绘画'],
-  historyEventTypeList: ['军事类事件', '政治类事件'],
-  individualEventTypeList: ['社交活动', '地点类']
+  startYear: '',
+  endYear: '',
+  personName: '',
+  postTypeList: [],
+  historyEventTypeList: [],
+  individualEventTypeList: []
 })
 const emits = defineEmits(['search'])
 

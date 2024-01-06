@@ -74,7 +74,7 @@
           effect="light">
           <template #content>
             <div style="max-width: 270px;">
-              {{
+              {{ item.name }}:{{
                 store.currentYear < item.startYear
                   ? 0
                   : store.currentYear > item.endYear

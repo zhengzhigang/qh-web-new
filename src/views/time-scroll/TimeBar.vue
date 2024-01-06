@@ -155,10 +155,10 @@ const option = {
     filterMode: 'filter',
     //展示10个柱子
     startValue: 0, //从0个柱子开始，也就是最起始的地方
-    endValue: 15, //到第6个柱子结束
+    endValue: 25, //到第6个柱子结束
     show: true,
     minValueSpan: 10,
-    maxValueSpan: 15
+    maxValueSpan: 25
   }],
 }
 
