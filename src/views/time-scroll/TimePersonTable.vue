@@ -482,6 +482,10 @@ onMounted(() => {
       padding: 0 8px;
     }
   }
+
+  .el-scrollbar__bar {
+    display: block !important;
+  }
 }
 </style>
 <style lang="scss">
