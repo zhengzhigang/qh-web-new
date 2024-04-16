@@ -143,14 +143,14 @@ const validate = () => {
     }
     
     if (
-      (params.startYear < 618 || params.startYear > 1014) ||
-      (params.endYear < 618 || params.endYear > 1014)
+      (Number(params.startYear) < 618 || Number(params.startYear) > 1014) ||
+      (Number(params.endYear) < 618 || Number(params.endYear) > 1014)
     ) {
       ElMessage.error('搜索范围为618-1014')
       return false
     }
 
-    if (params.startYear > params.endYear) {
+    if (Number(params.startYear) > Number(params.endYear)) {
       ElMessage.error('开始年份应小于结束年份')
       return false
     }
