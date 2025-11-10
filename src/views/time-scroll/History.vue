@@ -281,7 +281,9 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  timeContnet.removeEventListener("mousemove", moveTimeLine)
+  if (timeContnet) {
+    timeContnet.removeEventListener("mousemove", moveTimeLine)
+  }
   window.removeEventListener("resize", getTimeContnetRect)
 })
 </script>

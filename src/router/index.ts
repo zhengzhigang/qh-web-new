@@ -69,6 +69,11 @@ const routes: Array<RouteRecordRaw> = [
         name: 'buddhism',
         component: () => import('../views/buddhism/index.vue')
     },
+    {
+        path: '/buddhism/detail',
+        name: 'buddhismDetail',
+        component: () => import('../views/buddhism/detail.vue')
+    },
 ]
 
 const router = createRouter({

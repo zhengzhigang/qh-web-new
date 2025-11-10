@@ -2,32 +2,30 @@
   <div class="book-tree">
     <p class="book-tree__title">读佛经</p>
     <div class="book-tree__content">
-      <el-tree-v2
-        :data="treeData"
-        :props="props"
-        :height="468"
-        :item-size="32"
-        @node-click="nodeClick"
-      >
+      <el-tree style="max-width: 600px" :props="props" :load="loadNode" lazy @node-click="nodeClick">
         <template #default="{ node }">
           <el-icon
             class="node-icon book-tree__icon"
             :class="{ 'is-leaf': node.isLeaf }"
             color="#e6a23c"
           >
-            <Collection />
+            <Collection v-if="node.level === 1" />
+            <Tickets v-else />
           </el-icon>
           <span class="book-tree__text">{{ node.label }}</span>
         </template>
-      </el-tree-v2>
+      </el-tree>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import "echarts-wordcloud";
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { getdirectoryApi } from "@/api/common";
 import { Collection } from "@element-plus/icons-vue";
+
+const router = useRouter();
 
 interface Tree {
   id: string;
@@ -39,24 +37,47 @@ const props = {
   value: "path",
   label: "name",
   children: "children",
+  isLeaf: 'isLeaf'
 };
 const treeData = ref([]);
 
-const getData = async () => {
-  const res: any = await getdirectoryApi();
-  if (res.code === 0) {
-    const data = res.data || {};
-    treeData.value = data.items || [];
+const loadNode = async (node, resolve, reject) => {
+  if (node.level === 0 || node.level === 1) {
+    const path = node.level === 0 ? '' : node.data.path
+    const res: any = await getdirectoryApi({ path });
+    if (res.code === 0) {
+      const data = res.data || {};
+      treeData.value = (data.items || []).map((item) => ({
+        ...item,
+        isLeaf: true
+      }));
+      const list = (data.items || []).map((item) => ({
+        ...item,
+        isLeaf: node.level !== 0
+      }));
+      return resolve(list)
+    }
   }
-};
+}
 
-const nodeClick = (v) => {
-  console.log("$$$$$$$$$$", v);
-};
+const nodeClick = (node) => {
+  if (!node.isLeaf) return
+  // router.push({
+  //   path: "/buddhism/detail",
+  //   query: {
+  //     path: node.path
+  //   }
+  // });
 
-onMounted(() => {
-  getData();
-});
+  const { href } = router.resolve({
+    path: '/buddhism/detail',
+    query: { path: node.path }
+  })
+
+  // 2. 在新窗口/标签页中打开
+  window.open(href, '_blank', 'noopener,noreferrer')
+
+};
 </script>
 <style lang="scss" scoped>
 .book-tree {

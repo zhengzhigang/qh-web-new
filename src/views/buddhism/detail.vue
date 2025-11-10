@@ -1,27 +1,16 @@
 <template>
-  <div class="time-scroll bg-white">
-    <div class="time-scroll__header">
+  <div class="buddhism-detail time-scroll bg-white">
+    <div class="buddhism-detail__header">
       <Header :type="4"></Header>
     </div>
     <div
-      class="time-scroll__main"
+      class="buddhism-detail__main"
       v-loading.fullscreen.lock="state.loading"
       element-loading-text="加载中、请稍候..."
       element-loading-background="rgba(216, 207, 180, 0.4)"
     >
-      <div style="margin-bottom: 30px">
-        <div class="time-scroll__land">
-          <div class="time-scroll__land-item">
-            <BookTree></BookTree>
-          </div>
-          <div class="time-scroll__land-item">
-            <time-wordcloud></time-wordcloud>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="time-scroll__content">
-      <BuddhismSearch></BuddhismSearch>
+    <!-- 使用 v-html 渲染解析后的 HTML -->
+    <div v-if="htmlContent" v-html="htmlContent"></div>
     </div>
     <Footer></Footer>
   </div>
@@ -31,24 +20,38 @@
 import { reactive, onMounted, ref } from "vue";
 import Header from "@/components/headerNew.vue";
 import Footer from "@/components/footer.vue";
-import TimeWordcloud from "./TimeWordcloud.vue";
-import BookTree from "./BookTree.vue";
-import BuddhismSearch from "./BuddhismSearch.vue";
+import { getContentApi } from "@/api/common";
+import { useRoute } from "vue-router";
+import { marked } from 'marked'
 
-const branchOptions = [
-  { value: "全真和正一", label: "一级 1" },
-  { value: "2", label: "一级 2" },
-  { value: "3", label: "一级 3" },
-];
+const route = useRoute()
 
 const state = reactive<{
   [key: string]: any;
 }>({
   loading: false,
 });
+const htmlContent = ref('')
+
+const loadContent = async () => {
+  state.loading = true
+  try {
+    const res: any = await getContentApi({ filePath: route.query.path })
+    if (res.code === 0) {
+      console.log('====', res)
+      htmlContent.value = await marked.parse(res.data.content)
+    }
+  } finally {
+    state.loading = false
+  }
+}
+
+onMounted(() => {
+  loadContent()
+})
 </script>
 <style lang="less" scoped>
-.time-scroll {
+.buddhism-detail {
   background: #fcf9f1;
 
   &__header {
@@ -66,17 +69,17 @@ const state = reactive<{
     background-repeat: repeat-y;
     background-position: center;
     background-size: 1150px auto;
-    border-radius: 5px;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    min-height: calc(100vh - 240px);
   }
 
   &__land {
     display: flex;
     justify-content: space-between;
     margin-bottom: 26px;
-
-    &-item {
-      width: 588px;
-    }
   }
 
   &__item {

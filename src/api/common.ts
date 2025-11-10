@@ -477,11 +477,20 @@ export function getBuddhismFenciApi(data = {}) {
   })
 }
 
-// 豆角-获取书目录
+// 佛教-获取书目录
 export function getdirectoryApi(params = {}) {
   return request({
     method:'GET',
     url: 'buddhism/directory',
+    params
+  })
+}
+
+// 佛教-获取佛经内容
+export function getContentApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'buddhism/content',
     params
   })
 }
