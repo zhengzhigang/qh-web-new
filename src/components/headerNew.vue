@@ -26,6 +26,12 @@
           @click="changeTopMenu(3)"
           >时间轴</span
         >
+        <span
+          class="nav__item"
+          :class="type === 4 && 'active'"
+          @click="changeTopMenu(4)"
+          >佛教</span
+        >
       </div>
     </div>
   </div>
@@ -42,10 +48,18 @@ const props = defineProps({
 });
 
 const changeTopMenu = (type: number) => {
-  if (type == 1) router.push({ path: "home" });
-  if (type == 2) router.push({ path: "tag" });
-  if (type == 3)
+  if (type == 1) {
+    router.push({ path: "home" });
+  }
+  if (type == 2) {
+    router.push({ path: "tag" });
+  }
+  if (type == 3) {
     router.push({ path: "timeScrollHistory" });
+  }
+  if (type == 4) {
+    router.push({ path: "buddhism" });
+  }
 };
 
 const linkPage = (routePage: any) => {

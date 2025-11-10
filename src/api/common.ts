@@ -431,3 +431,57 @@ export function getRelPersonEventListByYearApi(params = {}) {
     params
   })
 }
+
+// 佛教-获取省份
+export function getBuddhismProvinceApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'buddhism/temple/listTempleProvince',
+    params
+  })
+}
+
+// 佛教-获取城市
+export function getBuddhismCityApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'buddhism/temple/listTempleCity',
+    params
+  })
+}
+
+// 佛教-获取区县
+export function getBuddhismTownApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'buddhism/temple/listTempleTown',
+    params
+  })
+}
+
+// 佛教-寺庙道观列表
+export function getBuddhismListApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'buddhism/temple/listTemple',
+    params
+  })
+}
+
+// 佛教-获取词云
+export function getBuddhismFenciApi(data = {}) {
+  return request({
+    method:'post',
+    url: 'buddhism/fenci/char/jingangjing/list',
+    data
+  })
+}
+
+// 豆角-获取书目录
+export function getdirectoryApi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'buddhism/directory',
+    params
+  })
+}
