@@ -67,7 +67,7 @@ const changeTopMenu = (type: number) => {
     router.push({ path: "buddhism" });
   }
   if (type == 5) {
-    router.push({ path: "earthquake" });
+    router.push({ path: "disaster" });
   }
 };
 

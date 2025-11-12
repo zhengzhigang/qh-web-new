@@ -2,7 +2,7 @@
   <div class="buddhism-search">
     <el-form :inline="true" :model="searchForm" label-width="auto">
       <el-form-item label="宗教名称">
-        <el-select v-model="searchForm.religionName" placeholder="请选择">
+        <el-select v-model="searchForm.religionName" placeholder="请选择" @change="searchList">
           <el-option
             v-for="item in religionOptions"
             :key="item.value"
@@ -12,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="分支名称">
-        <el-select v-model="searchForm.subBranch" placeholder="请选择">
+        <el-select v-model="searchForm.subBranch" placeholder="请选择" @change="searchList">
           <el-option
             v-for="item in branchOptions"
             :key="item.value"
@@ -47,6 +47,7 @@
           v-model="searchForm.placeName"
           placeholder="请输入(选填)"
           clearable
+          @input="handleInput"
         />
       </el-form-item>
     </el-form>
@@ -84,6 +85,7 @@ import {
   getBuddhismTownApi,
 } from "@/api/common";
 import type { CascaderProps } from "element-plus";
+import { debounce } from 'lodash-es'
 
 const religionOptions = [
   { label: "全部", value: "" },
@@ -138,7 +140,14 @@ const props: CascaderProps = {
         label: item.cityName,
         leaf: false,
       }));
-      return resolve(list);
+      return resolve([
+        {
+        value: '',
+        label: '全省',
+        leaf: true,
+        },
+        ...list
+      ]);
     }
     if (level === 2) {
       const res = await getBuddhismTownApi({
@@ -150,7 +159,14 @@ const props: CascaderProps = {
         label: item.townName,
         leaf: true,
       }));
-      return resolve(list);
+      return resolve([
+        {
+        value: '',
+        label: '全市',
+        leaf: true,
+        },
+        ...list
+      ]);
     }
     resolve([]);
   },
@@ -184,7 +200,24 @@ const provinceCgange = (value: any) => {
   searchForm.provinceName = value[0];
   searchForm.cityName = value[1];
   searchForm.townName = value[2];
+  searchList()
 };
+
+const debouncedSearch = debounce((value) => {
+  console.log('执行搜索或请求:', value)
+  currentPage.value = 1
+  getBuddhismList()
+}, 500)
+
+// 输入事件处理器
+const handleInput = (value) => {
+  debouncedSearch(value)
+}
+
+const searchList = () => {
+  currentPage.value = 1
+  getBuddhismList()
+}
 
 const getBuddhismList = async () => {
   const res: any = await getBuddhismListApi({
