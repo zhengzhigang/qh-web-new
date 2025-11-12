@@ -9,7 +9,7 @@
             :class="{ 'is-leaf': node.isLeaf }"
             color="#e6a23c"
           >
-            <Collection v-if="node.level === 1" />
+            <Collection v-if="!node.isLeaf" />
             <Tickets v-else />
           </el-icon>
           <span class="book-tree__text">{{ node.label }}</span>
@@ -42,22 +42,22 @@ const props = {
 const treeData = ref([]);
 
 const loadNode = async (node, resolve, reject) => {
-  if (node.level === 0 || node.level === 1) {
+  // if (node.level === 0 || node.level === 1) {
     const path = node.level === 0 ? '' : node.data.path
     const res: any = await getdirectoryApi({ path });
     if (res.code === 0) {
       const data = res.data || {};
       treeData.value = (data.items || []).map((item) => ({
         ...item,
-        isLeaf: true
+        isLeaf: !item.directory
       }));
       const list = (data.items || []).map((item) => ({
         ...item,
-        isLeaf: node.level !== 0
+        isLeaf: !item.directory
       }));
       return resolve(list)
     }
-  }
+  // }
 }
 
 const nodeClick = (node) => {

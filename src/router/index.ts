@@ -64,6 +64,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'listStatusAuthorPageByStatusCode',
         component: () => import('../views/home/tagAuthor.vue')
     },
+    // 佛经
     {
         path: '/buddhism',
         name: 'buddhism',
@@ -74,6 +75,12 @@ const routes: Array<RouteRecordRaw> = [
         name: 'buddhismDetail',
         component: () => import('../views/buddhism/detail.vue')
     },
+    // 地震
+    {
+        path: '/disaster',
+        name: 'disaster',
+        component: () => import('../views/disaster/index.vue')
+    }
 ]
 
 const router = createRouter({

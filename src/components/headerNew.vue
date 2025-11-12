@@ -32,6 +32,12 @@
           @click="changeTopMenu(4)"
           >佛教</span
         >
+        <span
+          class="nav__item"
+          :class="type === 5 && 'active'"
+          @click="changeTopMenu(5)"
+          >地震</span
+        >
       </div>
     </div>
   </div>
@@ -60,6 +66,9 @@ const changeTopMenu = (type: number) => {
   if (type == 4) {
     router.push({ path: "buddhism" });
   }
+  if (type == 5) {
+    router.push({ path: "earthquake" });
+  }
 };
 
 const linkPage = (routePage: any) => {
@@ -85,8 +94,8 @@ const linkPage = (routePage: any) => {
 .nav {
   &__item {
     height: 65px;
-    margin: 0 20px;
-    padding: 0 34px;
+    margin: 0 15px;
+    padding: 0 20px;
     color: #fff;
     font-size: 18px;
     cursor: pointer;

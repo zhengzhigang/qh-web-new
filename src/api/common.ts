@@ -494,3 +494,21 @@ export function getContentApi(params = {}) {
     params
   })
 }
+
+// 灾害-列出每个月的地震次数
+export function getListEarthQuakeNumMonthlyAPi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'zaihai/earthquake/listEarthQuakeNumMonthly',
+    params
+  })
+}
+
+// 灾害-列出指定月的地震数据
+export function getListEarthQuakeByMonthAPi(params = {}) {
+  return request({
+    method:'GET',
+    url: 'zaihai/earthquake/listEarthQuakeByMonth',
+    params
+  })
+}
