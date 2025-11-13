@@ -33,6 +33,7 @@ const option = {
   },
   xAxis: {
     type: 'category',
+    scale: true,
     nameTextStyle: {
       color: 'rgba(134, 128, 112, 0.6)',
       verticalAlign: 'top',
@@ -44,7 +45,9 @@ const option = {
     },
     // x轴字体颜色
     axisLabel: {
-      color: 'rgba(134, 128, 112, 0.6)'
+      color: 'rgba(134, 128, 112, 0.6)',
+      interval: 0, // 强制显示所有标签
+      rotate: 45, // 旋转标签避免重叠
     },
     // x轴刻度
     axisTick: {
@@ -75,11 +78,27 @@ const option = {
       let str = ''
       dataList.forEach((item) => {
         str += `
-          <div style="padding: 5px 0;">
-            <p>地点：${item.location}</p>
-            <p>震级：${item.magnitude}</p>
+          <div style="padding: 5px 0; border-bottom: 1px solid #f0f0f0;">
+            <p style="margin: 2px 0;"><strong>地点：</strong>${
+              item.location
+            }</p>
+            <p style="margin: 2px 0;"><strong>时间：</strong>${formatTime(
+              item.earthQuakeTime
+            )}</p>
+            <p style="margin: 2px 0;"><strong>经度：</strong>${
+              item.longitude
+            }</p>
+            <p style="margin: 2px 0;"><strong>纬度：</strong>${
+              item.latitude
+            }</p>
+            <p style="margin: 2px 0;"><strong>震级：</strong>${
+              item.magnitude
+            }</p>
+            <p style="margin: 2px 0;"><strong>震源深度：</strong>${
+              item.depth
+            }km</p>
           </div>
-        `
+        `;
       })
 
       return `<div>${str}</div>`
@@ -118,7 +137,7 @@ const option = {
     type: 'inside',
     xAxisIndex: 0,
     start: 0,
-    end: 20,
+    end: 10,
     zoomLock: true,
     moveOnMouseWheel: true // ⭐ 关键：启用滚轮平移（ECharts ≥ v5.4）
   },{
@@ -141,6 +160,15 @@ const option = {
     maxValueSpan: 25
   }],
 }
+
+const formatTime = (arr: number[]) => {
+  const [year, month, day, hour, minute, second] = arr;
+  return `${year}-${month.toString().padStart(2, "0")}-${day
+    .toString()
+    .padStart(2, "0")} ${hour ? hour.toString().padStart(2, "0") : "00"}:${
+    minute ? minute.toString().padStart(2, "0") : "00"
+  }:${second ? second.toString().padStart(2, "0") : "00"}`;
+};
 
 // 初始化图表
 const initChart = () => {
@@ -211,6 +239,7 @@ const makeData = () => {
 
   option.xAxis.data = months
   option.series[0].data = seriesData
+  option.dataZoom[0].end = 20 / seriesData.length * 100
 
   if (myEcharts) {
     myEcharts.setOption(option, true)
