@@ -176,7 +176,7 @@ const branchOptions = computed(() => {
     return [
       { label: "全部", value: "" },
       { label: "全真", value: "全真" },
-      { label: "正一", value: "佛教" },
+      { label: "正一", value: "正一" },
     ];
   }
   if (searchForm.religionName === "佛教") {
@@ -189,7 +189,7 @@ const branchOptions = computed(() => {
   }
   return [
     { label: "全真", value: "全真" },
-    { label: "正一", value: "佛教" },
+    { label: "正一", value: "正一" },
     { label: "汉语系", value: "汉语系" },
     { label: "藏语系", value: "藏语系" },
     { label: "巴利语系", value: "巴利语系" },
