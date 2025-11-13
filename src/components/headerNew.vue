@@ -36,7 +36,7 @@
           class="nav__item"
           :class="type === 5 && 'active'"
           @click="changeTopMenu(5)"
-          >地震</span
+          >自然灾害</span
         >
       </div>
     </div>
