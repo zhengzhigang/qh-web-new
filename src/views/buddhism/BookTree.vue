@@ -2,7 +2,7 @@
   <div class="book-tree">
     <p class="book-tree__title">读佛经</p>
     <div class="book-tree__content">
-      <el-tree style="max-width: 600px" :props="props" :load="loadNode" lazy @node-click="nodeClick">
+      <el-tree style="max-width: 600px; max-height: 465px; overflow-y: auto;" :props="props" :load="loadNode" lazy @node-click="nodeClick">
         <template #default="{ node }">
           <el-icon
             class="node-icon book-tree__icon"

@@ -11,8 +11,8 @@ import { getListEarthQuakeNumMonthlyAPi, getListEarthQuakeByMonthAPi } from '@/a
 
 let myEcharts: echarts.ECharts | null = null
 const dataList = ref<{ month: string; count: number }[]>([])
-// 在 setup 顶部添加
-const detailMap = ref<Record<string, any[]>>({}) // key: "2024-05", value: [地震数据数组]
+const detailMap = ref<Record<string, any[]>>({}) 
+const pendingRequests = ref<Record<string, boolean>>({})
 
 // 图表配置项
 const option = {
@@ -43,17 +43,14 @@ const option = {
     splitLine: {
       show: false
     },
-    // x轴字体颜色
     axisLabel: {
       color: 'rgba(134, 128, 112, 0.6)',
-      interval: 0, // 强制显示所有标签
-      rotate: 45, // 旋转标签避免重叠
+      interval: 0,
+      rotate: 45,
     },
-    // x轴刻度
     axisTick: {
       show: false
     },
-    // x轴线
     axisLine: {
       lineStyle: {
         color: '#EAEAEA',
@@ -63,16 +60,16 @@ const option = {
   },
   tooltip: {
     trigger: 'axis',
-    triggerOn: 'none',
+    triggerOn: 'click',
     padding: 10,
     extraCssText: 'max-height: 300px; overflow-y: auto; max-width: 300px; white-space: normal;pointer-events: auto !important;',
     formatter: (params: any[]) => {
       const param = params[0]
-      const monthKey = param.name // 如 "2024-05"
+      const monthKey = param.name
       const dataList = detailMap.value[monthKey] || []
 
       if (dataList.length === 0) {
-        return '<div>加载中...</div>'
+        return '<div style="padding: 10px;">加载中</div>'
       }
 
       let str = ''
@@ -122,7 +119,7 @@ const option = {
       symbol: 'circle',
       yAxisIndex: 0,
       smooth: true,
-      symbolSize: 8,
+      symbolSize: 12, // 增大点击区域
       itemStyle: {
         color: '#709977'
       },
@@ -130,7 +127,12 @@ const option = {
         width: 2,
         color: '#709977'
       },
-      connectNulls: true
+      connectNulls: true,
+      // 增加可点击区域
+      emphasis: {
+        scale: true,
+        focus: 'series'
+      }
     }
   ],
   dataZoom: [{
@@ -139,22 +141,19 @@ const option = {
     start: 0,
     end: 10,
     zoomLock: true,
-    moveOnMouseWheel: true // ⭐ 关键：启用滚轮平移（ECharts ≥ v5.4）
+    moveOnMouseWheel: true
   },{
     type: 'slider',
     width: '100%',
     height: 8,
     right: '0%',
     left: '0%',
-    // bottom: '0px',
-    backgroundColor: '#ddd',//滚到颜色
-    handeSize: 0,//手柄
-    realtime: true,//实时更新
-    //filter过滤掉窗口外的数据，none不过滤数据，只改变数轴范围
+    backgroundColor: '#ddd',
+    handeSize: 0,
+    realtime: true,
     filterMode: 'filter',
-    //展示10个柱子
-    startValue: 0, //从0个柱子开始，也就是最起始的地方
-    endValue: 25, //到第6个柱子结束
+    startValue: 0,
+    endValue: 25,
     show: true,
     minValueSpan: 10,
     maxValueSpan: 25
@@ -178,58 +177,97 @@ const initChart = () => {
   myEcharts = echarts.init(chartDom)
   myEcharts.setOption(option)
 
-  // 在 initChart 中绑定
+  // 监听整个图表的点击事件，而不仅仅是数据点
+  myEcharts.getZr().on('click', async (event) => {
+    if (!event.target) {
+      // 点击空白区域时，根据坐标判断点击的是哪个数据点
+      const pointInPixel = [event.offsetX, event.offsetY]
+      
+      // 转换坐标到图表坐标系
+      const pointInGrid = myEcharts.convertFromPixel('grid', pointInPixel)
+      
+      if (myEcharts.containPixel('grid', pointInPixel)) {
+        const xIndex = Math.round(pointInGrid[0])
+        const months = option.xAxis.data as string[]
+        
+        if (xIndex >= 0 && xIndex < months.length) {
+          const clickedMonth = months[xIndex]
+          await handleMonthClick(clickedMonth, xIndex)
+        }
+      }
+    }
+  })
+
+  // 同时保留原有的数据点点击事件
   myEcharts.on('click', async (params) => {
-    const clickedMonth = option.xAxis.data[params.dataIndex] as string
-
-     // 隐藏 tooltip
-    myEcharts.dispatchAction({
-      type: 'hideTip'
-    });
-
-    await updateTooltipData(clickedMonth, params)
+    if (params.componentType === 'series') {
+      const clickedMonth = option.xAxis.data[params.dataIndex] as string
+      await handleMonthClick(clickedMonth, params.dataIndex)
+    }
   })
 }
 
-// 更新单个点的tooltip信息
-const updateTooltipData = async (str: string, params: any) => {
-  if (detailMap.value[str]) {
-    // 如果已有数据，直接显示 tooltip
-    showCustomTooltip(params)
+// 处理月份点击的统一函数
+const handleMonthClick = async (month: string, dataIndex: number) => {
+  console.log('点击月份:', month)
+  
+  // 如果已经有数据，直接显示 tooltip
+  if (detailMap.value[month]) {
+    showTooltip(dataIndex)
     return
   }
-
-  const [year, month] = str.split('-')
-
-  const res: any = await getListEarthQuakeByMonthAPi({ year, month })
-  if (res?.code === 0 && res.data) {
-    // 缓存数据
-    detailMap.value[str] = res.data
-    // 手动显示 tooltip
-    const t = setTimeout(() => {
-      showCustomTooltip(params)
-      clearTimeout(t)
-    })
+  
+  // 如果没有数据，先加载数据
+  if (!pendingRequests.value[month]) {
+    await loadMonthData(month, dataIndex)
   }
 }
 
-const showCustomTooltip = (params: any) => {
-  if (myEcharts) {
-    myEcharts.dispatchAction({
-      type: 'showTip',
-      seriesIndex: params.seriesIndex,
-      dataIndex: params.dataIndex
-    })
+// 加载月份数据
+const loadMonthData = async (month: string, dataIndex: number) => {
+  pendingRequests.value[month] = true
+  
+  try {
+    const [year, monthNum] = month.split('-')
+    const res: any = await getListEarthQuakeByMonthAPi({ year, month: monthNum })
+    
+    if (res?.code === 0 && res.data) {
+      detailMap.value[month] = res.data
+    } else {
+      detailMap.value[month] = []
+    }
+
+    // 数据加载完成后显示 tooltip
+    showTooltip(dataIndex)
+    
+  } catch (error) {
+    console.error('加载地震数据失败:', error)
+    detailMap.value[month] = []
+    showTooltip(dataIndex)
+  } finally {
+    pendingRequests.value[month] = false
   }
 }
 
-// 关闭 tooltip
-const hideCustomTooltip = () => {
-  if (myEcharts) {
-    myEcharts.dispatchAction({
-      type: 'hideTip'
-    })
-  }
+// 显示 tooltip
+const showTooltip = (dataIndex: number) => {
+  if (!myEcharts) return
+  
+  // 先隐藏可能已经显示的 tooltip
+  myEcharts.dispatchAction({
+    type: 'hideTip'
+  })
+  
+  // 短暂延迟后显示 tooltip
+  setTimeout(() => {
+    if (myEcharts) {
+      myEcharts.dispatchAction({
+        type: 'showTip',
+        seriesIndex: 0,
+        dataIndex: dataIndex
+      })
+    }
+  }, 100)
 }
 
 // 合并数据并更新图表
@@ -239,7 +277,7 @@ const makeData = () => {
 
   option.xAxis.data = months
   option.series[0].data = seriesData
-  option.dataZoom[0].end = 20 / seriesData.length * 100
+  option.dataZoom[0].end = 25 / seriesData.length * 100
 
   if (myEcharts) {
     myEcharts.setOption(option, true)
@@ -256,20 +294,9 @@ const getListEarthQuakeNumMonthly = async () => {
   }
 }
 
-// 全局点击事件处理函数
-const handleClickOutside = (event: MouseEvent) => {
-  const chartContainer = document.querySelector('.quake-line__chart')
-  if (chartContainer && !chartContainer.contains(event.target as Node)) {
-    hideCustomTooltip()
-  }
-}
-
 onMounted(async () => {
   await getListEarthQuakeNumMonthly()
-  // 处理数据
   makeData()
-  // 添加全局点击事件监听器
-  window.addEventListener('click', handleClickOutside)
 })
 
 onBeforeUnmount(() => {
@@ -277,8 +304,6 @@ onBeforeUnmount(() => {
     myEcharts.dispose()
     myEcharts = null
   }
-  // 移除全局点击事件监听器
-  window.removeEventListener('click', handleClickOutside)
 })
 </script>
 
@@ -291,6 +316,7 @@ onBeforeUnmount(() => {
     padding: 20px;
     background: #fff;
     border-radius: 4px;
+    cursor: pointer; // 添加指针样式提示可点击
   }
 }
 </style>

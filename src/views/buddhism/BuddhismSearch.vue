@@ -1,66 +1,76 @@
 <template>
   <div class="buddhism-search">
-    <el-form :inline="true" :model="searchForm" label-width="auto">
-      <el-form-item label="宗教名称">
-        <el-select v-model="searchForm.religionName" placeholder="请选择" @change="searchList">
-          <el-option
-            v-for="item in religionOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="分支名称">
-        <el-select v-model="searchForm.subBranch" placeholder="请选择" @change="searchList">
-          <el-option
-            v-for="item in branchOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="地区" style="margin-right: 0">
-        <el-cascader
-          :props="props"
-          clearable
-          @change="provinceCgange"
-          placeholder="请选择"
-        />
-
-        <!-- <el-select
-            v-model="searchForm.subBranch"
-            placeholder="Select"
-            style="width: 240px"
-          >
+    <el-affix :offset="0">
+      <el-form :inline="true" :model="searchForm" label-width="auto" style="background-color: #fff;padding-top: 10px;">
+        <el-form-item label="宗教名称">
+          <el-select v-model="searchForm.religionName" placeholder="请选择" @change="searchList">
             <el-option
-              v-for="item in options"
+              v-for="item in religionOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
             />
-          </el-select> -->
-      </el-form-item>
-      <el-form-item label="寺庙名称">
-        <el-input
-          v-model="searchForm.placeName"
-          placeholder="请输入(选填)"
-          clearable
-          @input="handleInput"
-        />
-      </el-form-item>
-    </el-form>
-    <div class="time-scroll__list">
+          </el-select>
+        </el-form-item>
+        <el-form-item label="分支名称">
+          <el-select v-model="searchForm.subBranch" placeholder="请选择" @change="searchList">
+            <el-option
+              v-for="item in branchOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="地区" style="margin-right: 0">
+          <el-cascader
+            :props="props"
+            clearable
+            @change="provinceCgange"
+            placeholder="请选择"
+          />
+  
+          <!-- <el-select
+              v-model="searchForm.subBranch"
+              placeholder="Select"
+              style="width: 240px"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select> -->
+        </el-form-item>
+        <el-form-item label="寺庙名称">
+          <el-input
+            v-model="searchForm.placeName"
+            placeholder="请输入(选填)"
+            clearable
+            @input="handleInput"
+          />
+        </el-form-item>
+      </el-form>
+    </el-affix>
+    <div v-loading="loading" class="time-scroll__list">
       <el-table :data="buddhismList" style="width: 100%">
         <el-table-column type="index" width="50" />
         <el-table-column prop="placeName" label="寺庙名称" width="180" />
-        <el-table-column prop="personCharge" label="负责人" width="180" />
-        <el-table-column prop="religionName" label="宗派名称" width="180" />
-        <el-table-column prop="subBranch" label="分支名称" />
-        <el-table-column prop="address" label="地址"> </el-table-column>
-        <el-table-column prop="address" label="创建时间" />
+        <el-table-column prop="personCharge" label="负责人" width="120" />
+        <el-table-column prop="religionName" label="宗派名称" width="180" align="center" />
+        <el-table-column prop="subBranch" label="分支名称" align="center" />
+        <el-table-column prop="address" label="地址"  width="240"> </el-table-column>
+        <el-table-column prop="address" label="创建时间" width="190"  align="center">
+          <template v-slot="{row}">
+            {{ formatTime(row.createTime) }}
+          </template>
+        </el-table-column>
       </el-table>
+      <div class="buddhism-search__pagination">
+        <el-button type="primary" :disabled="currentPage <= 1" @click="prev">上一步</el-button>
+        <el-button type="primary" :disabled="buddhismList.length < 20" @click="next">下一步</el-button>
+      </div>
     </div>
     <!-- <el-pagination
       v-model:current-page="currentPage"
@@ -85,24 +95,14 @@ import {
   getBuddhismTownApi,
 } from "@/api/common";
 import type { CascaderProps } from "element-plus";
-import { debounce } from 'lodash-es'
+import { debounce, template } from 'lodash-es'
 
 const religionOptions = [
   { label: "全部", value: "" },
   { label: "道教", value: "道教" },
   { label: "佛教", value: "佛教" },
 ];
-const branchOptions1 = [
-  { label: "全部", value: "" },
-  { label: "全真", value: "全真" },
-  { label: "正一", value: "佛教" },
-];
-const branchOptions2 = [
-  { label: "全部", value: "" },
-  { label: "汉语系", value: "汉语系" },
-  { label: "藏语系", value: "藏语系" },
-  { label: "巴利语系", value: "巴利语系" },
-];
+const loading = ref(false)
 const currentPage = ref(1);
 // const pageSize = ref(10);
 // const total = ref(0);
@@ -196,6 +196,16 @@ const branchOptions = computed(() => {
   ];
 });
 
+const formatTime = (arr: number[]) => {
+  if (!arr || !arr.length) return ''
+  const [year, month, day, hour, minute, second] = arr;
+  return `${year}-${month.toString().padStart(2, "0")}-${day
+    .toString()
+    .padStart(2, "0")} ${hour ? hour.toString().padStart(2, "0") : "00"}:${
+    minute ? minute.toString().padStart(2, "0") : "00"
+  }:${second ? second.toString().padStart(2, "0") : "00"}`;
+};
+
 const provinceCgange = (value: any) => {
   searchForm.provinceName = value[0];
   searchForm.cityName = value[1];
@@ -214,23 +224,42 @@ const handleInput = (value) => {
   debouncedSearch(value)
 }
 
+const prev = () => {
+  currentPage.value -= 1
+  getBuddhismList()
+}
+
+const next = () => {
+  currentPage.value += 1
+  getBuddhismList()
+}
+
 const searchList = () => {
   currentPage.value = 1
   getBuddhismList()
 }
 
 const getBuddhismList = async () => {
-  const res: any = await getBuddhismListApi({
-    provinceName: searchForm.provinceName,
-    cityName: searchForm.cityName,
-    townName: searchForm.townName,
-    religionName: searchForm.religionName,
-    placeName: searchForm.placeName,
-    subBranch: searchForm.subBranch,
-    page: currentPage.value,
-  });
-  if (res.code === 0) {
-    buddhismList.value = res.data || [];
+  try {
+    loading.value = true
+    const res: any = await getBuddhismListApi({
+      provinceName: searchForm.provinceName,
+      cityName: searchForm.cityName,
+      townName: searchForm.townName,
+      religionName: searchForm.religionName,
+      placeName: searchForm.placeName,
+      subBranch: searchForm.subBranch,
+      page: currentPage.value,
+    });
+    if (res.code === 0) {
+      buddhismList.value = res.data || [];
+    } else {
+      buddhismList.value = []
+    }
+    loading.value = false
+  } catch(_) {
+    buddhismList.value = []
+    loading.value = false
   }
 };
 
@@ -246,6 +275,13 @@ onMounted(() => {
     ::v-deep .el-form-item__content {
       width: 100% !important;
     }
+  }
+
+  &__pagination {
+    display: flex;
+    gap: 10px;
+    padding-top: 10px;
+    justify-content: center;
   }
 }
 </style>
