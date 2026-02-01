@@ -31,11 +31,13 @@
               >
             </div>
             <div class="ml-auto mr-auto pl-20px">
-              <div class="home__nav-select mt-10px mb-1px">
+              <div class="home__nav-select mt-16px mb-1px">
                 <el-select
                   v-show="poemTabActive[0] == true"
                   v-model="datas.index"
                   placeholder=""
+                  size="large"
+                  style="width: 140px"
                 >
                   <el-option label="模糊查找" value="-1" />
                   <el-option label="第1个字" value="1" />
@@ -48,7 +50,7 @@
                 <input
                   type="text"
                   v-model="datas.searchStr"
-                  :style="{ width: poemTabActive[0] ? '300px' : '499px' }"
+                  :style="{ width: poemTabActive[0] ? '300px' : '440px' }"
                   @keyup.enter="searchAction"
                 />
                 <span class="searchBtn" @click="searchAction">搜索</span>
@@ -67,10 +69,18 @@
           <div class="home__details-item">
             <canvasPage :personId="datas.personId" />
           </div>
+        </div>
+      </template>
+    </section>
+
+    <section
+      class="home__content w-1140px ml-auto mr-auto pt-28px pb-28px pl-28px pr-28px"
+    >
+      <template v-if="datas.singleMatch == 1">
+        <div class="home__details">
           <div class="home__details-item" v-if="datas.authorId != '0'">
-            <p class="text-18px">
-              作品 :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<el-button
-                @click="exportByAuthorIdAction(datas.authorId)"
+            <p class="text-18px flex justify-between">
+              作品 :<el-button @click="exportByAuthorIdAction(datas.authorId)"
                 >导出</el-button
               >
             </p>
@@ -414,14 +424,15 @@ const linkToAuthor = (personId: any) => {
 
   &__nav {
     &-button {
-      height: 40px;
-      padding: 8px 24px;
+      height: 38px;
+      padding: 0 24px;
       font-size: 16px;
       color: #5d6146;
       border-radius: 4px;
       cursor: pointer;
       white-space: nowrap;
-      line-height: 24px;
+      line-height: 38px;
+
       &.active {
         position: relative;
         background: #f85659;
@@ -435,9 +446,9 @@ const linkToAuthor = (personId: any) => {
     }
 
     &-select {
-      height: 48px;
+      height: 38px;
       overflow: hidden;
-      border-radius: 100px;
+      border-radius: 20px;
 
       ::v-deep .el-input__inner {
         text-align: center;
@@ -445,10 +456,12 @@ const linkToAuthor = (personId: any) => {
       ::v-deep .el-input.is-focus .el-input__wrapper {
         box-shadow: 0 0 0 1px transparent inset !important;
       }
-      ::v-deep .el-select .el-input__wrapper {
+      ::v-deep .el-select .el-select__wrapper {
         border-radius: 0;
+        box-shadow: none;
+        border-right: 1px solid #dcdfe6;
       }
-      ::v-deep .el-select .el-input__wrapper.is-focus {
+      ::v-deep .el-select .el-select__wrapper.is-focus {
         box-shadow: 0 0 0 1px transparent inset !important;
       }
 
@@ -462,9 +475,9 @@ const linkToAuthor = (personId: any) => {
       .searchBtn {
         display: inline-block;
         background: #f85659;
-        width: 120px;
+        width: 100px;
         height: 100%;
-        line-height: 48px;
+        line-height: 38px;
         text-align: center;
         color: #fff;
         font-size: 14px;
@@ -478,7 +491,7 @@ const linkToAuthor = (personId: any) => {
   &__content {
     border-radius: 8px;
     background: #f0efe2;
-    margin-top: 30px;
+    margin-top: 20px;
   }
 
   &__details {
@@ -512,7 +525,7 @@ const linkToAuthor = (personId: any) => {
 
   &__footer {
     padding: 40px 0 20px 0;
-    background: linear-gradient(226deg, #c4b894 0%, #ede4d3 100%);
+
     &-nav {
       margin-bottom: 20px;
       > span {

@@ -1,25 +1,17 @@
 <template>
-  <div v-if="datas.hasRelationData">
-    <div
-      style="
-        height: 110px;
-        padding-top: 6px;
-        border-bottom: #efefef solid 1px;
-        color: #555555;
-        font-size: 12px;
-      "
-    >
-      <div style="">
-        <div style="line-height: 20px">方向筛选：</div>
+  <div v-if="datas.hasRelationData" class="graph">
+    <div class="graph__filter">
+      <div class="graph__filter-title mb-5px text-base">方向筛选：</div>
+      <div class="flex align-center">
         <el-radio-group
           v-model="datas.checked_role_type"
           size="mini"
+          class="mr-15px"
           @change="doFilterRoleType"
         >
           <el-radio-button label="A">主动方向</el-radio-button>
           <el-radio-button label="P">被动方向</el-radio-button>
         </el-radio-group>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <el-select
           v-model="datas.rel_checkList"
           multiple
@@ -27,6 +19,7 @@
           default-first-option
           :reserve-keyword="false"
           placeholder="选择关系"
+          class="mr-15px"
           style="width: 320px"
           size="mini"
         >
@@ -37,7 +30,6 @@
             :value="item.assocCode"
           />
         </el-select>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <el-button @click="doFilterNode">查询</el-button>
       </div>
     </div>
@@ -73,7 +65,7 @@
   </div>
 </template>
 
-  <script setup lang="ts">
+<script setup lang="ts">
 import { onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
@@ -120,8 +112,6 @@ const options = {
 watch(
   () => props.personId,
   (newVal, oldVal) => {
-    console.log("newVal:", newVal);
-    console.log("oldVal:", oldVal);
     if (newVal != oldVal) {
       listPersonAssocCode({
         personId: props.personId,
@@ -150,7 +140,6 @@ watch(
         }
 
         if (datas.rel_checkList.length == 0) {
-          // ElMessage.error('当前关系类型下没有关系图谱.')
           datas.hasRelationData = false;
           return;
         } else {
@@ -166,7 +155,6 @@ watch(
               res.data.customNodes == null ||
               res.data.customNodes.length == 0
             ) {
-              // ElMessage.error('当前关系类型下没有关系图谱.')
               return;
             }
             graphJsonData.value.nodes = res.data.customNodes;
@@ -234,7 +222,19 @@ const onNodeClick = (nodeObject, $event) => {
   return true;
 };
 </script>
-  <style lang="less">
+<style lang="less">
+.graph {
+  &__filter {
+    height: 80px;
+    border-bottom: #efefef solid 1px;
+    color: #555555;
+    font-size: 12px;
+
+    &_title {
+      line-height: 20px;
+    }
+  }
+}
 .c-mb-button svg {
   display: inline !important;
   vertical-align: baseline;

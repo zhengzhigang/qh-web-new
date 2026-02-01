@@ -18,7 +18,7 @@
         "echarts": "^5.4.3",
         "echarts-wordcloud": "^2.1.0",
         "el-table-infinite-scroll": "^3.0.3",
-        "element-plus": "^2.2.18",
+        "element-plus": "^2.13.2",
         "eslint-plugin-n": "^15.0.0 || ^16.0.0",
         "json-bigint": "^1.0.0",
         "less": "^4.1.3",
