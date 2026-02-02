@@ -17,7 +17,7 @@ export function login(params) {
 }
 export function logout(params) {
   return request({
-    url: '/admin/logout',
+    url: '/api/admin/logout',
     method: 'post',
     params
   });
@@ -27,50 +27,50 @@ export function logout(params) {
 
 export function searchAuthor(params) {
   return request({
-    url: '/searchPoet/searchPoetName',
+    url: '/api/searchPoet/searchPoetName',
     method: 'get',
     params
   });
 }
 export function searchPoetAuthorId(params) {
   return request({
-    url: '/searchPoet/searchPoetAuthorId',
+    url: '/api/searchPoet/searchPoetAuthorId',
     method: 'get',
     params
   });
 }
 export function listPostPage(params) {
   return request({
-    url: '/post/listPostPageByAuthorId',
+    url: '/api/post/listPostPageByAuthorId',
     method: 'get',
     params
   });
 }
 export function exportByAuthorId(params) {
   return request({
-    url: '/post/exportByAuthorId',
+    url: '/api/post/exportByAuthorId',
     method: 'get',
     params
   });
 }
 export function searchPostTitle(params) {
   return request({
-    url: '/searchPost/searchPostTitle',
+    url: '/api/searchPost/searchPostTitle',
     method: 'get',
     params
   });
 }
 export function searchPostContent(params) {
   return request({
-    url: '/searchPost/searchPostContent',
+    url: '/api/searchPost/searchPostContent',
     method: 'get',
     params
   });
 }
 /////////////////////////下面的是知识图谱api
-export function  findAuthorIdByPersonId(params) {
+export function findAuthorIdByPersonId(params) {
   return request({
-    url: '/common/findAuthorIdByPersonId',
+    url: '/api/common/findAuthorIdByPersonId',
     method: 'get',
     params
   });
@@ -78,7 +78,7 @@ export function  findAuthorIdByPersonId(params) {
 
 export function listPersonByRelation(params) {
   return request({
-    url: '/poet/listPersonByRelation',
+    url: '/api/poet/listPersonByRelation',
     method: 'get',
     params
   });
@@ -86,7 +86,7 @@ export function listPersonByRelation(params) {
 
 export function listPersonAssocCode(params) {
   return request({
-    url: '/assoc/listPersonAssocCode',
+    url: '/api/assoc/listPersonAssocCode',
     method: 'get',
     params
   });
