@@ -6,7 +6,7 @@
           <img
             class="home__header-logo"
             style="cursor: pointer"
-            src="@/assets/logo.png"
+            src="@/assets/中央民族大学校徽图片-512px.png"
             @click="linkPage('home')"
           />
           <div class="home__nav flex justify-between">
@@ -144,26 +144,6 @@
         @current-change="handleCurrentChange"
       />
     </section>
-
-    <div class="home__footer">
-      <div
-        class="w-1140px ml-auto mr-auto flex justify-center flex-col items-center"
-      >
-        <p class="home__footer-nav">
-          <span>关于</span>
-          <span>隐私</span>
-          <span>联系</span>
-          <span>导览</span>
-          <span>访问量</span>
-        </p>
-        <p>© 2023 中国数字人文 皖ICP备19020276号-4</p>
-        <p>本网站为学术公益性网站，若有侵权，请联系删除。</p>
-        <p>
-          知识共享许可协议本网站采用知识共享署名-非商业性使用-禁止演绎 4.0
-          国际许可协议进行许可。
-        </p>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -416,9 +396,9 @@ const linkToAuthor = (personId: any) => {
     }
 
     &-logo {
-      width: 168px;
-      height: 45px;
-      margin-top: 8px;
+      width: 60px;
+      height: 60px;
+      margin-top: 5px;
     }
   }
 
@@ -520,24 +500,6 @@ const linkToAuthor = (personId: any) => {
     &-text {
       font-size: 14px;
       color: #2c3d50;
-    }
-  }
-
-  &__footer {
-    padding: 40px 0 20px 0;
-
-    &-nav {
-      margin-bottom: 20px;
-      > span {
-        font-weight: 500;
-        color: #6f4d3a;
-        font-size: 14px;
-      }
-    }
-    p {
-      margin-bottom: 6px;
-      font-size: 12px;
-      color: #6f4d3a;
     }
   }
 }
