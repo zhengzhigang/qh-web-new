@@ -359,7 +359,7 @@ const exportByAuthorIdAction = (authorId: any) => {
   console.log("exportByAuthorIdAction:", authorId);
   const exportUrl = `${
     import.meta.env.VITE_URL
-  }/post/exportByAuthorId?authorId=${authorId}`;
+  }/api/post/exportByAuthorId?authorId=${authorId}`;
   window.open(exportUrl, "_blank");
   return true;
 };
