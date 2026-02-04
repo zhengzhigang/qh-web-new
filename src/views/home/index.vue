@@ -32,25 +32,10 @@
             </div>
             <div class="ml-auto mr-auto pl-20px">
               <div class="home__nav-select mt-16px mb-1px">
-                <el-select
-                  v-show="poemTabActive[0] == true"
-                  v-model="datas.index"
-                  placeholder=""
-                  size="large"
-                  style="width: 140px"
-                >
-                  <el-option label="模糊查找" value="-1" />
-                  <el-option label="第1个字" value="1" />
-                  <el-option label="第2个字" value="2" />
-                  <el-option label="第3个字" value="3" />
-                  <el-option label="第4个字" value="4" />
-                  <el-option label="最后一个字" value="99" />
-                </el-select>
-
                 <input
                   type="text"
                   v-model="datas.searchStr"
-                  :style="{ width: poemTabActive[0] ? '300px' : '440px' }"
+                  :style="{ width: '440px' }"
                   @keyup.enter="searchAction"
                 />
                 <span class="searchBtn" @click="searchAction">搜索</span>
