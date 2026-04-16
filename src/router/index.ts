@@ -23,6 +23,16 @@ const routes: Array<RouteRecordRaw> = [
         name: 'canvas',
         component: () => import('../views/home/canvas.vue')
     },
+    {
+        path: '/home-new',
+        name: 'home-new',
+        component: () => import('../views/home-new/index.vue')
+    },
+    {
+        path: '/experiment',
+        name: 'experiment',
+        component: () => import('../views/experiment/index.vue')
+    },
 ]
 
 const router = createRouter({
