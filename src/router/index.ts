@@ -33,6 +33,27 @@ const routes: Array<RouteRecordRaw> = [
         name: 'experiment',
         component: () => import('../views/experiment/index.vue')
     },
+    // KGQA 相关路由
+    {
+        path: '/kgqa/welcome',
+        name: 'kgqa-welcome',
+        component: () => import('../views/kgqa/Welcome.vue')
+    },
+    {
+        path: '/kgqa/search',
+        name: 'kgqa-search',
+        component: () => import('../views/kgqa/Search.vue')
+    },
+    {
+        path: '/kgqa/all-relation',
+        name: 'kgqa-all-relation',
+        component: () => import('../views/kgqa/AllRelation.vue')
+    },
+    {
+        path: '/kgqa/qa',
+        name: 'kgqa-qa',
+        component: () => import('../views/kgqa/KGQA.vue')
+    },
 ]
 
 const router = createRouter({

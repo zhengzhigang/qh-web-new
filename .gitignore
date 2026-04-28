@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+KGQA_HLM-master-main
 *.local
 
 # Editor directories and files
