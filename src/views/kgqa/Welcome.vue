@@ -3,7 +3,7 @@
     <div class="cls-content" style="margin-top:150px">
       <div class="mar-ver pad-btm">
         <p class="text-muted" style="color:white">基于知识图谱的《红楼梦》人物关系可视化及问答系统</p>
-        <a id="a" @click="navigateToSearch">开启探索</a>
+        <el-button type="primary" @click="navigateToSearch" size="large">开启探索</el-button>
       </div>
     </div>
   </div>
@@ -11,6 +11,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { ElButton } from 'element-plus';
 
 const router = useRouter();
 

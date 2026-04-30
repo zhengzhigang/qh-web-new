@@ -13,14 +13,13 @@
       <div class="search-section">
         <h2 class="section-title">人物关系可视化</h2>
         <div class="search-box">
-          <input
-            type="text"
+          <el-input
             v-model="searchQuery"
-            id="search-input"
             placeholder="请输入你要检索的名字..."
             @keyup.enter="search"
-          >
-          <button class="search-btn" @click="search">搜索</button>
+            size="large"
+          />
+          <el-button type="primary" @click="search" size="large">搜索</el-button>
         </div>
       </div>
 
@@ -61,6 +60,7 @@ import {
 } from 'echarts/components';
 import { GraphChart } from 'echarts/charts';
 import 'echarts-wordcloud';
+import { ElInput, ElButton } from 'element-plus';
 import { searchName } from '@/api/kgqa';
 
 // 注册必要的组件
@@ -364,6 +364,191 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "史湘云", target: "林黛玉", value: "姐妹" },
       { source: "史湘云", target: "薛宝钗", value: "姐妹" },
       { source: "史湘云", target: "贾母", value: "姑祖孙" },
+    ]
+  },
+  "贾赦": {
+    data: [
+      { name: "贾赦", category: 0, symbolSize: 65 },
+      { name: "贾琏", category: 0, symbolSize: 55 },
+      { name: "贾政", category: 0, symbolSize: 50 },
+      { name: "贾母", category: 0, symbolSize: 55 },
+      { name: "迎春", category: 0, symbolSize: 45 },
+    ],
+    links: [
+      { source: "贾赦", target: "贾琏", value: "父子" },
+      { source: "贾赦", target: "贾政", value: "兄弟" },
+      { source: "贾赦", target: "贾母", value: "母子" },
+      { source: "贾赦", target: "迎春", value: "父女" },
+    ]
+  },
+  "贾琏": {
+    data: [
+      { name: "贾琏", category: 0, symbolSize: 65 },
+      { name: "王熙凤", category: 2, symbolSize: 60 },
+      { name: "贾赦", category: 0, symbolSize: 50 },
+      { name: "巧姐", category: 0, symbolSize: 40 },
+    ],
+    links: [
+      { source: "贾琏", target: "王熙凤", value: "夫妻" },
+      { source: "贾琏", target: "贾赦", value: "父子" },
+      { source: "贾琏", target: "巧姐", value: "父女" },
+    ]
+  },
+  "贾珍": {
+    data: [
+      { name: "贾珍", category: 1, symbolSize: 65 },
+      { name: "贾蓉", category: 1, symbolSize: 50 },
+      { name: "贾敬", category: 1, symbolSize: 50 },
+      { name: "尤氏", category: 5, symbolSize: 45 },
+    ],
+    links: [
+      { source: "贾珍", target: "贾蓉", value: "父子" },
+      { source: "贾珍", target: "贾敬", value: "父子" },
+      { source: "贾珍", target: "尤氏", value: "夫妻" },
+    ]
+  },
+  "贾蓉": {
+    data: [
+      { name: "贾蓉", category: 1, symbolSize: 60 },
+      { name: "贾珍", category: 1, symbolSize: 55 },
+      { name: "秦可卿", category: 5, symbolSize: 50 },
+    ],
+    links: [
+      { source: "贾蓉", target: "贾珍", value: "父子" },
+      { source: "贾蓉", target: "秦可卿", value: "夫妻" },
+    ]
+  },
+  "贾兰": {
+    data: [
+      { name: "贾兰", category: 1, symbolSize: 55 },
+      { name: "贾珠", category: 0, symbolSize: 50 },
+      { name: "李纨", category: 5, symbolSize: 45 },
+    ],
+    links: [
+      { source: "贾兰", target: "贾珠", value: "父子" },
+      { source: "贾兰", target: "李纨", value: "母子" },
+    ]
+  },
+  "薛姨妈": {
+    data: [
+      { name: "薛姨妈", category: 4, symbolSize: 60 },
+      { name: "薛宝钗", category: 4, symbolSize: 65 },
+      { name: "薛蟠", category: 4, symbolSize: 55 },
+      { name: "王夫人", category: 2, symbolSize: 50 },
+    ],
+    links: [
+      { source: "薛姨妈", target: "薛宝钗", value: "母女" },
+      { source: "薛姨妈", target: "薛蟠", value: "母子" },
+      { source: "薛姨妈", target: "王夫人", value: "姐妹" },
+    ]
+  },
+  "薛蟠": {
+    data: [
+      { name: "薛蟠", category: 4, symbolSize: 60 },
+      { name: "薛宝钗", category: 4, symbolSize: 65 },
+      { name: "薛姨妈", category: 4, symbolSize: 50 },
+      { name: "香菱", category: 5, symbolSize: 40 },
+    ],
+    links: [
+      { source: "薛蟠", target: "薛宝钗", value: "兄妹" },
+      { source: "薛蟠", target: "薛姨妈", value: "母子" },
+      { source: "薛蟠", target: "香菱", value: "妾" },
+    ]
+  },
+  "袭人": {
+    data: [
+      { name: "袭人", category: 5, symbolSize: 55 },
+      { name: "贾宝玉", category: 0, symbolSize: 65 },
+      { name: "薛宝钗", category: 4, symbolSize: 50 },
+    ],
+    links: [
+      { source: "袭人", target: "贾宝玉", value: "主仆" },
+      { source: "袭人", target: "薛宝钗", value: "朋友" },
+    ]
+  },
+  "紫鹃": {
+    data: [
+      { name: "紫鹃", category: 5, symbolSize: 55 },
+      { name: "林黛玉", category: 6, symbolSize: 65 },
+      { name: "贾宝玉", category: 0, symbolSize: 55 },
+    ],
+    links: [
+      { source: "紫鹃", target: "林黛玉", value: "主仆" },
+      { source: "紫鹃", target: "贾宝玉", value: "朋友" },
+    ]
+  },
+  "妙玉": {
+    data: [
+      { name: "妙玉", category: 5, symbolSize: 55 },
+      { name: "贾宝玉", category: 0, symbolSize: 60 },
+      { name: "林黛玉", category: 6, symbolSize: 55 },
+      { name: "薛宝钗", category: 4, symbolSize: 55 },
+    ],
+    links: [
+      { source: "妙玉", target: "贾宝玉", value: "朋友" },
+      { source: "妙玉", target: "林黛玉", value: "朋友" },
+      { source: "妙玉", target: "薛宝钗", value: "朋友" },
+    ]
+  },
+  "贾敬": {
+    data: [
+      { name: "贾敬", category: 1, symbolSize: 60 },
+      { name: "贾珍", category: 1, symbolSize: 55 },
+      { name: "贾惜春", category: 0, symbolSize: 45 },
+    ],
+    links: [
+      { source: "贾敬", target: "贾珍", value: "父子" },
+      { source: "贾敬", target: "贾惜春", value: "父女" },
+    ]
+  },
+  "巧姐": {
+    data: [
+      { name: "巧姐", category: 0, symbolSize: 50 },
+      { name: "贾琏", category: 0, symbolSize: 55 },
+      { name: "王熙凤", category: 2, symbolSize: 55 },
+    ],
+    links: [
+      { source: "巧姐", target: "贾琏", value: "父女" },
+      { source: "巧姐", target: "王熙凤", value: "母女" },
+    ]
+  },
+  "王夫人": {
+    data: [
+      { name: "王夫人", category: 2, symbolSize: 60 },
+      { name: "贾政", category: 0, symbolSize: 55 },
+      { name: "贾宝玉", category: 0, symbolSize: 60 },
+      { name: "王熙凤", category: 2, symbolSize: 50 },
+      { name: "薛姨妈", category: 4, symbolSize: 50 },
+    ],
+    links: [
+      { source: "王夫人", target: "贾政", value: "夫妻" },
+      { source: "王夫人", target: "贾宝玉", value: "母子" },
+      { source: "王夫人", target: "王熙凤", value: "姑侄" },
+      { source: "王夫人", target: "薛姨妈", value: "姐妹" },
+    ]
+  },
+  "林如海": {
+    data: [
+      { name: "林如海", category: 6, symbolSize: 60 },
+      { name: "林黛玉", category: 6, symbolSize: 65 },
+      { name: "贾敏", category: 6, symbolSize: 50 },
+    ],
+    links: [
+      { source: "林如海", target: "林黛玉", value: "父女" },
+      { source: "林如海", target: "贾敏", value: "夫妻" },
+    ]
+  },
+  "贾敏": {
+    data: [
+      { name: "贾敏", category: 6, symbolSize: 55 },
+      { name: "林黛玉", category: 6, symbolSize: 65 },
+      { name: "林如海", category: 6, symbolSize: 50 },
+      { name: "贾母", category: 0, symbolSize: 55 },
+    ],
+    links: [
+      { source: "贾敏", target: "林黛玉", value: "母女" },
+      { source: "贾敏", target: "林如海", value: "夫妻" },
+      { source: "贾敏", target: "贾母", value: "母女" },
     ]
   }
 };
