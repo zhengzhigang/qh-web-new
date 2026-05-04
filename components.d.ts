@@ -28,6 +28,7 @@ declare module 'vue' {
     Header: typeof import('./src/components/header.vue')['default']
     HeaderNew: typeof import('./src/components/headerNew.vue')['default']
     HomeHeader: typeof import('./src/components/home-header.vue')['default']
+    KgqaHeader: typeof import('./src/components/kgqa-header.vue')['default']
     Pagination: typeof import('./src/components/Pagination.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

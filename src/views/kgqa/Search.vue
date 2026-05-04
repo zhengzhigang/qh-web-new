@@ -1,14 +1,9 @@
 <template>
   <div id="container">
     <!-- 顶部导航栏 -->
-    <header id="header">
-      <div class="header-content">
-        <h1>基于知识图谱的《红楼梦》人物关系可视化及问答系统</h1>
-      </div>
-    </header>
-
+    <kgqa-header />
     <!-- 主体内容区域 -->
-    <main id="main-content">
+    <main id="main-content" style="margin-top: 60px">
       <!-- 搜索区域 -->
       <div class="search-section">
         <h2 class="section-title">人物关系可视化</h2>
@@ -19,7 +14,9 @@
             @keyup.enter="search"
             size="large"
           />
-          <el-button type="primary" @click="search" size="large">搜索</el-button>
+          <el-button type="primary" @click="search" size="large"
+            >搜索</el-button
+          >
         </div>
       </div>
 
@@ -28,13 +25,24 @@
         <!-- 关系图 -->
         <div class="chart-box graph-box">
           <h3 class="chart-title">人物关系图</h3>
-          <v-chart ref="graphRef" :option="graphOption" style="width: 100%; height: 100%;" autoresize />
+          <v-chart
+            ref="graphRef"
+            :option="graphOption"
+            style="width: 100%; height: 100%"
+            autoresize
+          />
         </div>
 
         <!-- 词云图 -->
         <div class="chart-box wordcloud-box">
           <h3 class="chart-title">人物词云</h3>
-          <v-chart ref="wordCloudRef" :option="wordCloudOption" style="width: 100%; height: 100%;" autoresize @click="onWordCloudClick" />
+          <v-chart
+            ref="wordCloudRef"
+            :option="wordCloudOption"
+            style="width: 100%; height: 100%"
+            autoresize
+            @click="onWordCloudClick"
+          />
         </div>
       </div>
     </main>
@@ -47,21 +55,21 @@
 </template>
 
 <script setup lang="ts">
-
-import { ref, onMounted, nextTick } from 'vue';
-import { useRouter } from 'vue-router';
-import VChart from 'vue-echarts';
-import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
+import { ref, onMounted, nextTick } from "vue";
+import { useRouter } from "vue-router";
+import VChart from "vue-echarts";
+import { use } from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
 import {
   TitleComponent,
   LegendComponent,
   TooltipComponent,
-} from 'echarts/components';
-import { GraphChart } from 'echarts/charts';
-import 'echarts-wordcloud';
-import { ElInput, ElButton } from 'element-plus';
-import { searchName } from '@/api/kgqa';
+} from "echarts/components";
+import { GraphChart } from "echarts/charts";
+import "echarts-wordcloud";
+import { ElInput, ElButton } from "element-plus";
+import { searchName } from "@/api/kgqa";
+import KgqaHeader from "@/components/kgqa-header.vue";
 
 // 注册必要的组件
 use([
@@ -75,7 +83,7 @@ use([
 const router = useRouter();
 const wordCloudRef = ref();
 const graphRef = ref();
-const searchQuery = ref('');
+const searchQuery = ref("");
 
 // 词云图配置
 const wordCloudOption = ref<any>({
@@ -83,40 +91,50 @@ const wordCloudOption = ref<any>({
     show: true,
     formatter: (params: any) => {
       return `${params.name}: ${params.value}次`;
-    }
+    },
   },
-  series: [{
-    type: 'wordCloud',
-    shape: 'circle',
-    left: 'center',
-    top: 'center',
-    width: '90%',
-    height: '90%',
-    sizeRange: [14, 60],
-    rotationRange: [-45, 45],
-    rotationStep: 15,
-    gridSize: 8,
-    drawOutOfBound: false,
-    keepAspect: true,
-    animation: true,
-    animationDuration: 3000,
-    animationEasing: 'sinusoidalInOut',
-    textStyle: {
-      fontFamily: 'sans-serif',
-      fontWeight: 'bold',
-      color: () => {
-        const colorList = ['#d9363e', '#2d50a7', '#2387c4', '#e17b36', '#4aaf5c', '#7a5d9e', '#c2823a'];
-        return colorList[Math.floor(Math.random() * colorList.length)];
-      }
-    },
-    emphasis: {
+  series: [
+    {
+      type: "wordCloud",
+      shape: "circle",
+      left: "center",
+      top: "center",
+      width: "90%",
+      height: "90%",
+      sizeRange: [14, 60],
+      rotationRange: [-45, 45],
+      rotationStep: 15,
+      gridSize: 8,
+      drawOutOfBound: false,
+      keepAspect: true,
+      animation: true,
+      animationDuration: 3000,
+      animationEasing: "sinusoidalInOut",
       textStyle: {
-        shadowBlur: 10,
-        shadowColor: '#333'
-      }
+        fontFamily: "sans-serif",
+        fontWeight: "bold",
+        color: () => {
+          const colorList = [
+            "#d9363e",
+            "#2d50a7",
+            "#2387c4",
+            "#e17b36",
+            "#4aaf5c",
+            "#7a5d9e",
+            "#c2823a",
+          ];
+          return colorList[Math.floor(Math.random() * colorList.length)];
+        },
+      },
+      emphasis: {
+        textStyle: {
+          shadowBlur: 10,
+          shadowColor: "#333",
+        },
+      },
+      data: [],
     },
-    data: []
-  }]
+  ],
 });
 
 // 词云点击事件
@@ -129,63 +147,63 @@ const onWordCloudClick = (params: any) => {
 // 关系图配置
 const graphOption = ref<any>({
   title: {
-    text: '',
+    text: "",
     textStyle: {
-      fontWeight: 'normal',
-    }
+      fontWeight: "normal",
+    },
   },
   animationDurationUpdate: 1500,
-  animationEasingUpdate: 'quinticInOut',
+  animationEasingUpdate: "quinticInOut",
   legend: {
     x: "center",
     show: true,
     data: ["贾家荣国府", "贾家宁国府", "王家", "史家", "薛家", "其他", "林家"],
     bottom: 10,
     textStyle: {
-      fontSize: 12
-    }
+      fontSize: 12,
+    },
   },
   series: [
     {
-      type: 'graph',
-      layout: 'force',
+      type: "graph",
+      layout: "force",
       symbolSize: 50,
-      edgeSymbol: ['circle', 'arrow'],
+      edgeSymbol: ["circle", "arrow"],
       edgeSymbolSize: [4, 4],
       edgeLabel: {
         normal: {
           show: true,
           textStyle: {
-            fontSize: 10
+            fontSize: 10,
           },
-          formatter: "{c}"
-        }
+          formatter: "{c}",
+        },
       },
       force: {
         repulsion: 2500,
-        edgeLength: [10, 100]
+        edgeLength: [10, 100],
       },
       focusNodeAdjacency: true,
       draggable: true,
       roam: true,
       categories: [
-        { name: '贾家荣国府', itemStyle: { color: '#d9363e' } },
-        { name: '贾家宁国府', itemStyle: { color: '#2d50a7' } },
-        { name: '王家', itemStyle: { color: '#2387c4' } },
-        { name: '史家', itemStyle: { color: '#e17b36' } },
-        { name: '薛家', itemStyle: { color: '#4aaf5c' } },
-        { name: '其他', itemStyle: { color: '#7a5d9e' } },
-        { name: '林家', itemStyle: { color: '#c2823a' } }
+        { name: "贾家荣国府", itemStyle: { color: "#d9363e" } },
+        { name: "贾家宁国府", itemStyle: { color: "#2d50a7" } },
+        { name: "王家", itemStyle: { color: "#2387c4" } },
+        { name: "史家", itemStyle: { color: "#e17b36" } },
+        { name: "薛家", itemStyle: { color: "#4aaf5c" } },
+        { name: "其他", itemStyle: { color: "#7a5d9e" } },
+        { name: "林家", itemStyle: { color: "#c2823a" } },
       ],
       label: {
         normal: {
           show: true,
           textStyle: {
             fontSize: 12,
-            fontWeight: 'bold',
-            color: '#333'
+            fontWeight: "bold",
+            color: "#333",
           },
-        }
+        },
       },
       tooltip: {
         formatter: function (node: any) {
@@ -198,28 +216,44 @@ const graphOption = ref<any>({
       },
       lineStyle: {
         normal: {
-          color: '#999',
+          color: "#999",
           opacity: 0.8,
           width: 2,
-          curveness: 0.2
-        }
+          curveness: 0.2,
+        },
       },
       nodes: [],
-      links: []
-    }
-  ]
+      links: [],
+    },
+  ],
 });
 
 const characters = [
-  "贾宝玉", "林黛玉", "薛宝钗", "王熙凤", "贾政", "贾母",
-  "贾赦", "贾琏", "贾珍", "王夫人", "贾探春", "贾迎春",
-  "贾惜春", "贾环", "巧姐", "袭人", "贾敬", "贾蓉",
-  "贾兰", "史湘云"
+  "贾宝玉",
+  "林黛玉",
+  "薛宝钗",
+  "王熙凤",
+  "贾政",
+  "贾母",
+  "贾赦",
+  "贾琏",
+  "贾珍",
+  "王夫人",
+  "贾探春",
+  "贾迎春",
+  "贾惜春",
+  "贾环",
+  "巧姐",
+  "袭人",
+  "贾敬",
+  "贾蓉",
+  "贾兰",
+  "史湘云",
 ];
 
 // Mock数据 - 人物关系
 const mockData: Record<string, { data: any[]; links: any[] }> = {
-  "贾宝玉": {
+  贾宝玉: {
     data: [
       { name: "贾宝玉", category: 0, symbolSize: 70 },
       { name: "贾政", category: 0, symbolSize: 50 },
@@ -246,9 +280,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "贾宝玉", target: "贾探春", value: "兄妹" },
       { source: "贾宝玉", target: "袭人", value: "主仆" },
       { source: "贾宝玉", target: "史湘云", value: "表兄妹" },
-    ]
+    ],
   },
-  "林黛玉": {
+  林黛玉: {
     data: [
       { name: "林黛玉", category: 6, symbolSize: 70 },
       { name: "贾宝玉", category: 0, symbolSize: 60 },
@@ -267,9 +301,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "林黛玉", target: "贾迎春", value: "姐妹" },
       { source: "林黛玉", target: "贾惜春", value: "姐妹" },
       { source: "林黛玉", target: "紫鹃", value: "主仆" },
-    ]
+    ],
   },
-  "薛宝钗": {
+  薛宝钗: {
     data: [
       { name: "薛宝钗", category: 4, symbolSize: 70 },
       { name: "贾宝玉", category: 0, symbolSize: 60 },
@@ -286,9 +320,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "薛宝钗", target: "薛蟠", value: "姐弟" },
       { source: "薛宝钗", target: "贾母", value: "亲戚" },
       { source: "薛宝钗", target: "王夫人", value: "姨甥" },
-    ]
+    ],
   },
-  "王熙凤": {
+  王熙凤: {
     data: [
       { name: "王熙凤", category: 2, symbolSize: 70 },
       { name: "贾琏", category: 0, symbolSize: 55 },
@@ -305,9 +339,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "王熙凤", target: "贾母", value: "婆媳" },
       { source: "王熙凤", target: "巧姐", value: "母女" },
       { source: "王熙凤", target: "贾蓉", value: "婶侄" },
-    ]
+    ],
   },
-  "贾政": {
+  贾政: {
     data: [
       { name: "贾政", category: 0, symbolSize: 70 },
       { name: "贾宝玉", category: 0, symbolSize: 60 },
@@ -328,9 +362,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "贾政", target: "王夫人", value: "夫妻" },
       { source: "贾政", target: "贾母", value: "母子" },
       { source: "贾政", target: "贾赦", value: "兄弟" },
-    ]
+    ],
   },
-  "贾母": {
+  贾母: {
     data: [
       { name: "贾母", category: 0, symbolSize: 75 },
       { name: "贾宝玉", category: 0, symbolSize: 60 },
@@ -349,9 +383,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "贾母", target: "贾敏", value: "母女" },
       { source: "贾母", target: "史湘云", value: "姑祖孙" },
       { source: "贾母", target: "王熙凤", value: "婆媳" },
-    ]
+    ],
   },
-  "史湘云": {
+  史湘云: {
     data: [
       { name: "史湘云", category: 3, symbolSize: 70 },
       { name: "贾宝玉", category: 0, symbolSize: 60 },
@@ -364,9 +398,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "史湘云", target: "林黛玉", value: "姐妹" },
       { source: "史湘云", target: "薛宝钗", value: "姐妹" },
       { source: "史湘云", target: "贾母", value: "姑祖孙" },
-    ]
+    ],
   },
-  "贾赦": {
+  贾赦: {
     data: [
       { name: "贾赦", category: 0, symbolSize: 65 },
       { name: "贾琏", category: 0, symbolSize: 55 },
@@ -379,9 +413,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "贾赦", target: "贾政", value: "兄弟" },
       { source: "贾赦", target: "贾母", value: "母子" },
       { source: "贾赦", target: "迎春", value: "父女" },
-    ]
+    ],
   },
-  "贾琏": {
+  贾琏: {
     data: [
       { name: "贾琏", category: 0, symbolSize: 65 },
       { name: "王熙凤", category: 2, symbolSize: 60 },
@@ -392,9 +426,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "贾琏", target: "王熙凤", value: "夫妻" },
       { source: "贾琏", target: "贾赦", value: "父子" },
       { source: "贾琏", target: "巧姐", value: "父女" },
-    ]
+    ],
   },
-  "贾珍": {
+  贾珍: {
     data: [
       { name: "贾珍", category: 1, symbolSize: 65 },
       { name: "贾蓉", category: 1, symbolSize: 50 },
@@ -405,9 +439,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "贾珍", target: "贾蓉", value: "父子" },
       { source: "贾珍", target: "贾敬", value: "父子" },
       { source: "贾珍", target: "尤氏", value: "夫妻" },
-    ]
+    ],
   },
-  "贾蓉": {
+  贾蓉: {
     data: [
       { name: "贾蓉", category: 1, symbolSize: 60 },
       { name: "贾珍", category: 1, symbolSize: 55 },
@@ -416,9 +450,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
     links: [
       { source: "贾蓉", target: "贾珍", value: "父子" },
       { source: "贾蓉", target: "秦可卿", value: "夫妻" },
-    ]
+    ],
   },
-  "贾兰": {
+  贾兰: {
     data: [
       { name: "贾兰", category: 1, symbolSize: 55 },
       { name: "贾珠", category: 0, symbolSize: 50 },
@@ -427,9 +461,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
     links: [
       { source: "贾兰", target: "贾珠", value: "父子" },
       { source: "贾兰", target: "李纨", value: "母子" },
-    ]
+    ],
   },
-  "薛姨妈": {
+  薛姨妈: {
     data: [
       { name: "薛姨妈", category: 4, symbolSize: 60 },
       { name: "薛宝钗", category: 4, symbolSize: 65 },
@@ -440,9 +474,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "薛姨妈", target: "薛宝钗", value: "母女" },
       { source: "薛姨妈", target: "薛蟠", value: "母子" },
       { source: "薛姨妈", target: "王夫人", value: "姐妹" },
-    ]
+    ],
   },
-  "薛蟠": {
+  薛蟠: {
     data: [
       { name: "薛蟠", category: 4, symbolSize: 60 },
       { name: "薛宝钗", category: 4, symbolSize: 65 },
@@ -453,9 +487,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "薛蟠", target: "薛宝钗", value: "兄妹" },
       { source: "薛蟠", target: "薛姨妈", value: "母子" },
       { source: "薛蟠", target: "香菱", value: "妾" },
-    ]
+    ],
   },
-  "袭人": {
+  袭人: {
     data: [
       { name: "袭人", category: 5, symbolSize: 55 },
       { name: "贾宝玉", category: 0, symbolSize: 65 },
@@ -464,9 +498,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
     links: [
       { source: "袭人", target: "贾宝玉", value: "主仆" },
       { source: "袭人", target: "薛宝钗", value: "朋友" },
-    ]
+    ],
   },
-  "紫鹃": {
+  紫鹃: {
     data: [
       { name: "紫鹃", category: 5, symbolSize: 55 },
       { name: "林黛玉", category: 6, symbolSize: 65 },
@@ -475,9 +509,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
     links: [
       { source: "紫鹃", target: "林黛玉", value: "主仆" },
       { source: "紫鹃", target: "贾宝玉", value: "朋友" },
-    ]
+    ],
   },
-  "妙玉": {
+  妙玉: {
     data: [
       { name: "妙玉", category: 5, symbolSize: 55 },
       { name: "贾宝玉", category: 0, symbolSize: 60 },
@@ -488,9 +522,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "妙玉", target: "贾宝玉", value: "朋友" },
       { source: "妙玉", target: "林黛玉", value: "朋友" },
       { source: "妙玉", target: "薛宝钗", value: "朋友" },
-    ]
+    ],
   },
-  "贾敬": {
+  贾敬: {
     data: [
       { name: "贾敬", category: 1, symbolSize: 60 },
       { name: "贾珍", category: 1, symbolSize: 55 },
@@ -499,9 +533,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
     links: [
       { source: "贾敬", target: "贾珍", value: "父子" },
       { source: "贾敬", target: "贾惜春", value: "父女" },
-    ]
+    ],
   },
-  "巧姐": {
+  巧姐: {
     data: [
       { name: "巧姐", category: 0, symbolSize: 50 },
       { name: "贾琏", category: 0, symbolSize: 55 },
@@ -510,9 +544,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
     links: [
       { source: "巧姐", target: "贾琏", value: "父女" },
       { source: "巧姐", target: "王熙凤", value: "母女" },
-    ]
+    ],
   },
-  "王夫人": {
+  王夫人: {
     data: [
       { name: "王夫人", category: 2, symbolSize: 60 },
       { name: "贾政", category: 0, symbolSize: 55 },
@@ -525,9 +559,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "王夫人", target: "贾宝玉", value: "母子" },
       { source: "王夫人", target: "王熙凤", value: "姑侄" },
       { source: "王夫人", target: "薛姨妈", value: "姐妹" },
-    ]
+    ],
   },
-  "林如海": {
+  林如海: {
     data: [
       { name: "林如海", category: 6, symbolSize: 60 },
       { name: "林黛玉", category: 6, symbolSize: 65 },
@@ -536,9 +570,9 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
     links: [
       { source: "林如海", target: "林黛玉", value: "父女" },
       { source: "林如海", target: "贾敏", value: "夫妻" },
-    ]
+    ],
   },
-  "贾敏": {
+  贾敏: {
     data: [
       { name: "贾敏", category: 6, symbolSize: 55 },
       { name: "林黛玉", category: 6, symbolSize: 65 },
@@ -549,8 +583,8 @@ const mockData: Record<string, { data: any[]; links: any[] }> = {
       { source: "贾敏", target: "林黛玉", value: "母女" },
       { source: "贾敏", target: "林如海", value: "夫妻" },
       { source: "贾敏", target: "贾母", value: "母女" },
-    ]
-  }
+    ],
+  },
 };
 
 // 获取Mock数据
@@ -560,31 +594,31 @@ const getMockData = (name: string) => {
 
 // 固定词云数据
 const fixedWordCloudData = [
-  { name: '贾宝玉', value: 700 },
-  { name: '林黛玉', value: 600 },
-  { name: '薛宝钗', value: 550 },
-  { name: '王熙凤', value: 500 },
-  { name: '贾母', value: 480 },
-  { name: '贾政', value: 450 },
-  { name: '史湘云', value: 420 },
-  { name: '贾琏', value: 400 },
-  { name: '贾迎春', value: 380 },
-  { name: '贾探春', value: 380 },
-  { name: '贾惜春', value: 370 },
-  { name: '袭人', value: 350 },
-  { name: '贾元春', value: 340 },
-  { name: '贾珠', value: 330 },
-  { name: '贾环', value: 320 },
-  { name: '王夫人', value: 310 },
-  { name: '贾赦', value: 300 },
-  { name: '巧姐', value: 290 },
-  { name: '贾珍', value: 280 },
-  { name: '贾蓉', value: 270 },
-  { name: '紫鹃', value: 260 },
-  { name: '贾兰', value: 250 },
-  { name: '薛蟠', value: 240 },
-  { name: '贾敬', value: 230 },
-  { name: '薛姨妈', value: 220 },
+  { name: "贾宝玉", value: 700 },
+  { name: "林黛玉", value: 600 },
+  { name: "薛宝钗", value: 550 },
+  { name: "王熙凤", value: 500 },
+  { name: "贾母", value: 480 },
+  { name: "贾政", value: 450 },
+  { name: "史湘云", value: 420 },
+  { name: "贾琏", value: 400 },
+  { name: "贾迎春", value: 380 },
+  { name: "贾探春", value: 380 },
+  { name: "贾惜春", value: 370 },
+  { name: "袭人", value: 350 },
+  { name: "贾元春", value: 340 },
+  { name: "贾珠", value: 330 },
+  { name: "贾环", value: 320 },
+  { name: "王夫人", value: 310 },
+  { name: "贾赦", value: 300 },
+  { name: "巧姐", value: 290 },
+  { name: "贾珍", value: 280 },
+  { name: "贾蓉", value: 270 },
+  { name: "紫鹃", value: 260 },
+  { name: "贾兰", value: 250 },
+  { name: "薛蟠", value: 240 },
+  { name: "贾敬", value: 230 },
+  { name: "薛姨妈", value: 220 },
 ];
 
 // 初始化固定词云
@@ -620,17 +654,17 @@ const search = async () => {
       await nextTick();
       updateGraph(data, links);
     } else {
-      throw new Error('响应数据为空');
+      throw new Error("响应数据为空");
     }
   } catch (error) {
-    console.warn('API调用失败，使用Mock数据:', error);
+    console.warn("API调用失败，使用Mock数据:", error);
     const mock = mockData[queryName];
     if (mock) {
       await nextTick();
       updateGraph(mock.data, mock.links);
     } else {
-      const matchedKey = Object.keys(mockData).find(key =>
-        key.includes(queryName) || queryName.includes(key)
+      const matchedKey = Object.keys(mockData).find(
+        (key) => key.includes(queryName) || queryName.includes(key)
       );
       if (matchedKey) {
         const matchedMock = mockData[matchedKey];
@@ -657,10 +691,10 @@ const searchByName = async (name: string) => {
       await nextTick();
       updateGraph(data, links);
     } else {
-      throw new Error('响应数据为空');
+      throw new Error("响应数据为空");
     }
   } catch (error) {
-    console.warn('API调用失败，使用Mock数据:', error);
+    console.warn("API调用失败，使用Mock数据:", error);
     const mock = mockData[name];
     if (mock) {
       await nextTick();
@@ -727,7 +761,7 @@ onMounted(async () => {
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: #333;
   margin: 0;
@@ -797,7 +831,7 @@ onMounted(async () => {
 }
 
 .chart-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #333;
   margin: 0 0 15px 0;

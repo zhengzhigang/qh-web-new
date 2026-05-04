@@ -1,23 +1,28 @@
 <template>
   <div id="container" class="cls-container">
-    <div class="cls-content" style="margin-top:150px">
+    <!-- 顶部导航栏 -->
+    <kgqa-header />
+    <div class="cls-content" style="margin-top: 150px">
       <div class="mar-ver pad-btm">
-        <p class="text-muted" style="color:white">基于知识图谱的《红楼梦》人物关系可视化及问答系统</p>
-        <el-button type="primary" @click="navigateToSearch" size="large">开启探索</el-button>
+        <p class="text-muted" style="color: white">
+          基于知识图谱的《红楼梦》人物关系可视化及问答系统
+        </p>
+        <a id="a" @click="navigateToSearch">开启探索</a>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { ElButton } from 'element-plus';
+import { useRouter } from "vue-router";
+import { ElButton } from "element-plus";
+import KgqaHeader from "@/components/kgqa-header.vue";
 
 const router = useRouter();
 
 const navigateToSearch = () => {
   router.push({
-    path: '/kgqa/search'
+    path: "/kgqa/search",
   });
 };
 </script>
