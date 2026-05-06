@@ -808,7 +808,6 @@ onMounted(async () => {
   display: flex;
   gap: 20px;
   flex: 1;
-  margin-bottom: 20px;
   min-height: 0;
 }
 
