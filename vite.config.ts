@@ -10,11 +10,11 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
-        vue(), 
+        vue(),
         WindiCSS(),
         AutoImport({
             resolvers: [ElementPlusResolver()],
-          }),
+        }),
         Components({
             resolvers: [ElementPlusResolver()],
         }),
@@ -29,7 +29,12 @@ export default defineConfig({
                 target: 'http://127.0.0.1:8888/',
                 changeOrigin: true,
                 rewrite: path => path.replace(/^\/api/, '/api')
-            }
+            },
+            '^/neo4j': {
+                target: 'http://127.0.0.1:3887/',
+                changeOrigin: true,
+                rewrite: path => path.replace(/^\/neo4j/, '/neo4j')
+            },
         }
         // https: {
         //   key: fs.readFileSync("keys/server.key"),

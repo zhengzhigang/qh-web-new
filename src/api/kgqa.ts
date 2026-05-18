@@ -7,7 +7,7 @@ import request from '@/utils/request';
  */
 export function searchName(params) {
   return request({
-    url: '/search_name',
+    url: '/neo4j/query',
     method: 'get',
     params
   });
@@ -20,7 +20,7 @@ export function searchName(params) {
  */
 export function getProfile(params) {
   return request({
-    url: '/get_profile',
+    url: '/neo4j/getAnswerProfile',
     method: 'get',
     params
   });
@@ -33,19 +33,8 @@ export function getProfile(params) {
  */
 export function kgqaAnswer(params) {
   return request({
-    url: '/KGQA_answer',
+    url: '/neo4j/getKGQAAnswer',
     method: 'get',
     params
-  });
-}
-
-/**
- * 获取所有人物关系数据
- * @returns 所有人物关系数据
- */
-export function getAllRelation() {
-  return request({
-    url: '../static/data.json',
-    method: 'get'
   });
 }

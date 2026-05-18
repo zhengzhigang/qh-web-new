@@ -82,82 +82,6 @@ const pictureSrc = ref("");
 const showPicture = ref(false);
 const currentCharacter = ref("");
 
-// Mock数据
-const mockAnswers: Record<string, any> = {
-  贾宝玉的爸爸是谁: {
-    nodes: [
-      { name: "贾宝玉", category: 0, symbolSize: 60 },
-      { name: "贾政", category: 0, symbolSize: 55 },
-    ],
-    links: [{ source: "贾宝玉", target: "贾政", value: "父子" }],
-    profile:
-      "<dl><dt>中文名</dt><dd>贾政</dd><dt>身份</dt><dd>荣国府二老爷</dd><dt>官职</dt><dd>工部员外郎</dd><dt>性格</dt><dd>为人正直，古板严肃</dd></dl>",
-    picture: null,
-  },
-  林黛玉的母亲是谁: {
-    nodes: [
-      { name: "林黛玉", category: 6, symbolSize: 60 },
-      { name: "贾敏", category: 6, symbolSize: 55 },
-      { name: "贾母", category: 0, symbolSize: 50 },
-    ],
-    links: [
-      { source: "林黛玉", target: "贾敏", value: "母女" },
-      { source: "贾敏", target: "贾母", value: "母女" },
-    ],
-    profile:
-      "<dl><dt>中文名</dt><dd>贾敏</dd><dt>身份</dt><dd>林如海之妻</dd><dt>家世</dt><dd>贾府千金</dd><dt>子女</dt><dd>林黛玉</dd></dl>",
-    picture: null,
-  },
-  薛宝钗的哥哥是谁: {
-    nodes: [
-      { name: "薛宝钗", category: 4, symbolSize: 60 },
-      { name: "薛蟠", category: 4, symbolSize: 55 },
-    ],
-    links: [{ source: "薛宝钗", target: "薛蟠", value: "兄妹" }],
-    profile:
-      "<dl><dt>中文名</dt><dd>薛蟠</dd><dt>身份</dt><dd>薛家长子</dd><dt>性格</dt><dd>纨绔子弟，性情骄纵</dd><dt>绰号</dt><dd>呆霸王</dd></dl>",
-    picture: null,
-  },
-  王熙凤的丈夫是谁: {
-    nodes: [
-      { name: "王熙凤", category: 2, symbolSize: 60 },
-      { name: "贾琏", category: 0, symbolSize: 55 },
-    ],
-    links: [{ source: "王熙凤", target: "贾琏", value: "夫妻" }],
-    profile:
-      "<dl><dt>中文名</dt><dd>贾琏</dd><dt>身份</dt><dd>荣国府管家</dd><dt>性格</dt><dd>风流成性，贪图享乐</dd></dl>",
-    picture: null,
-  },
-  贾母的孙子是谁: {
-    nodes: [
-      { name: "贾母", category: 0, symbolSize: 65 },
-      { name: "贾政", category: 0, symbolSize: 50 },
-      { name: "贾宝玉", category: 0, symbolSize: 60 },
-    ],
-    links: [
-      { source: "贾母", target: "贾政", value: "母子" },
-      { source: "贾政", target: "贾宝玉", value: "父子" },
-    ],
-    profile:
-      "<dl><dt>中文名</dt><dd>贾宝玉</dd><dt>身份</dt><dd>荣国府嫡孙</dd><dt>性格</dt><dd>叛逆多情，厌恶仕途</dd><dt>别称</dt><dd>宝二爷</dd></dl>",
-    picture: null,
-  },
-  秦可卿是谁: {
-    nodes: [
-      { name: "秦可卿", category: 5, symbolSize: 60 },
-      { name: "贾蓉", category: 1, symbolSize: 55 },
-      { name: "贾珍", category: 1, symbolSize: 50 },
-    ],
-    links: [
-      { source: "秦可卿", target: "贾蓉", value: "夫妻" },
-      { source: "贾蓉", target: "贾珍", value: "父子" },
-    ],
-    profile:
-      "<dl><dt>中文名</dt><dd>秦可卿</dd><dt>外文名称</dt><dd>Qin Keqing</dd><dt>其他名称</dt><dd>秦氏、蓉大奶奶</dd><dt>身份</dt><dd>宁国府重孙媳妇，贾蓉之妻</dd><dt>排名</dt><dd>金陵十二钗正册第十二位</dd></dl>",
-    picture: null,
-  },
-};
-
 // 默认图表配置
 const getChartOption = (nodes: any[], links: any[]) => {
   return {
@@ -281,53 +205,37 @@ const search = async () => {
   if (!searchQuery.value.trim()) return;
 
   try {
-    // 先尝试使用Mock数据
-    const mockData = mockAnswers[searchQuery.value.trim()];
-
-    if (mockData) {
-      displayResult(mockData);
-      return;
-    }
-
-    // 尝试API调用
     const response = await kgqaAnswer({ name: searchQuery.value });
-    const json = response.data;
 
-    if (json && Array.isArray(json) && json.length >= 3) {
-      const resultData = {
-        nodes: json[0]?.data || [],
-        links: json[0]?.links || [],
-        profile: json[1] || "",
-        picture: json[2] || null,
-      };
-      displayResult(resultData);
+    if (response.data) {
+      const json = response.data;
+
+      if (json && Array.isArray(json) && json.length >= 3) {
+        const resultData = {
+          nodes: json[0]?.data || [],
+          links: json[0]?.links || [],
+          profile: json[1] || "",
+          picture: json[2] || null,
+        };
+        displayResult(resultData);
+      } else {
+        displayResult({
+          nodes: [],
+          links: [],
+          profile:
+            "<dl><dt>提示</dt><dd>未找到相关答案，请尝试其他问题</dd></dl>",
+          picture: null,
+        });
+      }
     } else {
-      // 使用默认mock数据
-      displayResult({
-        nodes: [
-          { name: "贾宝玉", category: 0, symbolSize: 60 },
-          { name: "林黛玉", category: 6, symbolSize: 60 },
-        ],
-        links: [{ source: "贾宝玉", target: "林黛玉", value: "表兄妹" }],
-        profile:
-          "<dl><dt>提示</dt><dd>未找到相关答案，请尝试其他问题</dd></dl>",
-        picture: null,
-      });
+      throw new Error("响应数据为空");
     }
   } catch (error) {
     console.error("搜索失败:", error);
-    // 使用默认mock数据
     displayResult({
-      nodes: [
-        { name: "贾宝玉", category: 0, symbolSize: 60 },
-        { name: "林黛玉", category: 6, symbolSize: 60 },
-        { name: "薛宝钗", category: 4, symbolSize: 60 },
-      ],
-      links: [
-        { source: "贾宝玉", target: "林黛玉", value: "表兄妹" },
-        { source: "贾宝玉", target: "薛宝钗", value: "表姐弟" },
-      ],
-      profile: "<dl><dt>提示</dt><dd>网络异常，已使用本地数据</dd></dl>",
+      nodes: [],
+      links: [],
+      profile: "<dl><dt>提示</dt><dd>网络异常，请重试</dd></dl>",
       picture: null,
     });
   }
