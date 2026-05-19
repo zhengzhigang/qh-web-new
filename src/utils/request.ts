@@ -27,11 +27,11 @@ axiosInstance.interceptors.request.use(
     requestInfo => {
         if (requestInfo.headers) {
             requestInfo.headers['Content-Type'] = 'application/json;charset=UTF-8';
-            const pathname  = requestInfo.url;
-            requestInfo.paramsSerializer = function(params) {
-                return qs.stringify(params, { arrayFormat: 'repeat'})
-              }
-            if(pathname == '/admin/login'){
+            const pathname = requestInfo.url;
+            requestInfo.paramsSerializer = function (params) {
+                return qs.stringify(params, { arrayFormat: 'repeat' })
+            }
+            if (pathname == '/admin/login') {
             } else {
 
                 var tokenName = sessionStorage.getItem("tokenName");
@@ -39,7 +39,7 @@ axiosInstance.interceptors.request.use(
 
                 if (tokenName && tokenValue) {
                     if (pathname != '/' && pathname != '/admin/login') {
-                      requestInfo.headers[tokenName] = tokenValue;
+                        requestInfo.headers[tokenName] = tokenValue;
                     }
                 }
             }
@@ -53,15 +53,14 @@ axiosInstance.interceptors.request.use(
 // respone拦截器
 axiosInstance.interceptors.response.use(
     response => {
-        if(response.data.code == 0)
-        {
+        if (response.data.code == 0 || response.status === 200) {
             return response.data;
-        }else {
-            if(response.data.code == 10006){
+        } else {
+            if (response.data.code == 10006) {
                 sessionStorage.clear();
-                router.push({path: '/login'})
+                router.push({ path: '/login' })
             }
-            if(response.data.code == 10100){
+            if (response.data.code == 10100) {
                 alert("该人物在数据库里不存在")
             }
         }

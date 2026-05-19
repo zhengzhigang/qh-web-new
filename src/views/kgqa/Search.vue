@@ -10,11 +10,11 @@
         <div class="search-box">
           <el-input
             v-model="searchQuery"
+            class="search-section-input"
             placeholder="请输入你要检索的名字..."
             @keyup.enter="search"
-            size="large"
           />
-          <el-button type="primary" @click="search" size="large"
+          <el-button type="primary" @click="search" class="search-section-button"
             >搜索</el-button
           >
         </div>
@@ -267,8 +267,8 @@ const initWordCloud = () => {
 
 // 更新关系图（词云不更新）
 const updateGraph = (data: any[], links: any[]) => {
-  graphOption.value.series[0].nodes = data;
-  graphOption.value.series[0].links = links;
+  graphOption.value.series[0].nodes = Array.isArray(data) ? JSON.parse(JSON.stringify(data)) : [];
+  graphOption.value.series[0].links = Array.isArray(links) ? JSON.parse(JSON.stringify(links)) : [];
 
   if (graphRef.value) {
     graphRef.value.setOption(graphOption.value, true);
@@ -284,8 +284,9 @@ const search = async () => {
     const response = await searchName({ name: queryName });
 
     if (response.data) {
-      const data = response.data.data || [];
-      const links = response.data.links || [];
+      const data = response.data || [];
+      const links = response.links || [];
+    console.log(data, links);
 
       await nextTick();
       updateGraph(data, links);
@@ -303,8 +304,8 @@ const searchByName = async (name: string) => {
     const response = await searchName({ name });
 
     if (response.data) {
-      const data = response.data.data || [];
-      const links = response.data.links || [];
+      const data = response.data || [];
+      const links = response.links || [];
 
       await nextTick();
       updateGraph(data, links);
@@ -325,7 +326,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 #container {
   min-height: 100vh;
   display: flex;
@@ -460,5 +461,17 @@ onMounted(async () => {
   font-size: 12px;
   color: #999;
   margin: 0;
+}
+
+.search-section-input {
+  ::v-deep .el-input__wrapper {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.search-section-button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 </style>

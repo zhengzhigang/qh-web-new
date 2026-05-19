@@ -51,9 +51,6 @@
 
           <!-- 人物信息 -->
           <div class="info-panel">
-            <div class="character-name" v-if="currentCharacter">
-              {{ currentCharacter }}
-            </div>
             <div class="profile-content" v-html="profile"></div>
           </div>
         </div>
@@ -205,15 +202,15 @@ const search = async () => {
   if (!searchQuery.value.trim()) return;
 
   try {
-    const response = await kgqaAnswer({ name: searchQuery.value });
+    const response = await kgqaAnswer({ sentence : searchQuery.value });
 
-    if (response.data) {
-      const json = response.data;
+    if (response) {
+      const json = response;
 
       if (json && Array.isArray(json) && json.length >= 3) {
         const resultData = {
-          nodes: json[0]?.data || [],
-          links: json[0]?.links || [],
+          nodes: JSON.parse(JSON.stringify(json[0]?.data || [])),
+          links: JSON.parse(JSON.stringify(json[0]?.links || [])),
           profile: json[1] || "",
           picture: json[2] || null,
         };
@@ -263,11 +260,6 @@ const displayResult = (data: {
   } else {
     showPicture.value = false;
     pictureSrc.value = "";
-  }
-
-  // 更新当前人物名称
-  if (data.nodes.length > 0) {
-    currentCharacter.value = data.nodes[0].name;
   }
 };
 
