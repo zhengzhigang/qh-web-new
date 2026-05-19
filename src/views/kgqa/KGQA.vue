@@ -46,7 +46,7 @@
             />
           </div>
           <div class="picture-container placeholder" v-else>
-            <div class="no-image">暂无图片</div>
+            <div class="no-image">点击图表人物查看详情</div>
           </div>
 
           <!-- 人物信息 -->
@@ -187,7 +187,45 @@ const initChart = () => {
   chartInstance = echarts.init(container);
   chartInstance.setOption(getChartOption([], []));
 
+  // 添加图表点击事件
+  chartInstance.on("click", onChartClick);
+
   window.addEventListener("resize", handleResize);
+};
+
+// 图表点击事件处理
+const onChartClick = (params: any) => {
+  if (params.name && params.dataType === "node") {
+    fetchProfile(params.name);
+  }
+};
+
+// 获取人物信息
+const fetchProfile = async (name: string) => {
+  currentCharacter.value = name;
+  
+  try {
+    const response = await getProfile({ character_name: name });
+    
+    if (response) {
+      const profileData = response.profile || "";
+      const pictureData = response.picture || null;
+      
+      profile.value = profileData;
+      
+      if (pictureData) {
+        pictureSrc.value = "data:image/jpg;base64," + pictureData;
+        showPicture.value = true;
+      } else {
+        showPicture.value = false;
+        pictureSrc.value = "";
+      }
+    }
+  } catch (error) {
+    console.error("获取人物信息失败:", error);
+    profile.value = "<dl><dt>提示</dt><dd>获取人物信息失败，请重试</dd></dl>";
+    showPicture.value = false;
+  }
 };
 
 // 处理resize
