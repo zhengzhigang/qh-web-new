@@ -203,16 +203,16 @@ const onChartClick = (params: any) => {
 // 获取人物信息
 const fetchProfile = async (name: string) => {
   currentCharacter.value = name;
-  
+
   try {
-    const response = await getProfile({ character_name: name });
-    
+    const response = await getProfile({ name });
+
     if (response) {
-      const profileData = response.profile || "";
-      const pictureData = response.picture || null;
-      
+      const profileData = response[0] || "";
+      const pictureData = response[1] || null;
+
       profile.value = profileData;
-      
+
       if (pictureData) {
         pictureSrc.value = "data:image/jpg;base64," + pictureData;
         showPicture.value = true;
@@ -240,7 +240,7 @@ const search = async () => {
   if (!searchQuery.value.trim()) return;
 
   try {
-    const response = await kgqaAnswer({ sentence : searchQuery.value });
+    const response = await kgqaAnswer({ sentence: searchQuery.value });
 
     if (response) {
       const json = response;
