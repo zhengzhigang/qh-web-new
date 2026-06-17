@@ -1,7 +1,7 @@
 <template>
   <div id="container" class="cls-container">
     <!-- 顶部导航栏 -->
-    <kgqa-header />
+    <honglou-header />
     <div class="cls-content" style="margin-top: 150px">
       <div class="mar-ver pad-btm">
         <p class="text-muted" style="color: white">
@@ -16,13 +16,13 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { ElButton } from "element-plus";
-import KgqaHeader from "@/components/kgqa-header.vue";
+import HonglouHeader from "@/components/honglou-header.vue";
 
 const router = useRouter();
 
 const navigateToSearch = () => {
   router.push({
-    path: "/kgqa/search",
+    path: "/honglou/search",
   });
 };
 </script>

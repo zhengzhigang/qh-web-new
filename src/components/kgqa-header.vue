@@ -1,45 +1,45 @@
 <template>
-  <div class="kgqa-header">
+  <div class="honglou-header">
     <div
-      class="kgqa-header__content w-1200px ml-auto mr-auto flex justify-between items-center h-60px"
+      class="honglou-header__content w-1200px ml-auto mr-auto flex justify-between items-center h-60px"
     >
       <div class="flex items-center">
         <img
-          class="kgqa-header__logo"
+          class="honglou-header__logo"
           src="@/assets/中央民族大学校徽图片-512px.png"
-          @click="linkPage('kgqa-welcome')"
+          @click="linkPage('honglou-welcome')"
         />
-        <span class="kgqa-header__title ml-20px">知识图谱问答系统</span>
+        <span class="honglou-header__title ml-20px">知识图谱问答系统</span>
       </div>
-      <div class="kgqa-header__nav">
+      <div class="honglou-header__nav">
         <span
-          class="kgqa-header__nav-item"
-          :class="{ active: currentRoute === 'kgqa-welcome' }"
-          @click="linkPage('kgqa-welcome')"
+          class="honglou-header__nav-item"
+          :class="{ active: currentRoute === 'honglou-welcome' }"
+          @click="linkPage('honglou-welcome')"
         >
           <el-icon class="mr-2"><House /></el-icon>
           首页
         </span>
         <span
-          class="kgqa-header__nav-item"
-          :class="{ active: currentRoute === 'kgqa-search' }"
-          @click="linkPage('kgqa-search')"
+          class="honglou-header__nav-item"
+          :class="{ active: currentRoute === 'honglou-search' }"
+          @click="linkPage('honglou-search')"
         >
           <el-icon class="mr-2"><Connection /></el-icon>
           人物关系
         </span>
         <span
-          class="kgqa-header__nav-item"
-          :class="{ active: currentRoute === 'kgqa-all-relation' }"
-          @click="linkPage('kgqa-all-relation')"
+          class="honglou-header__nav-item"
+          :class="{ active: currentRoute === 'honglou-all-relation' }"
+          @click="linkPage('honglou-all-relation')"
         >
           <el-icon class="mr-2"><Grid /></el-icon>
           人物关系全貌
         </span>
         <span
-          class="kgqa-header__nav-item"
-          :class="{ active: currentRoute === 'kgqa-qa' }"
-          @click="linkPage('kgqa-qa')"
+          class="honglou-header__nav-item"
+          :class="{ active: currentRoute === 'honglou-qa' }"
+          @click="linkPage('honglou-qa')"
         >
           <el-icon class="mr-2"><ChatDotRound /></el-icon>
           人物关系问答
@@ -63,7 +63,7 @@ const linkPage = (page: string) => {
 };
 </script>
 <style lang="less" scoped>
-.kgqa-header {
+.honglou-header {
   color: white;
   border-bottom: 2px solid #8b1c1c;
   position: fixed;

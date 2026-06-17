@@ -33,26 +33,26 @@ const routes: Array<RouteRecordRaw> = [
         name: 'experiment',
         component: () => import('../views/experiment/index.vue')
     },
-    // KGQA 相关路由
+    // honglou 相关路由
     {
-        path: '/kgqa/welcome',
-        name: 'kgqa-welcome',
-        component: () => import('../views/kgqa/Welcome.vue')
+        path: '/honglou/welcome',
+        name: 'honglou-welcome',
+        component: () => import('../views/honglou/Welcome.vue')
     },
     {
-        path: '/kgqa/search',
-        name: 'kgqa-search',
-        component: () => import('../views/kgqa/Search.vue')
+        path: '/honglou/search',
+        name: 'honglou-search',
+        component: () => import('../views/honglou/Search.vue')
     },
     {
-        path: '/kgqa/all-relation',
-        name: 'kgqa-all-relation',
-        component: () => import('../views/kgqa/AllRelation.vue')
+        path: '/honglou/all-relation',
+        name: 'honglou-all-relation',
+        component: () => import('../views/honglou/AllRelation.vue')
     },
     {
-        path: '/kgqa/qa',
-        name: 'kgqa-qa',
-        component: () => import('../views/kgqa/KGQA.vue')
+        path: '/honglou/qa',
+        name: 'honglou-qa',
+        component: () => import('../views/honglou/Question.vue')
     },
 ]
 

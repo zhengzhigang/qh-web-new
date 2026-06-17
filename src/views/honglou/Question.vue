@@ -1,7 +1,7 @@
 <template>
   <div id="container">
     <!-- 顶部导航栏 -->
-    <kgqa-header />
+    <honglou-header />
 
     <!-- 主体内容区域 -->
     <main id="main-content" style="margin-top: 60px">
@@ -68,8 +68,8 @@
 import { ref, onMounted, onUnmounted, reactive } from "vue";
 import * as echarts from "echarts";
 import { ElInput, ElButton } from "element-plus";
-import { kgqaAnswer, getProfile } from "@/api/kgqa";
-import KgqaHeader from "@/components/kgqa-header.vue";
+import { kgqaAnswer, getProfile } from "@/api/honglou";
+import HonglouHeader from "@/components/honglou-header.vue";
 
 const chartContainer = ref<HTMLElement | null>(null);
 let chartInstance: echarts.ECharts | null = null;

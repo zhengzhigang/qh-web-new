@@ -1,7 +1,7 @@
 <template>
   <div id="container">
     <!-- 顶部导航栏 -->
-    <kgqa-header />
+    <honglou-header />
     <!-- 主体内容区域 -->
     <main id="main-content" style="margin-top: 60px">
       <!-- 搜索区域 -->
@@ -14,7 +14,10 @@
             placeholder="请输入你要检索的名字..."
             @keyup.enter="search"
           />
-          <el-button type="primary" @click="search" class="search-section-button"
+          <el-button
+            type="primary"
+            @click="search"
+            class="search-section-button"
             >搜索</el-button
           >
         </div>
@@ -68,8 +71,8 @@ import {
 import { GraphChart } from "echarts/charts";
 import "echarts-wordcloud";
 import { ElInput, ElButton } from "element-plus";
-import { searchName } from "@/api/kgqa";
-import KgqaHeader from "@/components/kgqa-header.vue";
+import { searchName } from "@/api/honglou";
+import HonglouHeader from "@/components/honglou-header.vue";
 
 // 注册必要的组件
 use([
@@ -267,8 +270,12 @@ const initWordCloud = () => {
 
 // 更新关系图（词云不更新）
 const updateGraph = (data: any[], links: any[]) => {
-  graphOption.value.series[0].nodes = Array.isArray(data) ? JSON.parse(JSON.stringify(data)) : [];
-  graphOption.value.series[0].links = Array.isArray(links) ? JSON.parse(JSON.stringify(links)) : [];
+  graphOption.value.series[0].nodes = Array.isArray(data)
+    ? JSON.parse(JSON.stringify(data))
+    : [];
+  graphOption.value.series[0].links = Array.isArray(links)
+    ? JSON.parse(JSON.stringify(links))
+    : [];
 
   if (graphRef.value) {
     graphRef.value.setOption(graphOption.value, true);
@@ -286,7 +293,7 @@ const search = async () => {
     if (response.data) {
       const data = response.data || [];
       const links = response.links || [];
-    console.log(data, links);
+      console.log(data, links);
 
       await nextTick();
       updateGraph(data, links);

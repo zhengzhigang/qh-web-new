@@ -1,7 +1,7 @@
 <template>
   <div id="container">
     <!-- 顶部导航栏 -->
-    <kgqa-header />
+    <honglou-header />
 
     <!-- 主体内容区域 -->
     <main id="main-content" style="margin-top: 60px">
@@ -47,7 +47,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import * as echarts from "echarts";
-import KgqaHeader from "@/components/kgqa-header.vue";
+import HonglouHeader from "@/components/honglou-header.vue";
 import allRelation from "./static/data.json";
 
 const chartContainer = ref<HTMLElement | null>(null);
