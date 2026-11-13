@@ -29,6 +29,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../views/home-new/index.vue')
     },
     {
+        path: '/poet-search',
+        name: 'poet-search',
+        component: () => import('../views/poet-search/index.vue')
+    },
+    {
         path: '/experiment',
         name: 'experiment',
         component: () => import('../views/experiment/index.vue')

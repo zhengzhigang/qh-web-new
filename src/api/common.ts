@@ -46,6 +46,13 @@ export function listPostPage(params) {
     params
   });
 }
+export function listPostPageByAuthorName(params) {
+  return request({
+    url: '/api/post/listPostPageByAuthorName',
+    method: 'get',
+    params
+  });
+}
 export function exportByAuthorId(params) {
   return request({
     url: '/api/post/exportByAuthorId',
