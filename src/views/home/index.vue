@@ -35,10 +35,13 @@
                 <input
                   type="text"
                   v-model="datas.searchStr"
+                  :placeholder="searchPlaceholder"
                   :style="{ width: '440px' }"
                   @keyup.enter="searchAction"
                 />
-                <span class="searchBtn" @click="searchAction">搜索</span>
+                <span class="searchBtn" @click="searchAction">{{
+                  loading ? "搜索中..." : "搜索"
+                }}</span>
               </div>
             </div>
           </div>
@@ -47,76 +50,59 @@
     </div>
 
     <section
+      v-loading="loading"
       class="home__content w-1140px ml-auto mr-auto pt-28px pb-28px pl-28px pr-28px"
     >
-      <template v-if="datas.singleMatch == 1">
-        <div class="home__details">
-          <div class="home__details-item">
-            <canvasPage :personId="datas.personId" />
-          </div>
-        </div>
-      </template>
-    </section>
-
-    <section
-      class="home__content w-1140px ml-auto mr-auto pt-28px pb-28px pl-28px pr-28px"
-    >
-      <template v-if="datas.singleMatch == 1">
-        <div class="home__details">
-          <div class="home__details-item" v-if="datas.authorId != '0'">
+      <div class="home__details">
+        <div class="home__details-item">
+          <!-- 诗人tab：按诗人名检索作品列表 -->
+          <template v-if="poemTabActive[0]">
             <p class="text-18px flex justify-between">
-              作品 :<el-button @click="exportByAuthorIdAction(datas.authorId)"
+              <span
+                >诗人：<span class="home__author-name">{{
+                  datas.authorName
+                }}</span></span
+              >
+              <el-button v-if="total > 0" @click="exportByAuthorNameAction"
                 >导出</el-button
               >
             </p>
-            <template v-for="(item, index) in datas.postListPage.list">
+            <template
+              v-for="(item, index) in datas.postListPage.list"
+              :key="index"
+            >
               <div class="home__production">
                 <span class="home__production-title">{{ item.title }}</span>
                 <p class="home__production-text">{{ item.content }}</p>
               </div>
             </template>
-          </div>
-        </div>
-      </template>
-      <template v-else>
-        <ul>
-          <template v-if="postListPageFlag">
-            <li
-              v-for="item in datas.postListPage.list"
-              :key="item.authorId"
-              v-html="item.name"
-            ></li>
+            <div v-if="total == 0" class="home__empty">
+              没有找到该诗人的作品
+            </div>
           </template>
-          <template v-else-if="poemTabActive[0]">
-            <li v-for="item in datas.esPage.records">
-              <a
-                href="javascript:void(0)"
-                @click="linkToAuthor(item.personId)"
-                v-html="item.name"
-              ></a>
-            </li>
-          </template>
+          <!-- 诗题/诗文tab：ES检索结果 -->
           <template v-else>
-            <li v-for="item in datas.esPage.records">
+            <template
+              v-for="(item, index) in datas.esPage.records"
+              :key="index"
+            >
               <div class="home__production">
                 <span class="home__production-title" v-html="item.title"></span
                 >&nbsp;
                 <span
-                  v-if="
-                    (poemTabActive[1] || poemTabActive[2]) &&
-                    item.authorSourceDO?.excelName
-                  "
+                  v-if="item.authorSourceDO?.excelName"
                   class="home__production-title"
                   >{{ item.authorSourceDO?.excelName }}</span
                 >
                 <p class="home__production-text" v-html="item.content"></p>
               </div>
-            </li>
+            </template>
+            <div v-if="total == 0" class="home__empty">没有找到相关内容</div>
           </template>
-        </ul>
-      </template>
+        </div>
+      </div>
       <el-pagination
-        v-if="datas.authorId != '0'"
+        v-if="total > 0"
         v-model:current-page="currentPage"
         v-model:page-size="pageSize"
         :page-sizes="[10, 20, 30, 50]"
@@ -133,228 +119,152 @@
 </template>
 
 <script lang="ts" setup>
-import canvasPage from "./canvas.vue";
-import { computed, reactive, ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
+import { reactive, ref, computed, onMounted } from "vue";
 import {
-  searchAuthor,
-  searchPoetAuthorId,
-  listPostPage,
+  listPostPageByAuthorName,
   searchPostTitle,
   searchPostContent,
-  findAuthorIdByPersonId,
 } from "@/api/common";
-import JSONBig from "json-bigint";
-const { currentRoute } = useRouter();
-const router = useRouter();
-const route = currentRoute.value;
 
 const poemTabActive = ref([true, false, false]);
+const loading = ref(false);
+const searchPlaceholder = computed(() => {
+  if (poemTabActive.value[0]) return "请输入诗人名字，如：李白";
+  if (poemTabActive.value[1]) return "请输入诗题关键词";
+  return "请输入诗文关键词";
+});
 const changePoemTab = async (
   active1: boolean,
   active2: boolean,
   active3: boolean
 ) => {
   datas.searchStr = "";
+  datas.authorName = "";
+  datas.postListPage = {};
+  datas.esPage = {};
+  total.value = 0;
+  currentPage.value = 1;
   poemTabActive.value = [active1, active2, active3];
 };
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
 const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`);
-  if (poemTabActive.value[0]) {
-    if (postListPageFlag.value == true) {
-      listPostPageAction(datas.authorInfo.authorId, 1, val);
-    } else {
-      searchAuthorAction(1, val);
-    }
-  }
-  if (poemTabActive.value[1]) {
-    searchPostTitleAction(1, val);
-  }
-  if (poemTabActive.value[2]) {
-    searchPostContentAction(1, val);
-  }
+  searchByPage(1, val);
 };
 const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
-  if (poemTabActive.value[0]) {
-    if (postListPageFlag.value == true) {
-      listPostPageAction(datas.authorInfo.authorId, val, pageSize.value);
-    } else {
-      searchAuthorAction(val);
-    }
-  }
-  if (poemTabActive.value[1]) {
-    searchPostTitleAction(val);
-  }
-  if (poemTabActive.value[2]) {
-    searchPostContentAction(val);
-  }
+  searchByPage(val, pageSize.value);
 };
-const postListPageFlag = ref(true);
-const datas = reactive({
-  cbdbPersonId: null,
-  searchStr: "",
-  //首页是否显示一个作者的信息
-  authorId: "0",
-  personId: "0",
-  singleMatch: 1,
-  esPage: {} as any,
-  authorInfo: {} as any,
-  personInfo: {} as any,
-  postListPage: [] as any,
-  index: "-1",
-});
-onMounted(async () => {
-  if (!route.query.authorId) {
-    //如果没有传authorId，如果没有传personId就默认是李白，如果传了personid就用传的personid,authorid就没有了
-    if (!route.query.personId) {
-      datas.personId = JSONBig.parse("32540");
-      datas.authorId = JSONBig.parse("2016760907028709538");
-    } else {
-      datas.personId = JSONBig.parse(route.query.personId);
-      await findAuthorIdByPersonId({ personId: datas.personId }).then((res) => {
-        datas.authorId = res.data.toString();
-      });
-    }
-  } else {
-    datas.authorId = JSONBig.parse(route.query.authorId);
-    datas.personId = JSONBig.parse(route.query.personId);
-  }
-
-  searchPoetAuthorId({
-    authorId: datas.authorId.toString(),
-    personId: datas.personId.toString(),
-    pageSize: pageSize.value,
-    pageNo: currentPage.value,
-  }).then((res) => {
-    if (res.data.singleMatch == 1) {
-      datas.singleMatch = 1;
-      datas.authorInfo = res.data.authorInfo;
-      datas.searchStr = res.data.authorInfo.name;
-      listPostPageAction(datas.authorInfo.authorId);
-    } else {
-      postListPageFlag.value = false;
-      datas.singleMatch = 0;
-      datas.esPage = res.data.esAuthorEsPage;
-      total.value = res.data.esAuthorEsPage.total;
-      currentPage.value = res.data.esAuthorEsPage.current;
-      pageSize.value = res.data.esAuthorEsPage.pageSize;
-    }
-  });
-});
-const listPostPageAction = async (
-  authorId: any,
-  currentPage: number = 1,
-  pageSize: number = 10
-) => {
-  listPostPage({
-    authorId: authorId.toString(),
-    pageSize: pageSize,
-    pageNo: currentPage,
-  }).then((res) => {
-    postListPageFlag.value = true;
-    datas.postListPage = res.data;
-    total.value = res.data.total;
-  });
-};
-const searchAction = async () => {
-  if (datas.searchStr == "") {
+const searchByPage = (pageNo: number, pageSizeParam: number) => {
+  if (loading.value) {
     return;
   }
   if (poemTabActive.value[0]) {
-    searchAuthorAction();
-  }
-  if (poemTabActive.value[1]) {
-    searchPostTitleAction();
-  }
-  if (poemTabActive.value[2]) {
-    searchPostContentAction();
+    listPostPageByAuthorNameAction(pageNo, pageSizeParam);
+  } else if (poemTabActive.value[1]) {
+    searchPostTitleAction(pageNo, pageSizeParam);
+  } else if (poemTabActive.value[2]) {
+    searchPostContentAction(pageNo, pageSizeParam);
   }
 };
-const searchAuthorAction = async (
+const datas = reactive({
+  searchStr: "",
+  // 诗人名字（从返回的作品列表中取）
+  authorName: "",
+  esPage: {} as any,
+  postListPage: [] as any,
+});
+onMounted(() => {
+  // 默认加载李白的作品
+  datas.searchStr = "李白";
+  listPostPageByAuthorNameAction(1, pageSize.value);
+});
+// 按诗人名分页查询作品（ poet-search 页迁移）
+const listPostPageByAuthorNameAction = async (
   pageNo: number = 1,
-  pageSizeParam: number = 20
+  pageSizeParam: number = 10
 ) => {
-  searchAuthor({
-    authorName: datas.searchStr,
-    index: datas.index,
-    pageSize: pageSizeParam,
+  loading.value = true;
+  listPostPageByAuthorName({
     pageNo: pageNo,
-  }).then((res) => {
-    console.log(res.data);
-    if (res.data.singleMatch == 1) {
-      datas.singleMatch = 1;
-      datas.authorInfo = res.data.authorInfo;
-      datas.personId = res.data.authorInfo.personId;
-      listPostPageAction(datas.authorInfo.authorId, 1, 10);
-    } else if (res.data.singleMatch == 0) {
-      postListPageFlag.value = false;
-      datas.singleMatch = 0;
-      datas.esPage = res.data.esAuthorEsPage;
-      total.value = res.data.esAuthorEsPage.total;
-      currentPage.value = res.data.esAuthorEsPage.current;
-      pageSize.value = res.data.esAuthorEsPage.pageSize;
-    } else if (res.data.singleMatch == -1) {
-      ElMessage.error("没有找到匹配的人.");
-    }
-  });
+    pageSize: pageSizeParam,
+    authorName: datas.searchStr.trim(),
+  })
+    .then((res) => {
+      const data = res.data || {};
+      datas.postListPage = data;
+      total.value = data.total || 0;
+      datas.authorName = data.list?.[0]?.authorName || datas.searchStr.trim();
+      currentPage.value = pageNo;
+      pageSize.value = pageSizeParam;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
+const searchAction = async () => {
+  if (datas.searchStr.trim() == "") {
+    return;
+  }
+  if (loading.value) {
+    return;
+  }
+  searchByPage(1, pageSize.value);
 };
 const searchPostTitleAction = async (
   pageNo: number = 1,
-  pageSizeParam: number = 20
+  pageSizeParam: number = 10
 ) => {
+  loading.value = true;
   searchPostTitle({
     postTitle: datas.searchStr,
     pageSize: pageSizeParam,
     pageNo: pageNo,
-  }).then((res) => {
-    console.log(res.data);
-    postListPageFlag.value = false;
-    datas.esPage = res.data;
-    datas.singleMatch = 0;
-    total.value = res.data.total;
-    currentPage.value = res.data.current;
-    pageSize.value = res.data.pageSize;
-  });
+  })
+    .then((res) => {
+      console.log(res.data);
+      datas.esPage = res.data || {};
+      total.value = res.data?.total || 0;
+      currentPage.value = pageNo;
+      pageSize.value = pageSizeParam;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 const searchPostContentAction = async (
   pageNo: number = 1,
-  pageSizeParam: number = 20
+  pageSizeParam: number = 10
 ) => {
+  loading.value = true;
   searchPostContent({
     postContent: datas.searchStr,
     pageSize: pageSizeParam,
     pageNo: pageNo,
-  }).then((res) => {
-    console.log(res.data);
-    postListPageFlag.value = false;
-    datas.esPage = res.data;
-    datas.singleMatch = 0;
-    total.value = res.data.total;
-    currentPage.value = res.data.current;
-    pageSize.value = res.data.pageSize;
-  });
+  })
+    .then((res) => {
+      console.log(res.data);
+      datas.esPage = res.data || {};
+      total.value = res.data?.total || 0;
+      currentPage.value = pageNo;
+      pageSize.value = pageSizeParam;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
-const exportByAuthorIdAction = (authorId: any) => {
-  console.log("exportByAuthorIdAction:", authorId);
-  const exportUrl = `${
-    import.meta.env.VITE_URL
-  }/api/post/exportByAuthorId?authorId=${authorId}`;
+const exportByAuthorNameAction = () => {
+  const params = new URLSearchParams({
+    pageNo: "1",
+    pageSize: String(total.value || 0),
+    authorName: datas.searchStr.trim(),
+  });
+  const exportUrl =
+    import.meta.env.VITE_URL +
+    "/api/post/exportByAuthorName?" +
+    params.toString();
   window.open(exportUrl, "_blank");
-  return true;
-};
-
-const linkToAuthor = (personId: any) => {
-  const to = router.resolve({
-    name: "home", //这里是跳转页面的name，要与路由设置保持一致
-    query: { personId: personId },
-  });
-  window.open(to.href, "_blank");
 };
 </script>
 <style lang="less" scoped>
@@ -370,6 +280,9 @@ const linkToAuthor = (personId: any) => {
 }
 
 .home {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: url("@/assets/bcpic.png") repeat;
 
   &__header {
@@ -454,9 +367,20 @@ const linkToAuthor = (personId: any) => {
   }
 
   &__content {
+    flex: 1;
     border-radius: 8px;
     background: #f0efe2;
     margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+
+    > .home__details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
   }
 
   &__details {
@@ -472,6 +396,18 @@ const linkToAuthor = (personId: any) => {
     }
   }
 
+  &__author-name {
+    color: #f85659;
+    font-weight: 600;
+  }
+
+  &__empty {
+    padding: 40px 0;
+    text-align: center;
+    color: #2c3d50;
+    font-size: 14px;
+  }
+
   &__production {
     margin-bottom: 40px;
 
@@ -485,6 +421,7 @@ const linkToAuthor = (personId: any) => {
     &-text {
       font-size: 14px;
       color: #2c3d50;
+      white-space: pre-wrap;
     }
   }
 }
