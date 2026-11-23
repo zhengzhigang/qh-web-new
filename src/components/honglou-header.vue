@@ -44,6 +44,10 @@
           <el-icon class="mr-2"><ChatDotRound /></el-icon>
           人物关系问答
         </span>
+        <span class="honglou-header__nav-item" @click="linkPage('home')">
+          <el-icon class="mr-2"><Reading /></el-icon>
+          诗词
+        </span>
       </div>
     </div>
   </div>

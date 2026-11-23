@@ -29,6 +29,9 @@
                 @click="changePoemTab(false, false, true)"
                 >诗文</span
               >
+              <span class="home__nav-button" @click="linkToHonglou"
+                >红楼梦</span
+              >
             </div>
             <div class="ml-auto mr-auto pl-20px">
               <div class="home__nav-select mt-16px mb-1px">
@@ -120,11 +123,20 @@
 
 <script lang="ts" setup>
 import { reactive, ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import {
   listPostPageByAuthorName,
   searchPostTitle,
   searchPostContent,
 } from "@/api/common";
+
+const router = useRouter();
+const linkPage = (page: string) => {
+  router.push({ name: page });
+};
+const linkToHonglou = () => {
+  router.push({ path: "/honglou/welcome" });
+};
 
 const poemTabActive = ref([true, false, false]);
 const loading = ref(false);
@@ -175,8 +187,6 @@ const datas = reactive({
   postListPage: [] as any,
 });
 onMounted(() => {
-  // 默认加载李白的作品
-  datas.searchStr = "李白";
   listPostPageByAuthorNameAction(1, pageSize.value);
 });
 // 按诗人名分页查询作品（ poet-search 页迁移）
